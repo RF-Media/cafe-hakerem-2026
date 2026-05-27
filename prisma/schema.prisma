@@ -1,0 +1,40 @@
+// Cafe Hakerem — Postgres (Neon free tier) locally and in production.
+// See CLAUDE.md §13. Two tables: jachnun orders and catering inquiries.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model JachnunOrder {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+
+  reference  String   @unique  // short code shown to the customer, e.g. "JCH-2X4P"
+
+  name       String
+  phone      String
+  quantity   Int
+  pickupSlot DateTime           // absolute time of the chosen pickup window start
+  notes      String?
+
+  @@index([pickupSlot])
+}
+
+model CateringInquiry {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+
+  reference   String   @unique // e.g. "CAT-9F2K"
+
+  name        String
+  phone       String
+  email       String?
+  eventDate   DateTime?
+  guestCount  Int?
+  message     String
+}
