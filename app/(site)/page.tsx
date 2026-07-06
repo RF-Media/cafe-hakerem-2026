@@ -102,7 +102,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Category pills tile — static form of the design-lab marquee */}
             <div className="col-span-6 md:col-span-4 bg-espresso text-cream rounded-2xl border border-stroke/60 p-6 md:p-8 flex flex-col justify-between gap-6">
               <span className="text-xs uppercase tracking-[0.25em] text-cream/60 font-latin">
                 Always rolling
