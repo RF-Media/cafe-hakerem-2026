@@ -9,7 +9,7 @@ import { business } from "@/content/business";
 
 export const metadata: Metadata = {
   title: "מדיניות פרטיות | קפה הכרם",
-  description: "מדיניות הפרטיות של אתר קפה הכרם — איזה מידע נאסף, איך הוא נשמר ולמה.",
+  description: "מדיניות הפרטיות של אתר קפה הכרם בגני תקווה — איזה מידע אנחנו אוספים מהזמנות וטפסים, כיצד הוא מוגן, ואיזה זכויות יש לך כלקוח.",
   robots: { index: false, follow: true },
 };
 

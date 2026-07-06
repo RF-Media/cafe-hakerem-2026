@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "check:todos": "tsx scripts/check-todos.ts",
+    "check:geo": "tsx scripts/check-geo.ts",
     "build": "next build",
-    "preflight": "npm run check:todos && next build",
+    "preflight": "npm run check:todos && npm run check:geo && next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",

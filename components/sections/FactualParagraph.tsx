@@ -20,8 +20,8 @@ export function FactualParagraph({ focus }: FactualParagraphProps) {
       aria-label="פרטי בית הקפה"
     >
       <p>
-        {business.name.he} הוא בית קפה בוטיקי ב{business.address.city.he}, ברחוב{" "}
-        {address}. {focus} הטלפון של {business.name.he} הוא{" "}
+        {business.name.he} הוא בית קפה בוטיקי בגבעת סביון, {business.address.city.he}, ברחוב{" "}
+        {business.address.street.he}. {focus} הטלפון של {business.name.he} הוא{" "}
         <a href={`tel:${business.phone.tel}`} className="underline hover:text-espresso">
           {business.phone.display}
         </a>

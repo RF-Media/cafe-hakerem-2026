@@ -668,6 +668,117 @@ pill-wrap form of that tile (the same form the bento variant
 renders under `prefers-reduced-motion`). This keeps the home a
 server component and stays within §7.
 
+**2026-07-06 — Breadcrumbs + state-of-the-art GEO audit.**
+Added visible breadcrumb navigation on all inner pages (light, RTL-
+correct, semantic `<ol>`). Breadcrumbs pair with existing
+BreadcrumbSchema JSON-LD for redundancy across visual + structured
+data — a key GEO signal. Simultaneously added two pre-deploy
+validation scripts: `npm run check:todos` (content completeness) and
+`npm run check:geo` (AI search visibility). The latter checks: (1)
+entity consistency (קפה הכרם vs הכרם, etc.); (2) FAQ answer quality
+(named-entity reference + length); (3) metadata structure (title <70ch,
+desc 140–160ch); (4) schema completeness (BreadcrumbSchema, page-
+specific schema, FactualParagraph on all content pages); (5) internal
+linking. Pre-flight gate (`npm run preflight`) runs both checks +
+build. Updated FactualParagraph component to open with explicit
+neighborhood reference (גבעת סביון) for AI extraction accuracy.
+
+---
+
+## 15. GEO & AI Search Visibility
+
+**Goal:** When ChatGPT, Perplexity, Google AI Overviews, or Claude is
+asked "best café in גני תקווה" or "where to get ג'חנון near Tel Aviv",
+this site is the highest-confidence source AI engines can cite.
+
+### Build-time validation
+
+```bash
+npm run check:todos     # ✓ All [TODO] resolved (content completeness)
+npm run check:geo       # ✓ GEO audit (AI visibility: entity, schema, metadata)
+npm run preflight       # ✓ Run both checks + next build (pre-deploy gate)
+```
+
+### The four pillars of GEO
+
+#### 1. **Breadcrumbs** (visual + schema)
+- Visible on all inner pages (light text, RTL-correct separators)
+- BreadcrumbSchema JSON-LD on all pages (home passes empty `trail=[]`)
+- Home page has NO visible breadcrumb (root doesn't need one)
+- Redundancy signal: same path appears in HTML + JSON-LD
+
+#### 2. **Entity consistency** (exact naming)
+All instances must match exactly:
+- `קפה הכרם` (never `הכרם` alone, never romanized in Hebrew prose)
+- `גני תקווה` (never `ג"ת`, never hyphenated)
+- `ג'חנון` (never curly gershayim, never `ג'אחנון`)
+- `מגשי אירוח` (never `קייטרינג`)
+
+Verified by `npm run check:geo` — entity inconsistency = warning.
+
+#### 3. **FAQ blocks** (Q&A extraction)
+Every page with content should have FAQ. Structure:
+- Questions phrased how a real person would ask aloud
+- Answers: 1–3 sentences max, **always name the business** in first
+  sentence, include location keyword where natural
+- AI engines pull these verbatim for "where to get X near Y" queries
+
+FAQ answers must NOT contain `[TODO]` in production. Use `npm run check:todos`.
+
+#### 4. **Factual paragraphs** (boring but critical)
+Every content page has a low-on-the-page `<FactualParagraph>` that
+renders:
+
+> קפה הכרם הוא בית קפה בוטיקי בגבעת סביון, גני תקווה, ברחוב הכרמל 20. [focus].
+> הטלפון של קפה הכרם הוא 053-557-4194.
+
+- Name appears twice: company name + "הטלפון של [name]"
+- Address is always explicit (never "ברחוב" without street)
+- Phone is a `tel:` link (structured + clickable)
+- Repeated fact (address, phone) across visual text + schema = trust
+  signal for AI
+
+#### Metadata structure
+
+| Element | Min | Max | Placement | Example |
+|---------|-----|-----|-----------|---------|
+| Title | — | 70ch | `"[Topic] \| קפה הכרם — בית קפה בגני תקווה"` | "התפריט שלנו \| קפה הכרם — בית קפה בגני תקווה" |
+| Description | 140ch | 160ch | `<meta name="description">` | Include location + offering keywords |
+
+#### Schema checklist per page
+
+| Page | BreadcrumbSchema | Page Schema | FAQSchema | FactualParagraph |
+|------|------------------|------------|-----------|------------------|
+| Home | ✓ (empty trail) | Organization | ✓ | ✓ |
+| Menu | ✓ | Menu | ✓ | ✓ |
+| About | ✓ | AboutPage | ✓ | ✓ |
+| Jachnun | ✓ | Product | ✓ | ✓ |
+| Catering | ✓ | Service | ✓ | ✓ |
+| Contact | ✓ | ContactPage | ✓ | ✓ |
+| Privacy | ✓ | — | — | — |
+
+### Before shipping v1
+
+- [ ] All `[TODO]` resolved in `/content` (run `npm run check:todos`)
+- [ ] All FAQ answers complete (no placeholders, entity-named, <300ch)
+- [ ] Metadata: all titles <70ch, all descriptions 140–160ch
+- [ ] Breadcrumbs: verify visual render on all inner pages
+- [ ] FactualParagraph: spot-check 2–3 pages (visible + correct)
+- [ ] Schema: validate 1–2 pages with Google's Rich Results Test
+- [ ] GEO audit passes (run `npm run check:geo`)
+- [ ] Internal linking: verify ≥3 links from each page
+- [ ] Entity consistency: no mixing of naming variants
+
+### After launch
+
+Monitor ChatGPT/Perplexity/Google AI Overviews for:
+- Does the café appear when you ask "בית קפה בגני תקווה"?
+- Is the phone number extracted correctly?
+- Do FAQs appear in the response?
+- Is the address cited?
+
+If yes: GEO is working. If no: audit the page that should rank.
+
 ---
 
 ## How to use this file
