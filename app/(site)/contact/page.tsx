@@ -39,6 +39,8 @@ export default function ContactPage() {
       <BreadcrumbSchema trail={[{ name: "צור קשר", href: "/contact" }]} />
       <JsonLd data={contactSchema()} />
 
+      <Breadcrumb items={[{ name: "צור קשר" }]} />
+
       <section className="mx-auto max-w-container px-6 md:px-10 lg:px-16 pt-16 md:pt-24 pb-16 grid md:grid-cols-2 gap-10">
         <div>
           <Eyebrow withRule>Visit</Eyebrow>

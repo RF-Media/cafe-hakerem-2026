@@ -3,6 +3,7 @@ export const revalidate = 86400;
 
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { business } from "@/content/business";
 
@@ -16,6 +17,7 @@ export default function PrivacyPage() {
   return (
     <>
       <BreadcrumbSchema trail={[{ name: "פרטיות", href: "/privacy" }]} />
+      <Breadcrumb items={[{ name: "פרטיות" }]} />
       <article className="mx-auto max-w-3xl px-6 md:px-10 lg:px-16 pt-16 md:pt-24 pb-20 space-y-6">
         <h1 className="text-4xl md:text-5xl font-display text-espresso">מדיניות פרטיות</h1>
         <p className="text-sm text-espresso-soft">עודכן: [TODO: תאריך]</p>
