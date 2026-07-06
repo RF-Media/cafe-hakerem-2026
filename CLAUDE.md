@@ -654,6 +654,20 @@ next/image's default device list is wide; the design only uses
 breakpoints up to 1200px. Trimmed deviceSizes/imageSizes to
 match the design, reducing optimization invocations.
 
+**2026-05-28 — Home page adopts two design-lab moments.**
+After reviewing the three `/design-lab/*` variants, the merge is:
+(1) the bento menu block ("מה אופים השבוע.") from the *bento*
+variant replaces the thin menu-preview strip in section 3, and
+(2) the "כשמגיעים אורחים." catering block from the *editorial*
+variant replaces the thin catering-promo strip in section 5. Both
+are composed inline in `app/(site)/page.tsx` using only existing
+tokens and the §6 primitives — no new components, no new tokens.
+The bento variant's horizontal marquee is a §7 violation
+("Forbidden: marquees"), so the main home ships only the static
+pill-wrap form of that tile (the same form the bento variant
+renders under `prefers-reduced-motion`). This keeps the home a
+server component and stays within §7.
+
 ---
 
 ## How to use this file

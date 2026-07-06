@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Card } from "@/components/ui/Card";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { FAQBlock } from "@/components/ui/FAQBlock";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
@@ -37,6 +38,8 @@ export default function CateringPage() {
     <>
       <BreadcrumbSchema trail={[{ name: "מגשי אירוח", href: "/catering" }]} />
       <JsonLd data={serviceSchema()} />
+
+      <Breadcrumb items={[{ name: "מגשי אירוח" }]} />
 
       <section className="mx-auto max-w-container px-6 md:px-10 lg:px-16 pt-16 md:pt-24 pb-16">
         <Eyebrow withRule>{catering.hero.eyebrow}</Eyebrow>

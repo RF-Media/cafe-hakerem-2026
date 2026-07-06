@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { FAQBlock } from "@/components/ui/FAQBlock";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";

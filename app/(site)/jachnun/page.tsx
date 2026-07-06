@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Card } from "@/components/ui/Card";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { FAQBlock } from "@/components/ui/FAQBlock";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
@@ -43,6 +44,8 @@ export default function JachnunPage() {
     <>
       <BreadcrumbSchema trail={[{ name: "ג'חנון", href: "/jachnun" }]} />
       <JsonLd data={productSchema()} />
+
+      <Breadcrumb items={[{ name: "ג'חנון" }]} />
 
       {/* Sub-brand hero — terracotta accents */}
       <section className="bg-cream-2 py-20 md:py-28">

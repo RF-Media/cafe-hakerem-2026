@@ -4,6 +4,7 @@ export const revalidate = 86400;
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { FAQBlock } from "@/components/ui/FAQBlock";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
@@ -44,6 +45,8 @@ export default function MenuPage() {
     <>
       <BreadcrumbSchema trail={[{ name: "התפריט", href: "/menu" }]} />
       <JsonLd data={menuSchema()} />
+
+      <Breadcrumb items={[{ name: "התפריט" }]} />
 
       <section className="mx-auto max-w-container px-6 md:px-10 lg:px-16 pt-16 md:pt-24 pb-12">
         <Eyebrow withRule>{menuIntro.eyebrow}</Eyebrow>

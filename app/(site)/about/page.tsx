@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Card } from "@/components/ui/Card";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { FAQBlock } from "@/components/ui/FAQBlock";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
@@ -34,6 +35,8 @@ export default function AboutPage() {
     <>
       <BreadcrumbSchema trail={[{ name: "עלינו", href: "/about" }]} />
       <JsonLd data={aboutSchema()} />
+
+      <Breadcrumb items={[{ name: "עלינו" }]} />
 
       <section className="mx-auto max-w-container px-6 md:px-10 lg:px-16 pt-16 md:pt-24 pb-16">
         <Eyebrow withRule>{about.hero.eyebrow}</Eyebrow>
