@@ -5,7 +5,9 @@ import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { MobileBar } from "@/components/layout/MobileBar";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 import { business } from "@/content/business";
+import { CREAM_HEX } from "@/lib/theme";
 import "./globals.css";
 
 // Single unified family across the site (CLAUDE.md §5). Bound to all
@@ -45,7 +47,9 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f1ebdf",
+  // Derived from the --cream token rather than hardcoded, so the browser
+  // chrome can't drift from the page background.
+  themeColor: CREAM_HEX,
   width: "device-width",
   initialScale: 1,
 };
@@ -102,15 +106,39 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={fontVars}
       style={fontStyle}
     >
-      <body className="font-body bg-cream text-espresso min-h-screen flex flex-col">
+      {/*
+        The bottom padding is what keeps MobileBar off the footer. The bar is
+        `fixed`, so it occupies no layout space of its own and previously sat
+        on top of the last ~56px of every mobile page.
+
+        No `overflow-x: hidden` here on purpose: setting it on <body> turns
+        the body into a scroll container, which changes what the sticky nav
+        and every pinned scene stick to. Horizontal overflow is contained at
+        the section level instead.
+      */}
+      <body className="font-body bg-cream text-espresso min-h-screen flex flex-col pb-[calc(64px+env(safe-area-inset-bottom))] md:pb-0">
+        {/*
+          Framer Motion writes its `initial` state as an inline style into
+          the SSR HTML, so without JS every below-fold section would stay at
+          `opacity: 0` — the page would render as a hero and nothing else.
+          Each motion wrapper carries a `data-motion` attribute purely so
+          this rule can find it and hand the content back. Scoped to that
+          attribute rather than `*`, so genuinely hidden UI (hover chips,
+          the closed nav sheet) stays hidden.
+        */}
+        <noscript>
+          <style>{`[data-motion]{opacity:1!important;transform:none!important;clip-path:none!important}`}</style>
+        </noscript>
         <a href="#main" className="skip-link">דלגו לתוכן</a>
         <JsonLd data={globalSchema()} />
-        <Nav />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <Footer />
-        <MobileBar />
+        <MotionProvider>
+          <Nav />
+          <main id="main" className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <MobileBar />
+        </MotionProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>

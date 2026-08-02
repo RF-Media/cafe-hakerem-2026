@@ -5,7 +5,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { BadgeRow } from "@/components/ui/Badge";
 import { FAQBlock } from "@/components/ui/FAQBlock";
+import { Section, container } from "@/components/ui/Section";
+import { Reveal } from "@/components/motion/Reveal";
+import { SplitText } from "@/components/motion/SplitText";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
+import { MenuCategoryRail } from "@/components/sections/MenuCategoryRail";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -48,12 +54,17 @@ export default function MenuPage() {
 
       <Breadcrumb items={[{ name: "התפריט" }]} />
 
-      <section className="mx-auto max-w-container px-6 md:px-10 lg:px-16 pt-16 md:pt-24 pb-12">
-        <Eyebrow withRule>{menuIntro.eyebrow}</Eyebrow>
-        <h1 className="mt-3 text-4xl md:text-6xl font-display leading-[1.1] text-espresso">
-          {menuIntro.title}
+      <section className={`${container} pt-12 md:pt-20 pb-10 md:pb-14`}>
+        <div className="hero-fade" style={{ ["--d" as never]: 0 }}>
+          <Eyebrow withRule>{menuIntro.eyebrow}</Eyebrow>
+        </div>
+        <h1 className="mt-4 type-display text-4xl md:text-6xl text-espresso">
+          <SplitText text={menuIntro.title} delay={70} />
         </h1>
-        <p className="mt-5 max-w-2xl text-base md:text-lg leading-relaxed text-espresso-soft">
+        <p
+          className="hero-fade mt-6 max-w-prose-he type-lede text-base md:text-lg text-espresso-soft"
+          style={{ ["--d" as never]: 340 }}
+        >
           {menuIntro.body}
         </p>
       </section>
@@ -61,61 +72,75 @@ export default function MenuPage() {
       {/* Sticky in-page nav */}
       <nav
         aria-label="ניווט בתפריט"
-        className="sticky top-20 z-30 bg-cream/85 backdrop-blur border-y border-stroke"
+        className="sticky top-[72px] md:top-20 z-30 bg-cream/90 backdrop-blur-lg border-y border-stroke"
       >
-        <div className="mx-auto max-w-container px-6 md:px-10 lg:px-16 py-3 overflow-x-auto">
-          <ul className="flex gap-5 whitespace-nowrap text-sm">
-            {menuCategories.map((c) => (
-              <li key={c.id}>
-                <a href={`#${c.id}`} className="text-espresso-soft hover:text-espresso transition-colors">
-                  {c.title.he}
-                </a>
-              </li>
-            ))}
-          </ul>
+        <div className={`${container} py-2.5`}>
+          <MenuCategoryRail
+            items={menuCategories.map((c) => ({ id: c.id, label: c.title.he }))}
+          />
         </div>
       </nav>
 
-      <div className="mx-auto max-w-container px-6 md:px-10 lg:px-16 py-12 space-y-20">
+      <div className={`${container} py-14 md:py-16 space-y-20 md:space-y-28`}>
         {menuCategories.map((c) => (
           <section key={c.id} id={c.id} className="scroll-mt-40">
-            <header className="mb-6">
-              <h2 className="text-3xl md:text-4xl font-display leading-tight text-espresso">
-                {c.title.he}
-              </h2>
-              {c.blurb ? (
-                <p className="mt-2 text-base text-espresso-soft max-w-2xl">{c.blurb}</p>
-              ) : null}
-            </header>
-            <ul className="divide-y divide-stroke">
+            <Reveal>
+              <header className="mb-6 md:mb-8">
+                <h2 className="type-display text-3xl md:text-4xl text-espresso">
+                  {c.title.he}
+                </h2>
+                <span aria-hidden className="mt-4 block h-px w-12 bg-brass/55" />
+                {c.blurb ? (
+                  <p className="mt-4 text-base text-espresso-soft max-w-prose-he">{c.blurb}</p>
+                ) : null}
+              </header>
+            </Reveal>
+
+            <Stagger as="ul" className="divide-y divide-stroke" stagger={0.05}>
               {c.items.map((item, i) => (
-                <li key={i} className="py-4 flex items-baseline gap-6">
+                <StaggerItem
+                  key={i}
+                  as="li"
+                  className="group/row py-4 flex items-baseline gap-4 md:gap-6
+                             transition-colors duration-fast hover:text-espresso"
+                >
                   <div className="flex-1">
-                    <div className="font-display text-lg md:text-xl text-espresso">{item.name}</div>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                      <span className="font-display font-bold text-lg md:text-xl text-espresso">
+                        {item.name}
+                      </span>
+                      <BadgeRow badges={item.badges} />
+                    </div>
                     {item.description ? (
                       <div className="text-sm text-espresso-soft mt-1">{item.description}</div>
                     ) : null}
                   </div>
-                  <div className="font-medium text-espresso shrink-0">{item.price}</div>
-                </li>
+                  {/* Leader dots tie the name to its price across the gap —
+                      the reason printed menus have used them for a century. */}
+                  <span
+                    aria-hidden
+                    className="hidden md:block flex-1 border-b border-dotted border-stroke translate-y-[-0.25rem]"
+                  />
+                  <div className="font-medium text-espresso shrink-0 tabular-nums">
+                    {item.price}
+                  </div>
+                </StaggerItem>
               ))}
-            </ul>
+            </Stagger>
           </section>
         ))}
       </div>
 
-      <section className="bg-cream-2 py-20 md:py-28">
-        <div className="mx-auto max-w-container px-6 md:px-10 lg:px-16">
-          <FAQBlock items={menuFAQs} />
-          <FAQSchema items={menuFAQs} />
-          <FactualParagraph focus="התפריט כולל קפה שנטחן במקום, ארוחות בוקר, כריכים, סלטים, בורקסים ומאפים טריים, וכן מגשי אירוח וג'חנון של שבת להזמנה." />
-          <div className="mt-12 text-center text-sm text-espresso-soft">
-            רוצים להזמין מראש? <Link href="/jachnun" className="text-olive hover:text-espresso">ג'חנון של שבת</Link>{" · "}
-            <Link href="/catering" className="text-olive hover:text-espresso">מגשי אירוח</Link>{" · "}
-            <Link href="/contact" className="text-olive hover:text-espresso">פרטי הקפה</Link>
-          </div>
+      <Section tone="cream-2">
+        <FAQBlock items={menuFAQs} />
+        <FAQSchema items={menuFAQs} />
+        <FactualParagraph focus="התפריט כולל קפה שנטחן במקום, ארוחות בוקר, כריכים, סלטים, בורקסים ומאפים טריים, וכן מגשי אירוח וג'חנון של שבת להזמנה." />
+        <div className="mt-12 text-center text-sm text-espresso-soft">
+          רוצים להזמין מראש? <Link href="/jachnun" className="text-olive hover:text-espresso">ג'חנון של שבת</Link>{" · "}
+          <Link href="/catering" className="text-olive hover:text-espresso">מגשי אירוח</Link>{" · "}
+          <Link href="/contact" className="text-olive hover:text-espresso">פרטי הקפה</Link>
         </div>
-      </section>
+      </Section>
 
       <span className="sr-only">{business.name.he}</span>
     </>

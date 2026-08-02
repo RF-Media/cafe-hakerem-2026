@@ -7,11 +7,11 @@
  * slot to /api/jachnun-order; the server re-validates against the same
  * helper before persisting. All UX text is Hebrew.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/ui/FormField";
 import { jachnun as content } from "@/content/jachnun";
-import { getAvailableSlots } from "@/lib/jachnun-cutoff";
+import { getAvailableSlots, type Slot } from "@/lib/jachnun-cutoff";
 
 type Status =
   | { kind: "idle" }
@@ -20,9 +20,21 @@ type Status =
   | { kind: "error"; message: string };
 
 export function JachnunOrderForm() {
-  const slots = useMemo(() => getAvailableSlots(), []);
+  // Slots are computed AFTER mount, not during render. `getAvailableSlots()`
+  // reads the clock, and the server renders in UTC while the visitor is in
+  // Asia/Jerusalem — around the Thursday 18:00 cutoff the two disagree about
+  // which Shabbat is on offer, which is a hydration mismatch on the one
+  // field where being wrong costs a real order.
+  const [slots, setSlots] = useState<Slot[] | null>(null);
+
+  useEffect(() => {
+    setSlots(getAvailableSlots());
+  }, []);
+
   const [status, setStatus] = useState<Status>({ kind: "idle" });
-  const slotsError: string | null = null;
+
+  const loading = slots === null;
+  const noSlots = slots !== null && slots.length === 0;
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -52,8 +64,8 @@ export function JachnunOrderForm() {
 
   if (status.kind === "success") {
     return (
-      <div className="bg-cream-2 border border-stroke rounded-2xl p-8 text-center">
-        <div className="font-display text-2xl text-espresso mb-2">תודה! ההזמנה התקבלה.</div>
+      <div className="bg-cream-2 border border-stroke rounded-card p-8 text-center">
+        <div className="type-display text-2xl text-espresso mb-2">תודה! ההזמנה התקבלה.</div>
         <p className="text-base text-espresso-soft mb-4">
           מספר ההזמנה שלכם: <strong className="text-espresso">{status.reference}</strong>.
           נראה אתכם בשבת בבוקר.
@@ -95,12 +107,25 @@ export function JachnunOrderForm() {
         required
         hint={content.form.slotHint}
         options={
-          slots.length
+          slots?.length
             ? slots.map((s) => ({ value: s.iso, label: s.label }))
-            : [{ value: "", label: "טוען חלונות איסוף…" }]
+            : [
+                {
+                  value: "",
+                  // "Loading" and "none available" are different states and
+                  // used to share one message — a closed window read as a
+                  // spinner that never resolved.
+                  label: loading ? "טוען חלונות איסוף…" : "אין כרגע חלונות איסוף פנויים",
+                },
+              ]
         }
-        error={slotsError ?? undefined}
       />
+
+      {noSlots ? (
+        <p className="text-sm text-espresso-soft">
+          חלון ההזמנות לשבת הקרובה נסגר. נסו שוב בהמשך השבוע, או התקשרו אלינו.
+        </p>
+      ) : null}
 
       <FormField
         label="הערות (אופציונלי)"
@@ -117,7 +142,7 @@ export function JachnunOrderForm() {
         type="submit"
         variant="primary"
         size="lg"
-        disabled={status.kind === "submitting" || slots.length === 0}
+        disabled={status.kind === "submitting" || !slots?.length}
         className="w-full"
       >
         {status.kind === "submitting" ? "שולח…" : "שלחו הזמנה"}

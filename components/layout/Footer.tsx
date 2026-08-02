@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { business } from "@/content/business";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
+import { container } from "@/components/ui/Section";
+
+/**
+ * Dark closing chord. Every page above it is cream, so ending on
+ * espresso-deep gives the scroll a floor to land on instead of fading out.
+ */
 
 const linkGroups: { title: string; items: { href: string; label: string }[] }[] = [
   {
@@ -19,59 +26,77 @@ function socialHref(value: string): string | null {
   return value;
 }
 
+const linkClass =
+  "text-sm text-cream/70 hover:text-brass transition-colors duration-fast";
+const groupTitle =
+  "font-latin text-xs uppercase tracking-[0.22em] text-brass font-medium";
+
 export function Footer() {
   const ig = socialHref(business.socials.instagram);
   const fb = socialHref(business.socials.facebook);
   const gm = socialHref(business.socials.googleMaps);
+  const socials = [
+    ig ? { href: ig, label: "אינסטגרם" } : null,
+    fb ? { href: fb, label: "פייסבוק" } : null,
+    gm ? { href: gm, label: "Google Maps" } : null,
+  ].filter(Boolean) as { href: string; label: string }[];
 
   return (
-    <footer className="mt-24 border-t border-stroke bg-cream-2">
-      <div className="mx-auto max-w-container px-6 md:px-10 lg:px-16 py-16 grid gap-12 md:grid-cols-3">
-        <div className="space-y-3">
-          <div className="font-display text-2xl text-espresso">{business.name.he}</div>
-          <p className="text-sm text-espresso-soft leading-relaxed">
+    <footer className="mt-24 bg-espresso-deep text-cream">
+      <div aria-hidden className="h-px w-full bg-gradient-to-l from-transparent via-brass/40 to-transparent" />
+
+      <Stagger className={`${container} py-16 md:py-20 grid gap-12 md:grid-cols-3`} stagger={0.1}>
+        <StaggerItem className="space-y-4">
+          <div className="type-display text-2xl md:text-3xl">{business.name.he}</div>
+          <p className="text-sm text-cream/65 leading-relaxed max-w-xs">
             {business.tagline.he}
           </p>
-          <address className="not-italic text-sm text-espresso-soft leading-relaxed">
+          <address className="not-italic text-sm text-cream/65 leading-relaxed">
             <div>{business.address.street.he}, {business.address.neighborhood.he}</div>
             <div>{business.address.city.he}, {business.address.country.he}</div>
-            <div>
-              <a href={`tel:${business.phone.tel}`} className="hover:text-espresso transition-colors">
+            <div className="mt-2">
+              <a href={`tel:${business.phone.tel}`} className="text-cream hover:text-brass transition-colors">
                 {business.phone.display}
               </a>
             </div>
           </address>
-        </div>
+        </StaggerItem>
 
         {linkGroups.map((g) => (
-          <nav key={g.title} aria-label={g.title} className="space-y-3">
-            <div className="text-xs uppercase tracking-[0.25em] text-olive">{g.title}</div>
-            <ul className="space-y-2">
-              {g.items.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="text-sm text-espresso hover:text-olive transition-colors">
-                    {l.label}
-                  </Link>
+          <StaggerItem key={g.title}>
+            <nav aria-label={g.title} className="space-y-4">
+              <div className={groupTitle}>{g.title}</div>
+              <ul className="space-y-2.5">
+                {g.items.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className={linkClass}>{l.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </StaggerItem>
+        ))}
+
+        <StaggerItem className="space-y-4">
+          <div className={groupTitle}>עקבו אחרינו</div>
+          {socials.length ? (
+            <ul className="space-y-2.5">
+              {socials.map((s) => (
+                <li key={s.href}>
+                  <a href={s.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                    {s.label}
+                  </a>
                 </li>
               ))}
             </ul>
-          </nav>
-        ))}
+          ) : null}
+        </StaggerItem>
+      </Stagger>
 
-        <div className="space-y-3">
-          <div className="text-xs uppercase tracking-[0.25em] text-olive">עקבו אחרינו</div>
-          <ul className="space-y-2 text-sm">
-            {ig ? <li><a href={ig} target="_blank" rel="noopener noreferrer" className="text-espresso hover:text-olive transition-colors">אינסטגרם</a></li> : null}
-            {fb ? <li><a href={fb} target="_blank" rel="noopener noreferrer" className="text-espresso hover:text-olive transition-colors">פייסבוק</a></li> : null}
-            {gm ? <li><a href={gm} target="_blank" rel="noopener noreferrer" className="text-espresso hover:text-olive transition-colors">Google Maps</a></li> : null}
-          </ul>
-        </div>
-      </div>
-
-      <div className="border-t border-stroke">
-        <div className="mx-auto max-w-container px-6 md:px-10 lg:px-16 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs text-espresso-soft">
+      <div className="border-t border-cream/10">
+        <div className={`${container} py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs text-cream/50`}>
           <div>© {new Date().getFullYear()} {business.name.he}. כל הזכויות שמורות.</div>
-          <Link href="/privacy" className="hover:text-espresso transition-colors">
+          <Link href="/privacy" className="hover:text-brass transition-colors">
             פרטיות
           </Link>
         </div>

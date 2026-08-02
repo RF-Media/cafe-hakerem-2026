@@ -44,8 +44,8 @@ export function CateringInquiryForm() {
 
   if (status.kind === "success") {
     return (
-      <div className="bg-cream-2 border border-stroke rounded-2xl p-8 text-center">
-        <div className="font-display text-2xl text-espresso mb-2">תודה! הפנייה נשלחה.</div>
+      <div className="bg-cream-2 border border-stroke rounded-card p-8 text-center">
+        <div className="type-display text-2xl text-espresso mb-2">תודה! הפנייה נשלחה.</div>
         <p className="text-base text-espresso-soft">
           מספר פנייה: <strong className="text-espresso">{status.reference}</strong>. נחזור אליכם בהקדם.
         </p>
@@ -70,7 +70,7 @@ export function CateringInquiryForm() {
         type="textarea"
         required
         rows={5}
-        hint="סוג האירוע, סוג המגש המעדף, אילוצים תזונתיים."
+        hint="סוג האירוע, סוג המגש המועדף, אילוצים תזונתיים."
       />
 
       {status.kind === "error" ? (

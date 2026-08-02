@@ -23,11 +23,15 @@ export type FormFieldProps = {
   inputMode?: "text" | "tel" | "email" | "numeric" | "decimal";
 };
 
+// 48px minimum height: below that, a thumb misses the field on a phone.
 const inputClasses =
-  "w-full bg-cream border border-stroke rounded-input px-4 py-3 " +
+  "w-full min-h-[48px] bg-cream border border-stroke rounded-input px-4 py-3 " +
   "text-espresso placeholder:text-espresso-soft/60 " +
+  "hover:border-espresso-soft/40 " +
   "focus:border-olive focus:ring-2 focus:ring-olive/20 focus:outline-none " +
-  "transition-colors duration-200";
+  "transition-[border-color,box-shadow,background-color] duration-base ease-out-soft " +
+  "aria-[invalid=true]:border-jachnun aria-[invalid=true]:ring-2 " +
+  "aria-[invalid=true]:ring-jachnun/15";
 
 export function FormField({
   label,

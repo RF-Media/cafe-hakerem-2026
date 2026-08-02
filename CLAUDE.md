@@ -73,9 +73,13 @@ external font CDNs, dark mode logic.
   globals.css             CSS variables only
 
 /components
-  /ui/                    primitives (Button, Card, FormField,
-                          Eyebrow, SectionHeading, FAQBlock)
-  /sections/              page-level (Hero, ThreeValues, etc.)
+  /ui/                    primitives (Button, Card, Section, FormField,
+                          Eyebrow, SectionHeading, FAQBlock, Badge,
+                          Breadcrumb, CafeImage, icons)
+    /placeholders/        authored SVG illustrations
+  /motion/                motion wrappers — see §7
+  /sections/              page-level (FactualParagraph, JachnunScene,
+                          forms, HoursList, MenuCategoryRail)
   /layout/                Nav, Footer, MobileBar
   /seo/                   JsonLd, FAQSchema, BreadcrumbSchema
 
@@ -93,6 +97,8 @@ external font CDNs, dark mode logic.
   resend.ts
   validation.ts           all Zod schemas
   jachnun-cutoff.ts       Asia/Jerusalem time math
+  motion.ts               every easing/duration/variant — see §7
+  theme.ts                token values needed outside CSS
   use-reduced-motion.ts
 
 /prisma
@@ -125,25 +131,57 @@ wrapper; Tailwind adds it):
   --stroke:        30 18% 82%;
   --jachnun:       22 58% 38%;
   --jachnun-soft:  22 45% 52%;
+
+  /* Depth palette */
+  --espresso-deep: 24 26% 9%;   /* dark bands: footer, panels, pinned scene */
+  --cream-3:       36 40% 97%;  /* raised surface, above --cream */
+  --brass:         38 38% 52%;  /* metallic accent — hairlines, numerals */
 }
 ```
 
 Tailwind `theme.extend.colors` maps each to `hsl(var(--name))`.
+
+`--brass` is an accent, never a surface and never a CTA fill. It is
+allowed on: hairline rules, `№ 01` numerals, eyebrow glyphs, active
+indicators, focus/hover edges, and footer link hover. If you find
+yourself filling a large area with it, use `--olive`.
 
 **Radii:**
 - `--radius-card: 1rem` → cards
 - `--radius-pill: 9999px` → nav, buttons
 - `--radius-input: 0.5rem` → form fields
 
-**Shadows (used sparingly):**
-- `--shadow-float: 0 1px 3px hsl(24 22% 14% / 0.06), 0 8px 24px hsl(24 22% 14% / 0.04)`
-- Allowed only on: floating nav, hovered cards. Nothing else.
+**Elevation scale** — use the smallest step that reads:
+- `--shadow-xs` → hairline separation
+- `--shadow-sm` → resting cards, nav pill
+- `--shadow-md` → hovered nav, floating panels
+- `--shadow-lg` → hovered cards, the visit card
+- `--shadow-float` is an **alias of `--shadow-sm`**, kept so existing
+  `shadow-float` usages are unchanged. Prefer the named steps in new code.
+
+**Motion tokens:**
+- `--ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1)` → entrances
+- `--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1)` → loops, reversals
+- `--dur-fast 180ms` / `--dur-base 320ms` / `--dur-slow 700ms`
+
+Tailwind exposes these as `ease-out-soft`, `ease-in-out-soft`, and
+`duration-fast|base|slow`.
+
+**Type utilities** (in `@layer components`):
+- `.type-display` → weight 900, `-0.03em` tracking, `1.02` leading
+- `.type-lede` → weight 300, `1.55` leading
+
+One family means hierarchy comes from the 300↔900 weight span. Use
+`.type-display` on every headline and `.type-lede` on lede paragraphs;
+mid-weight display text reads as a system font, not a brand.
 
 **Spacing rhythm:**
-- Section vertical: `py-20 md:py-28`
-- Container: `max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16`
-- Stack rhythm: `space-y-6` for prose, `space-y-12` between
-  sub-sections.
+- Section vertical: `py-20 md:py-28` (or `<Section spacing="md">`)
+- Container: `<Section>` — do not hand-write the container string
+- Measure: `max-w-prose-he` (68ch) on any paragraph column
+- Viewport height: **`100svh` (`h-screen-s`), never `100vh`** — `vh`
+  jitters against the iOS Safari address bar and every pinned scene
+  is sized off it.
 
 No dark mode. No theme toggle. Forced light/warm.
 
@@ -218,25 +256,74 @@ type ButtonProps = {
 ### `<Card>`
 ```ts
 type CardProps = {
-  padding?: "sm" | "md" | "lg";  // p-4 / p-6 / p-8
+  padding?: "sm" | "md" | "lg";
   hoverable?: boolean;
+  elevation?: "flat" | "raised" | "floating";       // default "flat"
+  tone?: "cream" | "cream-3" | "espresso" | "jachnun";  // default "cream"
   children: ReactNode;
 }
 ```
-- Always: `bg-cream-2 border border-stroke rounded-2xl`
-- `hoverable`: adds `shadow-float` on hover.
-- No other variations. Cards are quiet.
+- Always: `border rounded-card` + the tone's surface and border.
+- `hoverable`: lifts 4px and steps up to `shadow-lg`. Implies
+  `elevation="raised"` at rest, so a hoverable card never appears to
+  fall when the pointer leaves.
+- `tone="espresso" | "jachnun"` exist so dark sections stop being
+  hand-rolled with one-off class strings.
+
+### `<Section>`
+```ts
+type SectionProps = {
+  tone?: "cream" | "cream-2" | "cream-3" | "espresso" | "jachnun";
+  spacing?: "none" | "sm" | "md" | "lg";  // default "md"
+  bleed?: boolean;                        // default true
+  children: ReactNode;
+}
+```
+Owns the container width, gutters and vertical rhythm. **Never
+hand-write `mx-auto max-w-container px-6 md:px-10 lg:px-16`** — that
+string was repeated on ~40 elements before this existed, which is how
+gutters drift out of alignment between pages. `bleed` keeps the
+background full-width with the container applied inside. The bare
+string is exported as `container` for the rare full-bleed case where
+only part of a section is constrained.
 
 ### `<Eyebrow>`
 ```ts
 type EyebrowProps = {
-  tone?: "olive" | "jachnun";  // default "olive"
+  tone?: "olive" | "jachnun" | "brass" | "cream";  // default "olive"
   withRule?: boolean;
   children: ReactNode;
 }
 ```
-Renders the eyebrow type scale. `withRule` prepends a
-`w-8 h-px bg-stroke`.
+Renders the eyebrow type scale. `withRule` prepends a tone-matched
+`w-8 h-px` rule.
+
+**On a coloured band, match the tone to the ground, not to the brand:**
+`tone="jachnun"` on `bg-jachnun` is terracotta on terracotta and is
+invisible. Dark bands take `tone="cream"`.
+
+No italic — `--font-latin` is Noto Sans Hebrew, which has no italic
+cut, so the browser would synthesise a slanted fake. Uppercase plus
+`0.22em` tracking carries the role.
+
+### `<CafeImage>`
+```ts
+type CafeImageProps = {
+  variant: PlaceholderVariant;  // interior | cup | pastry | tray |
+                                // jachnun | founder | instagram | map
+  alt: string;                  // Hebrew, required even with no src
+  src?: string;
+  priority?: boolean;
+  ratio?: string;               // Tailwind aspect class
+  sizes?: string;
+  tone?: "olive" | "espresso" | "jachnun" | "brass" | "cream";
+}
+```
+The single image slot on the site. With `src` it renders `next/image`
+under the CLAUDE.md §8 rules; without one it renders authored line art,
+`aria-hidden`, with no misleading alt. **`alt` is required either way**
+so swapping in real photography can never ship an unlabelled image.
+Never use a bare `<img>` or a `[TODO: תמונה]` box.
 
 ### `<SectionHeading>`
 ```ts
@@ -266,15 +353,21 @@ type FormFieldProps = {
 - Label on top, right-aligned (RTL start).
 - Required: red asterisk after label.
 - Input: `bg-cream border border-stroke rounded-input px-4 py-3 focus:border-olive focus:ring-2 focus:ring-olive/20`.
-- Error: `text-jachnun text-sm mt-1` (terracotta as warning).
+- **`min-h-[48px]`** on every field — below that a thumb misses it.
+- Error: `text-jachnun text-sm mt-1` (terracotta as warning), plus an
+  `aria-[invalid=true]` border/ring so the state is visible without
+  reading the message.
 - Hint: `text-espresso-soft text-sm mt-1`.
+
+**Touch targets:** every interactive element clears 44px on mobile.
+`<Button>` enforces this per size; anything hand-rolled must too.
 
 ### `<FAQBlock>` and `<FAQSchema>`
 Two paired components — render together on every FAQ page.
 
 ```ts
 type FAQItem = { q: string; a: string };
-type FAQBlockProps = { items: FAQItem[]; heading?: string };
+type FAQBlockProps = { items: FAQItem[]; heading?: string; id?: string };
 type FAQSchemaProps = { items: FAQItem[] };
 ```
 
@@ -283,35 +376,94 @@ accessible by default).
 `<FAQSchema>` emits `FAQPage` JSON-LD with the same items.
 Pages compose them — never bundle the schema into the block.
 
+Pass `id` when a page renders two blocks; the default `"faq-heading"`
+would otherwise appear twice and break `aria-labelledby`.
+
+**Never wrap an FAQ answer, or `<FactualParagraph>`, in `<SplitReveal>`
+or any per-word component.** Those strings are exactly what AI engines
+quote; they stay plain text nodes in one container.
+
 ---
 
 ## 7. Motion Rules
 
-Allowed motion, exhaustive:
+The site runs a **cinematic** motion treatment. This section was
+rewritten in 2026-08-02 — it previously forbade most of what is now
+required. See the Decision Log for why.
 
-```ts
-// Section entrance
-{
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
-  viewport: { once: true, margin: "-80px" }
-}
+Never invent a variant inline. Every easing, duration and distance
+lives in `/lib/motion.ts`; every effect has a component in
+`/components/motion/`.
 
-// Hero entrance — stagger children by 0.15s, same transition.
+### Three hard rules
 
-// Hover — scale max 1.02, 180ms ease-out. Color 200ms ease-out.
+**1. The `<h1>` is never gated behind hydration.**
+Hero reveals use **CSS `@keyframes`** (`.hero-word`, `.hero-fade` in
+`globals.css`), which paint from the SSR HTML before JS loads. A Framer
+`initial={{ opacity: 0 }}` on an `<h1>` ships the largest text on the
+page at zero opacity and holds it there until the bundle arrives —
+that is an LCP regression dressed as a design decision. Framer Motion
+is for **below the fold only**.
 
-// Nav scroll state — bg opacity 0.6→0.85, shadow appear, 250ms.
-```
+**2. Pinning is CSS `position: sticky`. Never a JS scroll hijack.**
+`<PinnedScene>` is a tall spacer with a sticky child. Scroll stays 1:1
+with page distance; wheel, trackpad, find-in-page and the scrollbar all
+keep their normal meaning. No `wheel` listener, no `preventDefault`,
+no scroll libraries (§2 still forbids Lenis and Locomotive).
 
-**Forbidden:** parallax, scroll-pinning, marquees, counters,
-typewriter, mouse-follow, scroll-progress bars, page-transition
-delays, loading screens.
+**3. Reduced motion is a kill switch, not a slowdown.**
+`<MotionProvider>` sets `reducedMotion="user"`; `globals.css` clamps
+animation duration and delay. Anything that exists *only* as motion
+(the scroll cue, rail travel, the ticker) is removed, not sped up.
+Pinning and parallax fall back to static layout. Verify by emulating
+the preference — do not assume.
 
-**Reduced motion:** `useReducedMotion()` hook in
-`/lib/use-reduced-motion.ts`. When true, disable all entrance
-animations; hover scale = 1.
+### Allowed
+
+| Effect | Component | Constraint |
+|---|---|---|
+| Entrance fade/translate | `<Reveal>` | `once: true`, `-80px` margin |
+| Staggered groups | `<Stagger>` / `<StaggerItem>` | ≤ 0.1s between children |
+| Parallax | `<Parallax>` | `translateY` only, ≤ ±0.4 speed, halved below `md` |
+| Pinned scene | `<PinnedScene>` | sticky only; unpinned below `md` |
+| Horizontal rail | `<HorizontalRail>` | native snap-swipe below `md` |
+| Hero word reveal | `<SplitText>` | CSS keyframes, server component |
+| Heading word reveal | `<SplitReveal>` | `h2`/`h3` only, never body copy |
+| Image wipe | `<ImageReveal>` | `clip-path` + `scale` |
+| Magnetic hover | `<Magnetic>` | ≤ 6px, `(pointer: fine)` only |
+| Ticker | `<Ticker>` | duplicate is `aria-hidden`, pauses on hover |
+| Counter | `<Counter>` | final value in the SSR HTML |
+| Scroll progress | `<ScrollProgress>` | `aria-hidden`, `scaleX` |
+| Hover | — | ≤ 4px lift or ≤ 1.02 scale, `--dur-fast` |
+| Nav scroll state | `Nav` | scroll-linked, `--dur-base` |
+
+### Forbidden
+
+- **JS scroll hijacking** of any kind, and scroll-smoothing libraries.
+- Animating `width`, `height`, `top`, `left`, `margin` — compositor
+  properties (`transform`, `opacity`, `clip-path`, `filter`) only.
+- Motion on an `<h1>` that delays first paint.
+- Loading screens, page-transition delays, typewriter effects.
+- Per-word splitting of body copy, FAQ answers, or
+  `<FactualParagraph>`.
+- Motion that moves a tap target under the user's finger.
+
+### Splitting Hebrew text
+
+`<SplitText>` and `<SplitReveal>` split on **whitespace only**, so
+`ג'חנון` is never broken at the gershayim. Each span holds a real text
+node — nothing duplicated, nothing `aria-hidden` — so the accessibility
+tree and any crawler's `textContent` are identical to plain markup.
+The word separator sits **outside** the masked span: that span is an
+`inline-block` with `overflow: hidden` and would swallow a trailing
+space, running the words together.
+
+### Budget
+
+Home page, 4× CPU throttle, full scroll: no long task > 50ms.
+Lighthouse mobile on `/` and `/jachnun`: **LCP < 2.5s, CLS < 0.1**.
+Pinned scenes and reveals are the classic way to wreck both — measure
+after adding one.
 
 ---
 
@@ -682,6 +834,63 @@ specific schema, FactualParagraph on all content pages); (5) internal
 linking. Pre-flight gate (`npm run preflight`) runs both checks +
 build. Updated FactualParagraph component to open with explicit
 neighborhood reference (גבעת סביון) for AI extraction accuracy.
+
+**2026-08-02 — Cinematic motion, overriding the old §7.**
+§7 previously forbade parallax, scroll-pinning, marquees, counters and
+scroll-progress bars. The café asked for the opposite: an extreme,
+art-directed treatment. Rather than ship code that contradicts this
+file, §7 was rewritten around what the site now does, with each effect
+carrying its own performance and accessibility constraint.
+
+The original ban was not wrong for its reason — it was protecting LCP,
+scroll integrity and reduced-motion users. Those three concerns are
+preserved as the *hard rules* at the top of the new §7 rather than
+being dropped: CSS-keyframe heroes, `position: sticky` instead of
+scroll hijacking, and reduced motion as a genuine kill switch. What
+changed is the conclusion, not the priorities.
+
+Practical shape: `lib/motion.ts` holds every constant;
+`components/motion/` holds thirteen wrappers plus two hooks. All wrappers
+take `children`, so pages stay server components and the rendered text
+is unchanged. Framer is loaded through `LazyMotion` + `domAnimation` +
+the `m` namespace with `strict` — ~6kb instead of ~34kb, and a stray
+`motion.*` import fails the build rather than silently re-inflating it.
+
+**2026-08-02 — Single family kept; weight extremes do the work.**
+Reintroducing a display serif (Frank Ruhl Libre, as the original spec
+had) was considered and rejected — one family, one payload, one set of
+metrics. The cost is that hierarchy can no longer come from family
+contrast, so it comes from the 300↔900 weight span instead:
+`.type-display` at 900 with `-0.03em` tracking, `.type-lede` at 300.
+Mid-weight headlines are what made the old pages read as a template;
+that gap is now doing the work a second typeface would have.
+
+**2026-08-02 — `--brass` as the premium accent.**
+The palette had warmth but no metal, and everything "premium" was
+being expressed as more shadow. `--brass: 38 38% 52%` is deliberately
+desaturated — it is for hairlines, `№ 01` numerals, eyebrow rules and
+active indicators, never a fill and never a CTA. It also carries the
+accent load that a second typeface would otherwise have carried.
+
+**2026-08-02 — CSS keyframes for heroes, Framer below the fold.**
+Framer's `initial` renders into the SSR HTML. On an `<h1>` that means
+shipping the page's LCP element at `opacity: 0` and waiting for
+hydration to reveal it. Hero reveals are therefore plain CSS
+`@keyframes`, which fire before any JS parses; `<SplitText>` is a
+*server* component for exactly this reason, while its below-fold
+sibling `<SplitReveal>` is a client one. Same visual language, and the
+largest text on the page never waits on a bundle.
+
+**2026-08-02 — Placeholder art instead of `[TODO: תמונה]` boxes.**
+Real photography is still pending. Bordered boxes containing the
+literal string `[TODO: תמונה]` made finished sections look broken and
+made it impossible to judge the layout. `<CafeImage>` is now the single
+image slot: given a `src` it renders `next/image` under §8's rules,
+without one it renders one of eight authored inline SVG illustrations.
+`alt` is required in both branches, so the swap to real photos can
+never ship an unlabelled image. Cost: eight hand-drawn SVGs to
+maintain until the photos land, at which point they become the
+graceful-degradation path rather than dead code.
 
 ---
 

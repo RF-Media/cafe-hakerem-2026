@@ -18,6 +18,9 @@ const config: Config = {
         stroke: "hsl(var(--stroke) / <alpha-value>)",
         jachnun: "hsl(var(--jachnun) / <alpha-value>)",
         "jachnun-soft": "hsl(var(--jachnun-soft) / <alpha-value>)",
+        "espresso-deep": "hsl(var(--espresso-deep) / <alpha-value>)",
+        "cream-3": "hsl(var(--cream-3) / <alpha-value>)",
+        brass: "hsl(var(--brass) / <alpha-value>)",
       },
       borderRadius: {
         card: "var(--radius-card)",
@@ -26,6 +29,10 @@ const config: Config = {
       },
       boxShadow: {
         float: "var(--shadow-float)",
+        xs: "var(--shadow-xs)",
+        sm: "var(--shadow-sm)",
+        md: "var(--shadow-md)",
+        lg: "var(--shadow-lg)",
       },
       fontFamily: {
         body: ["var(--font-body)", "system-ui", "sans-serif"],
@@ -34,9 +41,28 @@ const config: Config = {
       },
       maxWidth: {
         container: "1200px",
+        "prose-he": "68ch",
+      },
+      spacing: {
+        section: "5rem",
+        "section-lg": "7rem",
+      },
+      // `svh` rather than `vh` — `vh` jitters against the iOS Safari
+      // address bar, and every pinned scene is sized off this.
+      height: {
+        "screen-s": "100svh",
+      },
+      minHeight: {
+        "screen-s": "100svh",
       },
       transitionTimingFunction: {
-        "out-soft": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "out-soft": "var(--ease-out-soft)",
+        "in-out-soft": "var(--ease-in-out)",
+      },
+      transitionDuration: {
+        fast: "var(--dur-fast)",
+        base: "var(--dur-base)",
+        slow: "var(--dur-slow)",
       },
     },
   },

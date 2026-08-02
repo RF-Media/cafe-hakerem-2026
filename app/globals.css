@@ -14,13 +14,30 @@
   --jachnun:       22 58% 38%;
   --jachnun-soft:  22 45% 52%;
 
+  /* Depth palette — dark surfaces, raised surfaces, metallic accent */
+  --espresso-deep: 24 26% 9%;
+  --cream-3:       36 40% 97%;
+  --brass:         38 38% 52%;
+
   /* Radii */
   --radius-card:  1rem;
   --radius-pill:  9999px;
   --radius-input: 0.5rem;
 
-  /* Shadows — used only on floating nav and hovered cards */
-  --shadow-float: 0 1px 3px hsl(24 22% 14% / 0.06), 0 8px 24px hsl(24 22% 14% / 0.04);
+  /* Elevation scale */
+  --shadow-xs: 0 1px 2px hsl(24 22% 14% / 0.04);
+  --shadow-sm: 0 1px 3px hsl(24 22% 14% / 0.06), 0 4px 12px hsl(24 22% 14% / 0.03);
+  --shadow-md: 0 2px 6px hsl(24 22% 14% / 0.07), 0 12px 32px hsl(24 22% 14% / 0.05);
+  --shadow-lg: 0 4px 12px hsl(24 22% 14% / 0.08), 0 24px 64px hsl(24 22% 14% / 0.07);
+  /* Alias — every pre-existing `shadow-float` usage keeps its exact look */
+  --shadow-float: var(--shadow-sm);
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 700ms;
 }
 
 @layer base {
@@ -76,12 +93,93 @@
   }
 }
 
+@layer components {
+  /* Display type. One family, so hierarchy comes from the 300↔900 weight
+     span plus negative tracking at large sizes. */
+  .type-display {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+  }
+  .type-lede {
+    font-weight: 300;
+    line-height: 1.55;
+  }
+
+  /* Hairline rule that draws itself in from the RTL start edge. */
+  .rule-brass {
+    height: 1px;
+    background: hsl(var(--brass) / 0.55);
+    transform-origin: right;
+  }
+
+  /* Scroll cue at the foot of the hero */
+  .scroll-cue::after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, hsl(var(--brass) / 0.7), transparent);
+    animation: cue-slide 2.2s var(--ease-in-out) infinite;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Hero reveals — CSS keyframes, not Framer Motion.
+   These fire from the SSR HTML before JS loads, so the h1 is painted
+   immediately and LCP is never gated behind hydration (CLAUDE.md §7).
+   --------------------------------------------------------------------- */
+@keyframes rise-in {
+  from { opacity: 0; transform: translate3d(0, 1.1em, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: translate3d(0, 12px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes cue-slide {
+  0%   { transform: scaleY(0); transform-origin: top; }
+  45%  { transform: scaleY(1); transform-origin: top; }
+  55%  { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+@keyframes ticker-rtl {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(50%, 0, 0); }
+}
+
+/* Per-word mask reveal for hero headlines. The word span holds a real
+   text node — nothing is duplicated or aria-hidden — so the accessibility
+   tree and the crawler's text extraction are identical to plain markup. */
+.hero-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.hero-word > span {
+  display: inline-block;
+  animation: rise-in 0.9s var(--ease-out-soft) both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+.hero-fade {
+  animation: fade-in 0.8s var(--ease-out-soft) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
     transition-duration: 0.001ms !important;
+  }
+
+  /* Kill switch, not a speed-up: anything that only exists as motion
+     is removed outright rather than played instantly. */
+  .scroll-cue::after {
+    display: none;
   }
 }

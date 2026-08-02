@@ -10,8 +10,8 @@ import { forwardRef, type ReactNode } from "react";
  */
 
 export type ButtonProps = {
-  variant: "primary" | "secondary" | "ghost";
-  size?: "sm" | "md" | "lg";
+  variant: "primary" | "secondary" | "ghost" | "onDark";
+  size?: "sm" | "md" | "lg" | "xl";
   as?: "button" | "a";
   href?: string;
   icon?: ReactNode;
@@ -26,23 +26,41 @@ export type ButtonProps = {
   external?: boolean;
 };
 
+// Every size clears the 44px touch-target floor on mobile — `sm` used to
+// land at ~36px, which is a miss on a phone.
 const sizeClasses: Record<NonNullable<ButtonProps["size"]>, string> = {
-  sm: "px-4 py-2 text-sm",
-  md: "px-6 py-3 text-base",
-  lg: "px-8 py-4 text-lg",
+  sm: "min-h-[44px] md:min-h-0 px-4 py-2.5 text-sm",
+  md: "min-h-[48px] md:min-h-0 px-6 py-3 text-base",
+  lg: "min-h-[52px] px-8 py-4 text-lg",
+  xl: "min-h-[56px] px-9 py-4 text-lg md:text-xl",
 };
 
 const variantClasses: Record<ButtonProps["variant"], string> = {
-  primary:   "bg-espresso text-cream hover:bg-olive",
-  secondary: "bg-cream text-espresso border border-stroke hover:border-espresso",
-  ghost:     "text-espresso hover:bg-cream-2",
+  // The brass ring only appears on hover — a warm metallic edge catching
+  // the light, which is the whole point of the accent.
+  primary:
+    "bg-espresso text-cream shadow-sm hover:bg-olive hover:shadow-md " +
+    "hover:ring-1 hover:ring-brass/45",
+  secondary:
+    "bg-cream text-espresso border border-stroke hover:border-brass/60 hover:bg-cream-3",
+  ghost: "text-espresso hover:bg-cream-2",
+  onDark:
+    "bg-cream text-espresso hover:bg-brass hover:text-espresso-deep shadow-sm hover:shadow-md",
 };
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-pill font-medium " +
-  "transition-[transform,background-color,border-color,color] duration-[180ms] ease-out " +
-  "hover:scale-[1.02] active:scale-100 " +
-  "disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed";
+  "group/btn relative inline-flex items-center justify-center gap-2 rounded-pill font-medium " +
+  "transition-[transform,background-color,border-color,color,box-shadow] " +
+  "duration-fast ease-out-soft " +
+  "hover:-translate-y-px active:translate-y-0 active:scale-[0.98] " +
+  "disabled:opacity-50 disabled:hover:translate-y-0 disabled:cursor-not-allowed";
+
+// On hover the trailing icon nudges toward the block-end edge. The document
+// is RTL throughout, so block-end is the visual left — the direction Hebrew
+// reads forward in.
+const iconMotion =
+  "inline-flex transition-transform duration-fast ease-out-soft " +
+  "group-hover/btn:-translate-x-1";
 
 export const Button = forwardRef<HTMLElement, ButtonProps>(function Button(
   {
@@ -67,7 +85,7 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(function Button(
     iconPosition === "end" ? (
       <>
         <span>{children}</span>
-        {icon ? <span aria-hidden className="inline-flex">{icon}</span> : null}
+        {icon ? <span aria-hidden className={iconMotion}>{icon}</span> : null}
       </>
     ) : (
       <>
