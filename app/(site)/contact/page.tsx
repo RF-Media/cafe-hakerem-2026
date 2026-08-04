@@ -61,12 +61,12 @@ export default function ContactPage() {
           <Stagger className="mt-9 space-y-5" stagger={0.09}>
             <StaggerItem variant="tile">
               <Card padding="lg" tone="cream-3" elevation="raised">
-                <span className="inline-flex items-center gap-2 font-latin text-xs uppercase tracking-[0.22em] text-brass">
+                <Eyebrow tone="brass-ink">
                   <IconPin className="w-4 h-4" />
                   כתובת
-                </span>
+                </Eyebrow>
                 <address className="mt-3 not-italic text-espresso leading-relaxed">
-                  <div className="type-display text-xl">{business.address.street.he}</div>
+                  <div className="type-sub text-xl">{business.address.street.he}</div>
                   <div className="text-espresso-soft">
                     {business.address.neighborhood.he}, {business.address.city.he}
                   </div>
@@ -76,10 +76,10 @@ export default function ContactPage() {
 
             <StaggerItem variant="tile">
               <Card padding="lg" tone="cream-3" elevation="raised">
-                <span className="inline-flex items-center gap-2 font-latin text-xs uppercase tracking-[0.22em] text-brass">
+                <Eyebrow tone="brass-ink">
                   <IconPhone className="w-4 h-4" />
                   טלפון ו-WhatsApp
-                </span>
+                </Eyebrow>
                 <div className="mt-3 space-y-4 text-espresso">
                   <div>
                     <a href={`tel:${business.phone.tel}`} className="text-lg hover:text-olive transition-colors">
@@ -95,10 +95,10 @@ export default function ContactPage() {
 
             <StaggerItem variant="tile">
               <Card padding="lg" tone="cream-3" elevation="raised">
-                <span className="inline-flex items-center gap-2 font-latin text-xs uppercase tracking-[0.22em] text-brass">
+                <Eyebrow tone="brass-ink">
                   <IconClock className="w-4 h-4" />
                   שעות פתיחה
-                </span>
+                </Eyebrow>
                 <div className="mt-3">
                   <HoursList />
                 </div>
@@ -108,9 +108,7 @@ export default function ContactPage() {
             {reviews ? (
               <StaggerItem variant="tile">
                 <Card padding="lg" tone="cream-3" elevation="raised">
-                  <span className="font-latin text-xs uppercase tracking-[0.22em] text-brass">
-                    ביקורות
-                  </span>
+                  <Eyebrow tone="brass-ink">ביקורות</Eyebrow>
                   <a
                     href={reviews}
                     target="_blank"
@@ -144,8 +142,12 @@ export default function ContactPage() {
                   ratio="aspect-square"
                   tone="olive"
                 />
+                {/* Fallback only — `business.geo` is populated, so the map
+                    above renders. This branch survives in case the
+                    coordinates are ever blanked rather than corrected. */}
                 <span className="absolute inset-x-0 bottom-4 text-center text-xs text-espresso-soft px-4">
-                  [TODO: קואורדינטות ל-Google Maps ב-/content/business.ts]
+                  {business.address.street.he}, {business.address.neighborhood.he},{" "}
+                  {business.address.city.he}
                 </span>
               </div>
             )}

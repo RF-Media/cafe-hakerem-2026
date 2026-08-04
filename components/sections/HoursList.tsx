@@ -38,13 +38,13 @@ export function HoursList() {
             className={
               "flex justify-between gap-4 rounded-input px-2 py-1.5 -mx-2 " +
               "transition-colors duration-base " +
-              (isToday ? "bg-brass/12 font-medium" : "")
+              (isToday ? "bg-brass-ink/10 font-medium" : "")
             }
           >
             <span className="flex items-center gap-2">
               {h.label.he}
               {isToday ? (
-                <span className="font-latin text-[0.625rem] uppercase tracking-[0.18em] text-brass">
+                <span className="type-index text-[0.625rem] text-brass-ink">
                   היום
                 </span>
               ) : null}

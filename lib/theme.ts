@@ -8,7 +8,7 @@
  */
 
 /** Must match `--cream` in app/globals.css. */
-export const CREAM_HSL = { h: 36, s: 35, l: 94 } as const;
+export const CREAM_HSL = { h: 38, s: 32, l: 95 } as const;
 
 function hslToHex({ h, s, l }: { h: number; s: number; l: number }): string {
   const sat = s / 100;

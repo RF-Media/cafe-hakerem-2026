@@ -41,10 +41,14 @@ export function SectionHeading({
           </Eyebrow>
         </Reveal>
 
+        {/* `.type-title`, not `.type-display` — display weight (900) is
+            reserved for the one <h1> a page is allowed. A section heading at
+            900 competes with it and, when two sections sit close together,
+            with the next heading down. */}
         <Tag
           id={id}
           className={
-            "mt-4 type-display text-3xl md:text-[2.75rem] " +
+            "mt-4 type-title text-3xl md:text-[2.75rem] " +
             (dark ? "text-cream" : "text-espresso")
           }
         >
@@ -54,7 +58,7 @@ export function SectionHeading({
         <Reveal direction="up" distance={10} delay={0.15}>
           <span
             aria-hidden
-            className={"mt-6 block h-px w-16 " + (dark ? "bg-cream/30" : "bg-brass/55")}
+            className={"mt-6 block h-px w-16 " + (dark ? "bg-brass/50" : "bg-brass-ink/45")}
           />
         </Reveal>
 

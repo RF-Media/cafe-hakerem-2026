@@ -21,7 +21,7 @@ export type FAQBlockProps = {
 export function FAQBlock({ items, heading = "שאלות נפוצות", id = "faq-heading" }: FAQBlockProps) {
   return (
     <section aria-labelledby={id} className="max-w-3xl mx-auto">
-      <h2 id={id} className="type-display text-3xl md:text-4xl text-espresso mb-8">
+      <h2 id={id} className="type-title text-3xl md:text-4xl text-espresso mb-8">
         {heading}
       </h2>
       <ul className="space-y-3">
@@ -31,13 +31,13 @@ export function FAQBlock({ items, heading = "שאלות נפוצות", id = "faq
               className={
                 "group rounded-card border border-stroke bg-cream-2 px-5 md:px-6 py-4 " +
                 "transition-[background-color,box-shadow,border-color] duration-base ease-out-soft " +
-                "hover:border-brass/40 open:bg-cream-3 open:shadow-sm"
+                "hover:border-brass-ink/35 open:bg-cream-3 open:shadow-sm"
               }
             >
               <summary
                 className={
                   "flex items-center justify-between gap-4 list-none cursor-pointer " +
-                  "min-h-[44px] text-lg md:text-xl font-display font-bold text-espresso " +
+                  "min-h-[44px] type-sub text-lg md:text-xl text-espresso " +
                   "[&::-webkit-details-marker]:hidden"
                 }
               >
@@ -46,7 +46,7 @@ export function FAQBlock({ items, heading = "שאלות נפוצות", id = "faq
                   aria-hidden
                   className={
                     "shrink-0 grid place-items-center w-7 h-7 rounded-full " +
-                    "border border-brass/40 text-brass text-lg leading-none " +
+                    "border border-brass-ink/35 text-brass-ink text-lg leading-none " +
                     "transition-transform duration-base ease-out-soft group-open:rotate-45"
                   }
                 >

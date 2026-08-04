@@ -5,7 +5,7 @@
  * inherits it — children need no delay props of their own.
  */
 import { m } from "framer-motion";
-import { VIEWPORT, staggerContainer, staggerItem, tileItem } from "@/lib/motion";
+import { VIEWPORT, staggerContainer, staggerItem, tileItem, flapItem } from "@/lib/motion";
 
 type Tag = "div" | "ul" | "ol" | "section" | "dl";
 
@@ -48,16 +48,14 @@ export function StaggerItem({
   children: React.ReactNode;
   className?: string;
   as?: ItemTag;
-  /** `slide` fades up; `tile` also scales 0.96 → 1, for cards. */
-  variant?: "slide" | "tile";
+  /** `slide` fades up; `tile` also scales 0.96 → 1, for cards; `flap`
+   *  rotates down from a top hinge, for departure-board rows. */
+  variant?: "slide" | "tile" | "flap";
 }) {
   const Component = m[as];
+  const variants = variant === "tile" ? tileItem : variant === "flap" ? flapItem : staggerItem;
   return (
-    <Component
-      data-motion="stagger-item"
-      className={className}
-      variants={variant === "tile" ? tileItem : staggerItem}
-    >
+    <Component data-motion="stagger-item" className={className} variants={variants}>
       {children}
     </Component>
   );

@@ -16,8 +16,16 @@ export const DUR = {
   slow: 0.7,
 } as const;
 
-/** Shared `whileInView` viewport config — fire once, slightly early. */
-export const VIEWPORT = { once: true, margin: "-80px" } as const;
+/** Shared `whileInView` viewport config — fires slightly early, and
+ *  reverses through the same trigger margin when the item scrolls back out
+ *  of view (scrolling up un-reveals in the same way it revealed).
+ *
+ *  Margin capped at -20px: anything past roughly -40px reliably fails to
+ *  fire below the `md` breakpoint (confirmed at 375–767px — the reveal
+ *  never triggers even scrolled dead-center through the viewport, while
+ *  the identical setup fires normally at 768px+). Below that threshold it
+ *  is reliable at every width tested, 375–1440px. */
+export const VIEWPORT = { once: false, margin: "-20px" } as const;
 
 export type Direction = "up" | "down" | "start" | "end" | "none";
 
@@ -68,6 +76,31 @@ export const tileItem = {
     scale: 1,
     transition: { duration: DUR.slow, ease: EASE_OUT_SOFT },
   },
+};
+
+/** Split-flap board entrance — rotates down from a top hinge, like a
+ *  departure-board row dropping into place. Replays in reverse (flaps back
+ *  up) on scroll-out via the shared `VIEWPORT`; pair with `origin-top` on
+ *  the element (transform-origin isn't animatable). */
+export const flapItem = {
+  hidden: { opacity: 0, rotateX: -90, transformPerspective: 600 },
+  visible: {
+    opacity: 1,
+    rotateX: 0,
+    transformPerspective: 600,
+    transition: { duration: DUR.slow, ease: EASE_OUT_SOFT },
+  },
+};
+
+/** Nav dropdown panel — open/close, not an entrance. Both states carry a
+ *  transition (unlike the one-directional reveal variants above) because
+ *  `AnimatePresence` plays the `hidden` transition on exit, and this one
+ *  genuinely animates in both directions. `DUR.fast` + a small 6px lift:
+ *  this is a UI-chrome toggle, not a cinematic reveal — it must feel
+ *  instant, closer to a hover response than a scroll entrance. */
+export const dropdownPanel = {
+  hidden: { opacity: 0, y: -6, transition: { duration: DUR.fast, ease: EASE_OUT_SOFT } },
+  visible: { opacity: 1, y: 0, transition: { duration: DUR.fast, ease: EASE_OUT_SOFT } },
 };
 
 /** Magnetic hover — spring config and the hard cap on travel. */

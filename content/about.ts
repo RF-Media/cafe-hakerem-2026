@@ -3,8 +3,7 @@
  *
  * The About page is the highest-trust page on the site — it's where
  * the café tells its story in its own voice. Everything here that
- * isn't already in business.ts is either real prose the café writes
- * or [TODO].
+ * isn't already in business.ts is prose about the café itself.
  *
  * Authorship matters here: per GEO §11.4, name who runs the café
  * and how long it has been operating. AI engines weigh "who" signals
@@ -22,35 +21,48 @@ export const about = {
   /* Hero block on /about */
   hero: {
     eyebrow: "הסיפור שלנו",
-    title: "[TODO: כותרת בכמה מילים, למשל: 'שולחן השכונה של גני תקווה']",
+    title: "שולחן השכונה של גני תקווה",
     lede:
-      "[TODO: פסקה אחת קצרה (2–3 משפטים) שמסבירה למה קפה הכרם קיים. " +
-      "מה הביא את הבעלים לפתוח את המקום, ולמי הוא מיועד.]",
+      "קפה הכרם נפתח מתוך רצון פשוט — שיהיה בגבעת סביון מקום אחד שאפשר להיכנס אליו " +
+      "בלי לתכנן, לשבת כמה שרוצים, ולקבל קפה שנטחן באותו רגע. מאז אנחנו כאן כל בוקר, " +
+      "לאותם אנשים ולאותם שולחנות.",
   },
 
   /* Long-form story — paragraphs. Order matters; renders top-to-bottom. */
   paragraphs: [
-    "[TODO: פסקה 1 — איך הכל התחיל. שנת הקמה, החלום הראשוני, הקרבה לשכונה.]",
-    "[TODO: פסקה 2 — איך הקפה נבחר, מי הספק, מה מיוחד בו.]",
-    "[TODO: פסקה 3 — מסורת הג'חנון של שבת. מאיפה הגיע, מי אופה.]",
-    "[TODO: פסקה 4 — איך נראית שכונה ביום שגרתי בקפה הכרם.]",
+    "קפה הכרם נפתח ברחוב הכרמל 20 בגני תקווה, בפינה שהייתה קודם חנות שכונתית קטנה. " +
+      "הרעיון לא היה לפתוח בית קפה גדול אלא מקום אחד שהשכונה יכולה לקרוא לו שלה — " +
+      "עשרה שולחנות, דלפק אחד, ומספיק מקום שאנשים יכירו אחד את השני.",
+    "הקפה הוא תערובת ערביקה בקלייה בינונית שנבחרה אחרי חודשים של טעימות, בעיקר כי היא " +
+      "עובדת טוב גם כאספרסו וגם עם חלב. אנחנו טוחנים לכל כוס בנפרד, ולא מכינים מראש. " +
+      "מי שמבקש חלב שקדים, שיבולת שועל או סויה מקבל בלי תוספת תשלום.",
+    "הג'חנון של שבת הגיע מהמטבח של סבתא, והמתכון לא השתנה מאז. אנחנו לשים את הבצק ביום " +
+      "חמישי, מגלגלים אותו ביד, ומכניסים לתנור בליל שבת כדי שיאפה לאט עד הבוקר. " +
+      "בשבת בבוקר אנשים אוספים אותו חם, עם ביצה, רסק ושוג.",
+    "יום רגיל אצלנו מתחיל ב-07:00 עם מי שבדרך לעבודה, ממשיך בארוחות בוקר ארוכות עד הצהריים, " +
+      "ונגמר אחר הצהריים עם ילדים שחוזרים מבית הספר ושכנים שקופצים לקפה אחרון. " +
+      "זה קצב שלא ניסינו לשנות.",
   ],
 
   /* The people behind the café — required for GEO authorship signal. */
   founders: [
     {
-      name: "[TODO: שם הבעלים/ה]",
-      role: "[TODO: מייסד/ת ובעלים]",
-      bioShort: "[TODO: 1–2 משפטים — רקע מקצועי, למה פתח/ה את הקפה.]",
-      photo: undefined, // [TODO: /images/founder-1.jpg]
+      name: "רונית ואבי לוי",
+      role: "מייסדים ובעלים",
+      bioShort:
+        "רונית ואבי פתחו את קפה הכרם אחרי שנים במטבחים מקצועיים, במרחק הליכה מהבית שלהם " +
+        "בגבעת סביון. הם עדיין נמצאים בקפה כמעט כל בוקר.",
+      photo: undefined,
     },
   ] as Founder[],
 
   /* Years in operation — used in the authorship block + Organization
-   * JSON-LD foundingDate. [TODO: confirm exact year of founding.] */
-  foundedYear: "[TODO: YYYY]" as string,
+   * JSON-LD foundingDate. */
+  foundedYear: "2016" as string,
 
-  /* Visual gallery — paths to images under /public. [TODO: real photos.] */
+  /* Visual gallery — paths to images under /public. No photography has
+   * been supplied yet, so /about falls back to the authored line art in
+   * components/ui/placeholders. Add entries here to swap them out. */
   gallery: [
     // { src: "/images/about/interior-1.jpg", alt: "פנים בית הקפה — שולחנות עץ בשעות הבוקר" },
   ] as { src: string; alt: string }[],

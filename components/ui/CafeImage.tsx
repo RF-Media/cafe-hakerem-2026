@@ -34,7 +34,7 @@ const toneClasses: Record<NonNullable<CafeImageProps["tone"]>, string> = {
   olive: "text-olive/45",
   espresso: "text-espresso/35",
   jachnun: "text-jachnun/45",
-  brass: "text-brass/60",
+  brass: "text-brass-ink/55",
   cream: "text-cream/45",
 };
 

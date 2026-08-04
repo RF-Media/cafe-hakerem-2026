@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { business } from "@/content/business";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
@@ -12,7 +13,7 @@ const linkGroups: { title: string; items: { href: string; label: string }[] }[] 
   {
     title: "האתר",
     items: [
-      { href: "/menu",     label: "התפריט" },
+      { href: "/menu",     label: "תפריט הכרם" },
       { href: "/jachnun",  label: "ג'חנון של שבת" },
       { href: "/catering", label: "מגשי אירוח" },
       { href: "/about",    label: "עלינו" },
@@ -47,7 +48,18 @@ export function Footer() {
 
       <Stagger className={`${container} py-16 md:py-20 grid gap-12 md:grid-cols-3`} stagger={0.1}>
         <StaggerItem className="space-y-4">
-          <div className="type-display text-2xl md:text-3xl">{business.name.he}</div>
+          {/* The closing mark. The artwork is cream on transparency, so the
+              dark footer is the one other place besides the hero where it
+              works natively — no tinting, no second asset. Quiet on purpose:
+              the hero already made the loud statement. */}
+          <Image
+            src="/images/logo2.png"
+            alt={business.name.he}
+            width={1251}
+            height={574}
+            sizes="200px"
+            className="w-[180px] md:w-[200px] h-auto opacity-80"
+          />
           <p className="text-sm text-cream/65 leading-relaxed max-w-xs">
             {business.tagline.he}
           </p>

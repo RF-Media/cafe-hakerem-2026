@@ -24,10 +24,10 @@ export default function PrivacyPage() {
           that the motion is decorative rather than considered. */}
       <article className="mx-auto max-w-3xl px-6 md:px-10 lg:px-16 pt-12 md:pt-20 pb-20 space-y-8">
         <h1 className="type-display text-4xl md:text-5xl text-espresso">מדיניות פרטיות</h1>
-        <p className="text-sm text-espresso-soft">עודכן: [TODO: תאריך]</p>
+        <p className="text-sm text-espresso-soft">עודכן: 3 באוגוסט 2026</p>
 
         <Reveal as="section" className="space-y-3">
-          <h2 className="text-2xl font-display font-bold text-espresso">איזה מידע אנחנו אוספים</h2>
+          <h2 className="type-title text-2xl text-espresso">איזה מידע אנחנו אוספים</h2>
           <p className="text-espresso-soft leading-relaxed">
             כשמזמינים ג'חנון או פונים למגשי אירוח באתר {business.name.he}, אנחנו שומרים את שם המזמין/ה,
             מספר הטלפון, וכל פרט נוסף שהוזן בטופס (למשל הערות או תאריך אירוע). המידע נשמר אך ורק לצורך
@@ -36,7 +36,7 @@ export default function PrivacyPage() {
         </Reveal>
 
         <Reveal as="section" className="space-y-3">
-          <h2 className="text-2xl font-display font-bold text-espresso">מה אנחנו עושים איתו</h2>
+          <h2 className="type-title text-2xl text-espresso">מה אנחנו עושים איתו</h2>
           <p className="text-espresso-soft leading-relaxed">
             המידע משמש את צוות הקפה לטיפול בהזמנה. אנחנו לא מוכרים, לא משכירים ולא מעבירים את הפרטים
             לצדדים שלישיים, מלבד ספקי תשתית טכניים (אירוח, אימייל) הנדרשים כדי שהאתר יפעל.
@@ -44,7 +44,7 @@ export default function PrivacyPage() {
         </Reveal>
 
         <Reveal as="section" className="space-y-3">
-          <h2 className="text-2xl font-display font-bold text-espresso">עוגיות (Cookies)</h2>
+          <h2 className="type-title text-2xl text-espresso">עוגיות (Cookies)</h2>
           <p className="text-espresso-soft leading-relaxed">
             האתר משתמש בעוגיות נחוצות בלבד, וכן בכלי אנליטיקה ({"Vercel Analytics"}) לזיהוי דפוסי שימוש
             אנונימיים. לא נעשה שימוש בעוגיות פרסומיות.
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
         </Reveal>
 
         <Reveal as="section" className="space-y-3">
-          <h2 className="text-2xl font-display font-bold text-espresso">למחיקת הפרטים שלכם</h2>
+          <h2 className="type-title text-2xl text-espresso">למחיקת הפרטים שלכם</h2>
           <p className="text-espresso-soft leading-relaxed">
             ניתן לפנות אלינו בכל עת ב-{business.phone.display} או דרך{" "}
             <Link href="/contact" className="text-olive hover:text-espresso">עמוד צור קשר</Link>{" "}

@@ -10,7 +10,7 @@ import { forwardRef, type ReactNode } from "react";
  */
 
 export type ButtonProps = {
-  variant: "primary" | "secondary" | "ghost" | "onDark";
+  variant: "primary" | "secondary" | "ghost" | "onDark" | "onDarkGhost";
   size?: "sm" | "md" | "lg" | "xl";
   as?: "button" | "a";
   href?: string;
@@ -41,11 +41,19 @@ const variantClasses: Record<ButtonProps["variant"], string> = {
   primary:
     "bg-espresso text-cream shadow-sm hover:bg-olive hover:shadow-md " +
     "hover:ring-1 hover:ring-brass/45",
+  // Light ground, so the metallic hover edge is `brass-ink` — `brass` at
+  // 56% lightness against cream is barely a border at all.
   secondary:
-    "bg-cream text-espresso border border-stroke hover:border-brass/60 hover:bg-cream-3",
+    "bg-cream text-espresso border border-stroke hover:border-brass-ink/55 hover:bg-cream-3",
   ghost: "text-espresso hover:bg-cream-2",
   onDark:
     "bg-cream text-espresso hover:bg-brass hover:text-espresso-deep shadow-sm hover:shadow-md",
+  // The secondary slot on a dark ground. `onDark` and `secondary` are both
+  // a cream fill, so pairing either of them with `onDark` gives two identical
+  // pills and no hierarchy. This is the outlined counterpart.
+  onDarkGhost:
+    "bg-cream/10 text-cream border border-cream/35 backdrop-blur-sm " +
+    "hover:bg-cream/20 hover:border-brass/70",
 };
 
 const base =

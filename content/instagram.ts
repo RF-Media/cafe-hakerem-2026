@@ -10,29 +10,36 @@
  */
 
 export type InstagramPost = {
-  /** /public path to the image (square, recommended 1080×1080). */
-  src: string;
+  /** /public path to the image (square, recommended 1080×1080).
+   *  Omit until real photography lands — `CafeImage` then renders the
+   *  authored line art instead, still carrying the `alt` below. */
+  src?: string;
   /** Hebrew alt text — describes what's in the photo. */
   alt: string;
   /** Optional link out to the Instagram post itself. */
   href?: string;
 };
 
+/**
+ * Six curated posts. No photography has been supplied yet, so `src` is
+ * omitted on each and the gallery renders the authored line art from
+ * components/ui/placeholders — the same graceful-degradation path
+ * `CafeImage` uses everywhere else. Add a `src` per post (square,
+ * 1080×1080, under /public/images/instagram/) to swap in real photos;
+ * the `alt` text already describes what each frame should show.
+ */
 export const instagram: InstagramPost[] = [
-  // [TODO: 6 posts, square images saved to /public/images/instagram/
-  //  Example shape:
-  //  {
-  //    src: "/images/instagram/2026-05-01-breakfast.jpg",
-  //    alt: "ארוחת בוקר עם שקשוקה, סלט וקפה הפוך",
-  //    href: "https://instagram.com/p/XXXXXX",
-  //  },
-  // ]
+  { alt: "ארוחת בוקר הכרם על שולחן עץ — ביצים, גבינות, סלט ולחם הבית" },
+  { alt: "קפה הפוך בכוס קרמיקה עם ציור חלב על הדלפק" },
+  { alt: "מגש בורקסים חמים יוצא מהתנור במטבח של קפה הכרם" },
+  { alt: "ג'חנון אפוי עם ביצה קשה, רסק וסחוג בשבת בבוקר" },
+  { alt: "שולחנות החוץ של קפה הכרם ברחוב הכרמל בשעת בוקר" },
+  { alt: "עוגת גבינה אפויה ופרוסה על צלחת לצד אספרסו" },
 ];
 
 export const instagramSection = {
   eyebrow: "מהפיד שלנו",
   title: "רגעים אחרונים מקפה הכרם",
-  body:
-    "מה שיוצא מהמטבח, מי שיושב בחוץ, מה אופים השבוע. עקבו אחרינו באינסטגרם.",
-  ctaLabel: "לעמוד באינסטגרם",
+  body: "מה שיוצא מהמטבח, מי שיושב בחוץ, מה אופים השבוע.",
+  ctaLabel: "עקבו אחרינו",
 };

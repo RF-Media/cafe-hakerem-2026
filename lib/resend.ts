@@ -57,10 +57,10 @@ export function rtlEmail(title: string, bodyHtml: string): string {
   return `<!doctype html>
 <html lang="he" dir="rtl">
   <head><meta charset="utf-8"><title>${escapeHtml(title)}</title></head>
-  <body style="font-family: -apple-system, 'Heebo', Arial, sans-serif; background:#f1ebdf; color:#1f1a14; padding:24px;">
-    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width:600px;margin:0 auto;background:#fffaf0;border:1px solid #e0d7c5;border-radius:12px;padding:24px;">
+  <body style="font-family: -apple-system, 'Noto Sans Hebrew', Arial, sans-serif; background:#f6f3ee; color:#241d19; padding:24px;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width:600px;margin:0 auto;background:#fdfbf6;border:1px solid #dcd7d0;border-radius:12px;padding:24px;">
       <tr><td>
-        <h1 style="font-family:'Frank Ruhl Libre', Georgia, serif;font-size:22px;margin:0 0 16px;">${escapeHtml(title)}</h1>
+        <h1 style="font-family:inherit;font-weight:700;font-size:22px;letter-spacing:-0.02em;margin:0 0 16px;">${escapeHtml(title)}</h1>
         ${bodyHtml}
       </td></tr>
     </table>
@@ -68,7 +68,13 @@ export function rtlEmail(title: string, bodyHtml: string): string {
 </html>`;
 }
 
-function escapeHtml(s: string): string {
+/**
+ * Exported because callers build the email body, and anything a customer
+ * typed — a name, a phone, a special request — must be escaped before it is
+ * interpolated into that HTML. Notification emails are read in a mail client
+ * that renders markup.
+ */
+export function escapeHtml(s: string): string {
   return s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")

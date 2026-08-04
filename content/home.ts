@@ -3,8 +3,7 @@
  *
  * Extracted out of `app/(site)/page.tsx`, where it had been written inline.
  * CLAUDE.md §3: copy never lives in components — that rule is what lets the
- * café change wording without anyone touching JSX. Two `[TODO]` markers
- * below were previously shipping into the rendered page as literal text.
+ * café change wording without anyone touching JSX.
  */
 
 export const homeHero = {
@@ -16,6 +15,11 @@ export const homeHero = {
   secondaryCta: "להזמנת ג'חנון",
   visitEyebrow: "Visit",
   scrollCue: "גללו",
+  /** The storefront photograph behind the hero. Full-bleed, so it is the
+   *  LCP element — served `priority` at quality 85 per CLAUDE.md §8. */
+  image: "/images/hero-storefront.jpg",
+  imageAlt:
+    "חזית קפה הכרם ברחוב הכרמל 20, גני תקווה — הדלפק, ויטרינת המאפים ושלט הקפה מעל הכניסה",
 };
 
 export const homeValues = {
@@ -24,15 +28,18 @@ export const homeValues = {
   items: [
     {
       title: "קפה שנטחן במקום",
-      body: "תערובת [TODO] שמגיעה אלינו טרי, נטחנת במכונה לפני כל כוס.",
+      body: "תערובת ערביקה בקלייה בינונית שמגיעה אלינו טרייה, נטחנת לפני כל כוס.",
+      imageAlt: "בריסטה של קפה הכרם מכין קפה במכונת האספרסו של בית הקפה",
     },
     {
       title: "אופים בעצמנו",
-      body: "מאפים, בורקסים ועוגות — אפייה [TODO: יומית] במטבח שלנו.",
+      body: "מאפים, בורקסים ועוגות — אפייה יומית במטבח שלנו, מ-06:00 בבוקר.",
+      imageAlt: "מגש מאפים טריים מהתנור של קפה הכרם, קרואסונים ועוגות",
     },
     {
       title: "שכונה אמיתית",
       body: "אנחנו מכירים את הלקוחות בשם. הקפה הוא חלק מהשכונה, לא רשת.",
+      imageAlt: "ישיבה בחצר החיצונית של קפה הכרם בין עצי דקל, אורחים סביב שולחנות מתחת למטריות",
     },
   ],
 };
@@ -41,15 +48,39 @@ export const homeMenu = {
   eyebrow: "התפריט",
   title: "מה אופים השבוע.",
   cta: "לתפריט המלא",
-  panelEyebrow: "Always rolling",
   categoriesLabel: "קטגוריות",
   itemsLabel: "פריטים",
+};
+
+export const homeAlwaysRolling = {
+  eyebrow: "מה חדש",
+  title: "מה תמצאו אצלנו בתפריט",
+  subtitle:
+    "התפריט שלנו משתנה עם העונה וממה שטרי זה מספקים. הקטגוריות שלנו זורמות כמו קפה חם — תמיד משהו חדש להנות.",
+  /** Sits under the board. Previously hardcoded inside the component. */
+  caption: "התפריט מתחדש לפי העונה. לחצו על קטגוריה למעבר ישיר בתפריט המלא.",
+};
+
+
+export const homePatisserie = {
+  eyebrow: "סוף השבוע · פרק א׳",
+  title: "שישי מתוק מתחיל כאן.",
+  body:
+    "בכל סוף שבוע מחכה לכם ספיישל מתוקים מפנק מהפטיסרי שלנו – מאפים טריים, " +
+    "קינוחים ביתיים וריחות שפשוט אי אפשר לעמוד בפניהם. בואו להתפנק עם ביס " +
+    "מושלם לסופ\"ש שמח.",
+  cta: "לוויטרינת המאפים",
+  chapterCurrent: "פרק א׳ · מתוק · שישי",
+  chapterNext: "פרק ב׳ · מלוח · שבת",
+  imageAlt:
+    "מגש קינוחים ומאפים מתוקים טריים מהפטיסרי של קפה הכרם, ספיישל סוף השבוע",
 };
 
 export const homeJachnun = {
   eyebrow: "Saturday morning",
   title: "ג'חנון של שבת — להזמנה מראש",
-  body: "קפה הכרם אופה ג'חנון תימני לאיסוף בשבת בבוקר. ההזמנה דרך האתר עד יום חמישי 18:00.",
+  body: "קפה הכרם אופה ג'חנון תימני על בסיס תערובת בית, לאיסוף חם בשבת בבוקר. משפחתי, אמיתי, וכדאי להזמין מראש.",
+  urgency: "ההזמנות לשבת הקרובה נסגרות ביום חמישי, 18:00",
   cta: "להזמנת ג'חנון",
   steps: [
     { n: "01", title: "מזמינים עד חמישי", body: "טופס קצר באתר, עד יום חמישי בשעה 18:00." },
@@ -77,8 +108,6 @@ export const homeAbout = {
     "אנחנו מאמינים בקפה טוב, באוכל איכותי וביחס אישי – וזה מה שתמצאו כאן, בכל ביקור.",
   ],
 };
-
-export const homeInstagramEmpty = "[TODO: 6 פוסטים מאינסטגרם ב-/content/instagram.ts]";
 
 export const homeFactualFocus =
   "הקפה מציע ארוחות בוקר, כריכים, מאפים, מגשי אירוח וג'חנון של שבת להזמנה מראש.";

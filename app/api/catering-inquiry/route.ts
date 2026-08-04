@@ -70,10 +70,10 @@ export async function POST(req: Request) {
       </table>
     `,
   );
-  await sendNotification({
+  sendNotification({
     subject: `פנייה חדשה למגשי אירוח — ${reference}`,
     html,
-  });
+  }).catch((e) => console.error("[catering-inquiry] notify failed:", e));
 
   return NextResponse.json({ ok: true, reference });
 }

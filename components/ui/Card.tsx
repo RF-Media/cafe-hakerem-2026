@@ -39,7 +39,7 @@ export function Card({
     `border rounded-card ${toneClasses[tone]} ${paddingClasses[padding]} ` +
     `${elevationClasses[hoverable && elevation === "flat" ? "raised" : elevation]} ` +
     (hoverable
-      ? "transition-[box-shadow,transform,border-color] duration-base ease-out-soft " +
+      ? "transition-[box-shadow,transform,border-color,background-color,color] duration-base ease-out-soft " +
         "hover:shadow-lg hover:-translate-y-1 "
       : "") +
     className;

@@ -45,7 +45,7 @@ export function CateringInquiryForm() {
   if (status.kind === "success") {
     return (
       <div className="bg-cream-2 border border-stroke rounded-card p-8 text-center">
-        <div className="type-display text-2xl text-espresso mb-2">תודה! הפנייה נשלחה.</div>
+        <div className="type-sub text-2xl text-espresso mb-2">תודה! הפנייה נשלחה.</div>
         <p className="text-base text-espresso-soft">
           מספר פנייה: <strong className="text-espresso">{status.reference}</strong>. נחזור אליכם בהקדם.
         </p>

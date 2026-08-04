@@ -1,9 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_Hebrew } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
-import { Nav } from "@/components/layout/Nav";
-import { Footer } from "@/components/layout/Footer";
-import { MobileBar } from "@/components/layout/MobileBar";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { business } from "@/content/business";
@@ -107,16 +104,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       style={fontStyle}
     >
       {/*
-        The bottom padding is what keeps MobileBar off the footer. The bar is
-        `fixed`, so it occupies no layout space of its own and previously sat
-        on top of the last ~56px of every mobile page.
-
         No `overflow-x: hidden` here on purpose: setting it on <body> turns
         the body into a scroll container, which changes what the sticky nav
         and every pinned scene stick to. Horizontal overflow is contained at
         the section level instead.
+
+        This layout deliberately owns no chrome. `app/(site)/layout.tsx`
+        renders Nav/Footer/MobileBar for the public pages; the checkout at
+        `app/(order)/` renders its own, because a kiosk flow with a sticky
+        pay button cannot share the bottom of a phone screen with MobileBar.
       */}
-      <body className="font-body bg-cream text-espresso min-h-screen flex flex-col pb-[calc(64px+env(safe-area-inset-bottom))] md:pb-0">
+      <body className="font-body bg-cream text-espresso min-h-screen flex flex-col">
         {/*
           Framer Motion writes its `initial` state as an inline style into
           the SSR HTML, so without JS every below-fold section would stay at
@@ -131,14 +129,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </noscript>
         <a href="#main" className="skip-link">דלגו לתוכן</a>
         <JsonLd data={globalSchema()} />
-        <MotionProvider>
-          <Nav />
-          <main id="main" className="flex-1">
-            {children}
-          </main>
-          <Footer />
-          <MobileBar />
-        </MotionProvider>
+        <MotionProvider>{children}</MotionProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>

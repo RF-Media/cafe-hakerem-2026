@@ -1,7 +1,9 @@
 "use client";
 
 /**
- * The workhorse entrance. Fades and translates its children into view once.
+ * The workhorse entrance. Fades and translates its children into view, and
+ * reverses the same way when scrolled back out (see `VIEWPORT` in
+ * `lib/motion.ts`).
  *
  * Takes `children`, never copy — the content is server-rendered and simply
  * passes through, so the text in the HTML payload is identical with or

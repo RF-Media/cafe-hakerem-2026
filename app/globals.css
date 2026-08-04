@@ -3,32 +3,47 @@
 @tailwind utilities;
 
 :root {
-  /* Palette — HSL channels only; Tailwind wraps in hsl() */
-  --cream:         36 35% 94%;
-  --cream-2:       36 25% 89%;
-  --espresso:      24 22% 14%;
-  --espresso-soft: 24 14% 32%;
-  --olive:         82 22% 28%;
-  --olive-soft:    82 16% 45%;
-  --stroke:        30 18% 82%;
-  --jachnun:       22 58% 38%;
-  --jachnun-soft:  22 45% 52%;
+  /* Palette — "Roastery Noir". HSL channels only; Tailwind wraps in hsl().
+     Ground is porcelain rather than custard, ink goes genuinely dark, and
+     the old muddy yellow-green olive is now a deep pine that survives being
+     next to espresso. See CLAUDE.md §4 and the 2026-08-03 Decision Log. */
 
-  /* Depth palette — dark surfaces, raised surfaces, metallic accent */
-  --espresso-deep: 24 26% 9%;
-  --cream-3:       36 40% 97%;
-  --brass:         38 38% 52%;
+  /* Ground */
+  --cream:         38 32% 95%;
+  --cream-2:       36 22% 90%;
+  --cream-3:       42 46% 98%;
+  --stroke:        32 15% 84%;
+
+  /* Ink */
+  --espresso:      22 17% 12%;
+  --espresso-soft: 24 10% 38%;
+  --espresso-deep: 20 24% 7%;
+
+  /* Accents */
+  --olive:         152 22% 21%;
+  --olive-soft:    152 15% 38%;
+  --jachnun:       14 62% 42%;
+  --jachnun-soft:  14 48% 58%;
+
+  /* Two brasses, and the split is not decorative. `--brass` at 56% lightness
+     is a metal for DARK grounds (7.1:1 on --espresso-deep). On porcelain it
+     is ~2.2:1 — unusable as text, which is what the site shipped. Anything
+     brass-coloured sitting on a light ground uses `--brass-ink` (6.4:1). */
+  --brass:         38 55% 56%;
+  --brass-ink:     36 48% 34%;
 
   /* Radii */
   --radius-card:  1rem;
   --radius-pill:  9999px;
   --radius-input: 0.5rem;
 
-  /* Elevation scale */
-  --shadow-xs: 0 1px 2px hsl(24 22% 14% / 0.04);
-  --shadow-sm: 0 1px 3px hsl(24 22% 14% / 0.06), 0 4px 12px hsl(24 22% 14% / 0.03);
-  --shadow-md: 0 2px 6px hsl(24 22% 14% / 0.07), 0 12px 32px hsl(24 22% 14% / 0.05);
-  --shadow-lg: 0 4px 12px hsl(24 22% 14% / 0.08), 0 24px 64px hsl(24 22% 14% / 0.07);
+  /* Elevation scale. Keyed to --espresso-deep rather than a hardcoded brown,
+     so the shadows follow the palette instead of drifting off it. Near layer
+     is tight: premium reads as crisper, not as more blur. */
+  --shadow-xs: 0 1px 2px hsl(var(--espresso-deep) / 0.05);
+  --shadow-sm: 0 1px 2px hsl(var(--espresso-deep) / 0.06), 0 3px 8px hsl(var(--espresso-deep) / 0.04);
+  --shadow-md: 0 2px 4px hsl(var(--espresso-deep) / 0.07), 0 10px 24px hsl(var(--espresso-deep) / 0.06);
+  --shadow-lg: 0 4px 8px hsl(var(--espresso-deep) / 0.08), 0 24px 56px hsl(var(--espresso-deep) / 0.10);
   /* Alias — every pre-existing `shadow-float` usage keeps its exact look */
   --shadow-float: var(--shadow-sm);
 
@@ -91,20 +106,65 @@
     mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   }
+
+  /* Paper tooth for large light bands. Same noise as .hero-grain at a third
+     the strength — enough that a full-bleed cream section reads as stock
+     rather than as a flat fill, not enough to be seen as texture. Reuses the
+     one data-URI already in the bundle, so it costs nothing. */
+  .paper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.022;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
 }
 
 @layer components {
-  /* Display type. One family, so hierarchy comes from the 300↔900 weight
-     span plus negative tracking at large sizes. */
+  /* Type registers. One family, so hierarchy has to come from the 300↔900
+     weight span — but the site previously spent all of it on a single 900
+     utility applied to every h1, h2, h3 and card title alike. Size alone
+     was carrying hierarchy, which is why a 48px heading and a 30px heading
+     twenty rows apart read as the same object. Five registers now:
+       display 900  → <h1> only, one per page
+       title   700  → section <h2>
+       sub     500  → card <h3>, item names, list labels
+       lede    300  → lede paragraphs
+       index   400  → № numerals and eyebrow labels
+     See CLAUDE.md §5. */
   .type-display {
     font-family: var(--font-display), system-ui, sans-serif;
     font-weight: 900;
-    letter-spacing: -0.03em;
-    line-height: 1.02;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+  .type-title {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+  }
+  .type-sub {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
   }
   .type-lede {
     font-weight: 300;
     line-height: 1.55;
+  }
+  .type-index {
+    font-family: var(--font-latin), system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
   }
 
   /* Hairline rule that draws itself in from the RTL start edge. */
@@ -148,6 +208,16 @@
   from { transform: translate3d(0, 0, 0); }
   to   { transform: translate3d(50%, 0, 0); }
 }
+@keyframes flame-flicker {
+  0%, 100% { transform: scale(1, 1) rotate(-2deg); }
+  25%      { transform: scale(1.08, 0.94) rotate(2deg); }
+  50%      { transform: scale(0.95, 1.06) rotate(-1deg); }
+  75%      { transform: scale(1.05, 0.97) rotate(1deg); }
+}
+.flame-flicker {
+  transform-origin: 50% 90%;
+  animation: flame-flicker 1.6s var(--ease-in-out) infinite;
+}
 
 /* Per-word mask reveal for hero headlines. The word span holds a real
    text node — nothing is duplicated or aria-hidden — so the accessibility
@@ -181,5 +251,66 @@
      is removed outright rather than played instantly. */
   .scroll-cue::after {
     display: none;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Print — the order confirmation doubles as the receipt.
+
+   `[data-receipt]` is set by <OrderConfirmation>. Printing it (or
+   "save as PDF" from the browser's print dialog) is the useful-today
+   stand-in for the phase-2 generated PDF, which renders the same
+   `Receipt` model from lib/order-receipt.ts.
+
+   Everything that is navigation rather than record is dropped, and the
+   warm palette is flattened to black on white: cream backgrounds print
+   as a grey wash on most home printers.
+   ───────────────────────────────────────────────────────────── */
+@media print {
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  /* Site chrome and any control that cannot be acted on from paper. */
+  header,
+  footer,
+  nav,
+  .print\:hidden,
+  [data-motion="order-summary-sheet"],
+  [data-motion="payment-sheet"] {
+    display: none !important;
+  }
+
+  [data-receipt] {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  [data-receipt] * {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+
+  [data-receipt] [class*="rounded-card"],
+  [data-receipt] section,
+  [data-receipt] div[class*="border"] {
+    border-color: #999 !important;
+  }
+
+  /* Framer writes its `initial` state inline; without this a printed
+     page can come out blank if a section never entered the viewport. */
+  [data-motion] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+
+  a[href^="tel:"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
   }
 }

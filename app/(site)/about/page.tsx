@@ -147,7 +147,7 @@ export default function AboutPage() {
                     />
                   </div>
                   <div>
-                    <div className="type-display text-xl md:text-2xl text-espresso">{f.name}</div>
+                    <div className="type-sub text-xl md:text-2xl text-espresso">{f.name}</div>
                     <div className="mt-1 text-sm text-olive">{f.role}</div>
                     <p className="mt-3 text-base text-espresso-soft leading-relaxed">
                       {f.bioShort}
@@ -166,7 +166,7 @@ export default function AboutPage() {
       <Section>
         <div className="mx-auto text-center max-w-2xl">
           <Reveal>
-            <h2 className="type-display text-3xl md:text-4xl text-espresso">{about.cta.title}</h2>
+            <h2 className="type-title text-3xl md:text-4xl text-espresso">{about.cta.title}</h2>
           </Reveal>
           <Reveal delay={0.08}>
             <p className="mt-4 type-lede text-base md:text-lg text-espresso-soft">

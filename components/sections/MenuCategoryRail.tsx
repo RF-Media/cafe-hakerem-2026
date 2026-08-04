@@ -65,7 +65,7 @@ export function MenuCategoryRail({ items }: { items: RailItem[] }) {
                 "transition-[background-color,border-color,color] duration-fast ease-out-soft " +
                 (isActive
                   ? "bg-espresso text-cream border-espresso"
-                  : "bg-transparent text-espresso-soft border-stroke hover:border-brass/50 hover:text-espresso")
+                  : "bg-transparent text-espresso-soft border-stroke hover:border-brass-ink/45 hover:text-espresso")
               }
             >
               {c.label}

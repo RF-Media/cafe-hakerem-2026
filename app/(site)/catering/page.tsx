@@ -82,8 +82,8 @@ export default function CateringPage() {
           {catering.promises.map((p, i) => (
             <StaggerItem key={i} variant="tile">
               <Card padding="lg" tone="cream-3" className="h-full">
-                <span aria-hidden className="block h-px w-8 bg-brass/50" />
-                <div className="mt-4 type-display text-xl text-espresso">{p.title}</div>
+                <span aria-hidden className="block h-px w-8 bg-brass-ink/45" />
+                <div className="mt-4 type-sub text-xl text-espresso">{p.title}</div>
                 <p className="mt-2 text-base text-espresso-soft leading-relaxed">{p.body}</p>
               </Card>
             </StaggerItem>
@@ -95,7 +95,7 @@ export default function CateringPage() {
       <section className="py-20 md:py-28">
         <div className={container}>
           <Reveal>
-            <h2 className="type-display text-3xl md:text-4xl text-espresso mb-10">
+            <h2 className="type-title text-3xl md:text-4xl text-espresso mb-10">
               סוגי מגשים
             </h2>
           </Reveal>
@@ -105,7 +105,8 @@ export default function CateringPage() {
           {catering.options.map((o) => (
             <div
               key={o.id}
-              className="shrink-0 snap-start w-[80vw] sm:w-[55vw] md:w-[32vw] lg:w-[27vw]"
+              id={o.id}
+              className="shrink-0 snap-start scroll-mt-40 w-[80vw] sm:w-[55vw] md:w-[32vw] lg:w-[27vw]"
             >
               <Card padding="lg" tone="cream-3" hoverable elevation="raised" className="h-full">
                 <CafeImage
@@ -116,12 +117,12 @@ export default function CateringPage() {
                   className="mb-5"
                   sizes="(max-width: 768px) 80vw, 27vw"
                 />
-                <div className="type-display text-xl text-espresso">{o.title.he}</div>
+                <div className="type-sub text-xl text-espresso">{o.title.he}</div>
                 <div className="mt-1 text-sm text-olive">{o.serves}</div>
                 <ul className="mt-4 space-y-1.5 text-base text-espresso-soft">
                   {o.includes.map((it, i) => (
                     <li key={i} className="flex gap-2">
-                      <span aria-hidden className="text-brass">·</span>
+                      <span aria-hidden className="text-brass-ink">·</span>
                       <span>{it}</span>
                     </li>
                   ))}
@@ -164,7 +165,7 @@ export default function CateringPage() {
       <Section tone="cream-2">
         <div className="max-w-3xl">
           <Reveal>
-            <h2 className="type-display text-3xl md:text-4xl text-espresso">בואו נדבר</h2>
+            <h2 className="type-title text-3xl md:text-4xl text-espresso">בואו נדבר</h2>
           </Reveal>
           <Reveal delay={0.08}>
             <p className="mt-3 type-lede text-base md:text-lg text-espresso-soft">

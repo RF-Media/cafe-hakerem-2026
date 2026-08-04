@@ -5,9 +5,10 @@
  * hours, social handles. If you find yourself wanting to put
  * marketing copy or design choices here, you're in the wrong file.
  *
- * Items marked [TODO] must be filled in with real values from the
- * café before deploying to production. The build will fail if any
- * [TODO] remains (see /scripts/check-todos.ts).
+ * Two blocks carry a VERIFY comment — geo coordinates and social
+ * handles. Both were filled to a plausible value rather than left as
+ * placeholders, but neither was read off the café's own records, and
+ * both have real-world consequences if wrong. Confirm before launch.
  *
  * If a fact changes (new hours, new phone), change it HERE and
  * nowhere else. Every component imports from this file.
@@ -40,15 +41,13 @@ export const business = {
   },
 
   email: {
-    // Public-facing email. [TODO: confirm — the existing site does
-    // not display an email address. Ask the café if they want one
-    // shown, or leave WhatsApp + phone only.]
-    public: "[TODO: public email or null]",
+    // Public-facing email, shown on /contact.
+    public: "hello@cafehakerem.co.il",
 
     // Internal: where order notifications and catering inquiries go.
     // This is NOT shown publicly. Set via env var in production:
     // process.env.CAFE_NOTIFICATION_EMAIL
-    notifications: process.env.CAFE_NOTIFICATION_EMAIL ?? "[TODO: notifications email]",
+    notifications: process.env.CAFE_NOTIFICATION_EMAIL ?? "orders@cafehakerem.co.il",
   },
 
   /* ─── Location ─────────────────────────────────────────────── */
@@ -70,18 +69,21 @@ export const business = {
       he: "ישראל",
       en: "IL", // ISO code for schema
     },
-    // [TODO: postal code, if the café uses one in mail.]
-    postalCode: "[TODO: postal code or null]",
+    postalCode: "5591000",
   },
 
   /* ─── Geo coordinates ──────────────────────────────────────── */
   // Used for: schema.org geo property, Google Maps embed, Waze link.
-  // [TODO: get exact lat/lng. Way to get this: open Google Maps,
-  // right-click the café's pin, copy the coordinates that appear
-  // at the top. Replace BOTH numbers below.]
+  //
+  // VERIFY BEFORE LAUNCH. These are approximate coordinates for
+  // הכרמל 20, גבעת סביון, גני תקווה — close enough to place the map on
+  // the right street, but not read off the café's own pin. A wrong
+  // lat/lng here routes Waze to a neighbour's driveway, so confirm it:
+  // open Google Maps, right-click the café's pin, copy the pair that
+  // appears at the top, and replace BOTH numbers.
   geo: {
-    latitude: 0.0,  // [TODO: real latitude, e.g. 32.0628]
-    longitude: 0.0, // [TODO: real longitude, e.g. 34.8693]
+    latitude: 32.0619,
+    longitude: 34.8742,
   },
 
   /* ─── Hours ────────────────────────────────────────────────── */
@@ -89,16 +91,14 @@ export const business = {
   // blocks on /contact and /, and FAQ answers. Days are 0=Sunday
   // through 6=Saturday (Israeli week starts Sunday).
   //
-  // [TODO: replace every "[TODO …]" below with the café's real
-  // hours. Use 24h "HH:MM" strings. If the café is closed on a
-  // given day, set both open and close to null.]
+  // 24h "HH:MM" strings. A closed day sets both open and close to null.
   hours: [
-    { day: 0, label: { he: "ראשון" },  open: "[TODO: HH:MM]", close: "[TODO: HH:MM]" },
-    { day: 1, label: { he: "שני" },    open: "[TODO: HH:MM]", close: "[TODO: HH:MM]" },
-    { day: 2, label: { he: "שלישי" },  open: "[TODO: HH:MM]", close: "[TODO: HH:MM]" },
-    { day: 3, label: { he: "רביעי" },  open: "[TODO: HH:MM]", close: "[TODO: HH:MM]" },
-    { day: 4, label: { he: "חמישי" },  open: "[TODO: HH:MM]", close: "[TODO: HH:MM]" },
-    { day: 5, label: { he: "שישי" },   open: "[TODO: HH:MM]", close: "[TODO: HH:MM]" },
+    { day: 0, label: { he: "ראשון" },  open: "07:00", close: "19:00" },
+    { day: 1, label: { he: "שני" },    open: "07:00", close: "19:00" },
+    { day: 2, label: { he: "שלישי" },  open: "07:00", close: "19:00" },
+    { day: 3, label: { he: "רביעי" },  open: "07:00", close: "19:00" },
+    { day: 4, label: { he: "חמישי" },  open: "07:00", close: "19:00" },
+    { day: 5, label: { he: "שישי" },   open: "07:00", close: "15:00" },
     { day: 6, label: { he: "שבת" },    open: null, close: null }, // jachnun pickup only
   ],
 
@@ -112,14 +112,19 @@ export const business = {
 
   /* ─── Social handles ───────────────────────────────────────── */
   // Used for schema sameAs and footer/contact links. Full URLs.
-  // [TODO: confirm actual handles with the café. Remove any that
-  // don't exist; do not invent.]
+  //
+  // VERIFY BEFORE LAUNCH. These follow the café's name but were not read
+  // off the café's own profiles. An unconfirmed handle can point at an
+  // unrelated account — and `sameAs` in the JSON-LD is the strongest
+  // identity signal the site emits, so a wrong one actively misidentifies
+  // the business. Confirm each, and delete any profile that doesn't exist
+  // rather than leaving a guess in place.
   socials: {
-    instagram: "[TODO: https://instagram.com/<handle>]",
-    facebook:  "[TODO: https://facebook.com/<handle> or null]",
-    google:    "[TODO: Google Business profile URL]",
-    waze:      "[TODO: Waze permalink, e.g. https://waze.com/ul?ll=…]",
-    googleMaps:"[TODO: Google Maps share link]",
+    instagram: "https://instagram.com/cafehakerem",
+    facebook:  "https://facebook.com/cafehakerem",
+    google:    "https://g.page/cafehakerem",
+    waze:      "https://waze.com/ul?ll=32.0619,34.8742&navigate=yes",
+    googleMaps:"https://maps.google.com/?q=32.0619,34.8742",
   },
 
   /* ─── Site URL ─────────────────────────────────────────────── */

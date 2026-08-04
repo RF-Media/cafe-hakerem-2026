@@ -11,18 +11,51 @@ datasource db {
 }
 
 model JachnunOrder {
-  id         String   @id @default(cuid())
-  createdAt  DateTime @default(now())
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
 
-  reference  String   @unique  // short code shown to the customer, e.g. "JCH-2X4P"
+  reference    String   @unique // short code shown to the customer, e.g. "JCH-2X4P"
+  // Unguessable id for the receipt. The phase-2 PDF route keys off this
+  // rather than `id` or `reference`, so a receipt URL can be shared without
+  // exposing an enumerable order id.
+  receiptToken String   @unique
 
-  name       String
-  phone      String
-  quantity   Int
-  pickupSlot DateTime           // absolute time of the chosen pickup window start
-  notes      String?
+  name         String
+  phone        String
+  email        String?
+  quantity     Int
+  // Paid extras, on top of the one tomato portion and one olive box every
+  // unit already includes for free.
+  extraTomato  Int      @default(0)
+  extraOlives  Int      @default(0)
+  // Not included by default — see `jachnunPricing.addons.egg` in content/jachnun.ts.
+  extraEgg     Int      @default(0)
+
+  pickupSlot   DateTime // absolute time of the chosen pickup window start
+  // The Hebrew label the customer actually chose ("שבת 08/08 · 08:00–08:30").
+  // Stored rather than re-derived: the café reads this at 7am on a Saturday
+  // and must not have to decode a UTC timestamp.
+  pickupLabel  String
+  notes        String?
+
+  // Money is stored as integer agorot, never a float (see lib/money.ts).
+  // Recomputed server-side from the selection — never taken from the client.
+  totalAgorot  Int
+
+  paymentMethod String // "card" | "apple_pay" | "google_pay" | "bit" | "cash"
+  // "paid" — charged up front. "due_at_pickup" — card authorised only, cash
+  // taken at the counter.
+  paymentStatus String
+  paymentRef    String? // processor reference; today the mock token's id
+  cardBrand     String?
+  cardLast4     String? // last four digits only — never the full number
+
+  // Set by the client per checkout attempt. The unique constraint is what
+  // makes a double-tapped pay button produce one order instead of two.
+  idempotencyKey String? @unique
 
   @@index([pickupSlot])
+  @@index([createdAt])
 }
 
 model CateringInquiry {

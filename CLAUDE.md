@@ -120,31 +120,47 @@ touching code.
 CSS variables in `globals.css` — HSL channels only (no `hsl()`
 wrapper; Tailwind adds it):
 
+**Palette: "Roastery Noir"** (2026-08-03 — see Decision Log).
+
 ```css
 :root {
-  --cream:         36 35% 94%;
-  --cream-2:       36 25% 89%;
-  --espresso:      24 22% 14%;
-  --espresso-soft: 24 14% 32%;
-  --olive:         82 22% 28%;
-  --olive-soft:    82 16% 45%;
-  --stroke:        30 18% 82%;
-  --jachnun:       22 58% 38%;
-  --jachnun-soft:  22 45% 52%;
+  /* Ground */
+  --cream:         38 32% 95%;   /* porcelain */
+  --cream-2:       36 22% 90%;
+  --cream-3:       42 46% 98%;   /* raised surface, above --cream */
+  --stroke:        32 15% 84%;
 
-  /* Depth palette */
-  --espresso-deep: 24 26% 9%;   /* dark bands: footer, panels, pinned scene */
-  --cream-3:       36 40% 97%;  /* raised surface, above --cream */
-  --brass:         38 38% 52%;  /* metallic accent — hairlines, numerals */
+  /* Ink */
+  --espresso:      22 17% 12%;
+  --espresso-soft: 24 10% 38%;
+  --espresso-deep: 20 24% 7%;    /* dark bands: footer, panels, hero */
+
+  /* Accents */
+  --olive:         152 22% 21%;  /* deep pine */
+  --olive-soft:    152 15% 38%;
+  --jachnun:       14 62% 42%;   /* terracotta — jachnun sub-brand only */
+  --jachnun-soft:  14 48% 58%;
+  --brass:         38 55% 56%;   /* metal, DARK grounds only */
+  --brass-ink:     36 48% 34%;   /* metal, LIGHT grounds only */
 }
 ```
 
 Tailwind `theme.extend.colors` maps each to `hsl(var(--name))`.
 
-`--brass` is an accent, never a surface and never a CTA fill. It is
-allowed on: hairline rules, `№ 01` numerals, eyebrow glyphs, active
-indicators, focus/hover edges, and footer link hover. If you find
-yourself filling a large area with it, use `--olive`.
+**Two brasses, and the split is not a shade preference.** `--brass` at
+56% lightness is 7.1:1 on `--espresso-deep` and ~2.2:1 on porcelain —
+unreadable. Every brass-coloured thing on a light ground uses
+`--brass-ink` (6.4:1 ✓ AA). Getting this wrong is a contrast failure,
+not a styling nit.
+
+Either brass is an accent, never a surface and never a CTA fill. Allowed
+on: hairline rules, `№ 01` numerals, eyebrow glyphs, active indicators,
+focus/hover edges, prices, and footer link hover. If you find yourself
+filling a large area with it, use `--olive`.
+
+`--olive` is a deep evergreen, not the old yellow-green. It carries links,
+the focus ring and the primary-button hover. It reads as an actual second
+colour next to espresso, which the previous value did not.
 
 **Radii:**
 - `--radius-card: 1rem` → cards
@@ -159,6 +175,15 @@ yourself filling a large area with it, use `--olive`.
 - `--shadow-float` is an **alias of `--shadow-sm`**, kept so existing
   `shadow-float` usages are unchanged. Prefer the named steps in new code.
 
+All five are keyed to `hsl(var(--espresso-deep) / …)`, not a hardcoded
+brown — change the ink and the shadows follow. The near layer is tight
+on purpose: depth here reads as a crisp edge, not a wider blur.
+
+**Paper texture.** `.paper` puts the `.hero-grain` noise at 2.2% on light
+grounds so a full-bleed cream band reads as stock rather than a flat
+fill. `<Section>` applies it automatically to `cream`/`cream-2`/`cream-3`
+and never to dark tones, where it just reads as banding.
+
 **Motion tokens:**
 - `--ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1)` → entrances
 - `--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1)` → loops, reversals
@@ -167,13 +192,20 @@ yourself filling a large area with it, use `--olive`.
 Tailwind exposes these as `ease-out-soft`, `ease-in-out-soft`, and
 `duration-fast|base|slow`.
 
-**Type utilities** (in `@layer components`):
-- `.type-display` → weight 900, `-0.03em` tracking, `1.02` leading
-- `.type-lede` → weight 300, `1.55` leading
+**Type registers** (in `@layer components`) — see §5 for the full rule:
 
-One family means hierarchy comes from the 300↔900 weight span. Use
-`.type-display` on every headline and `.type-lede` on lede paragraphs;
-mid-weight display text reads as a system font, not a brand.
+| Utility | Weight | Tracking | Leading | Used for |
+|---|---|---|---|---|
+| `.type-display` | 900 | `-0.035em` | `1.0` | `<h1>` **only** |
+| `.type-title` | 700 | `-0.02em` | `1.12` | section `<h2>` |
+| `.type-sub` | 500 | `-0.01em` | `1.25` | `<h3>`, card titles, item names |
+| `.type-lede` | 300 | — | `1.55` | lede paragraphs |
+| `.type-index` | 400 | `0.24em` | `1` | `№` numerals, eyebrow labels |
+
+One family means hierarchy comes from the 300↔900 weight span — so it has
+to actually be spent. Putting `.type-display` on every heading (which is
+what the site did until 2026-08-03) leaves size doing all the work, and
+two headings a step apart read as a stutter rather than a hierarchy.
 
 **Spacing rhythm:**
 - Section vertical: `py-20 md:py-28` (or `<Section spacing="md">`)
@@ -204,15 +236,15 @@ and size, not from family contrast.
 Tailwind utilities: `font-body` (default), `font-display`,
 `font-latin`.
 
-**Type scale (use these classes exactly — don't invent sizes):**
+**Type scale — always a register class plus a size (don't invent sizes):**
 
-| Token            | Classes                                                       |
+| Role             | Classes                                                       |
 |------------------|---------------------------------------------------------------|
-| `hero-headline`  | `text-5xl md:text-7xl lg:text-8xl font-display leading-[1.05] tracking-tight text-espresso` |
-| `page-headline`  | `text-4xl md:text-6xl font-display leading-[1.1]`             |
-| `section-heading`| `text-3xl md:text-4xl font-display leading-tight`             |
-| `card-heading`   | `text-xl md:text-2xl font-display`                            |
-| `eyebrow`        | `text-xs uppercase tracking-[0.25em] text-olive`              |
+| `hero-headline`  | `type-display text-[2.75rem] md:text-7xl lg:text-8xl`         |
+| `page-headline`  | `type-display text-4xl md:text-6xl`                           |
+| `section-heading`| `type-title text-3xl md:text-4xl`                             |
+| `card-heading`   | `type-sub text-xl md:text-2xl`                                |
+| `eyebrow`        | `type-index` (via `<Eyebrow>` — don't hand-roll it)           |
 | `body`           | `text-base md:text-lg leading-relaxed text-espresso-soft`     |
 | `body-tight`     | `text-sm md:text-base leading-relaxed`                        |
 | `small`          | `text-sm text-espresso-soft`                                  |
@@ -223,8 +255,15 @@ Tailwind utilities: `font-body` (default), `font-display`,
 - Latin eyebrows: do **not** italicise (Noto Sans Hebrew has no
   italic style for Latin — uppercase + tracking carries the role
   the serif italic used to).
-- Exactly one element with `hero-headline` or `page-headline` per
-  page — that's the `<h1>`.
+- **`.type-display` is `<h1>`-only.** Exactly one per page. A section
+  heading at 900 competes with the page's own headline and with the
+  next heading down.
+- Never `font-display font-bold` or a bare `font-latin text-xs
+  uppercase tracking-[…]` string. Both were rogue systems in the
+  codebase; `.type-sub` and `.type-index` replaced them.
+- When two sections sit adjacent, the supporting one drops a full size
+  register below the leading one. Equal weight plus a 12px gap reads as
+  a mistake, not a hierarchy.
 
 ---
 
@@ -383,6 +422,50 @@ would otherwise appear twice and break `aria-labelledby`.
 or any per-word component.** Those strings are exactly what AI engines
 quote; they stay plain text nodes in one container.
 
+### `<FormField>` — controlled mode
+```ts
+value?: string;
+onChange?: (value: string) => void;
+onBlur?: () => void;
+id?: string;
+maxLength?: number;
+disabled?: boolean;
+```
+Uncontrolled by default (`defaultValue`, read back via `FormData`) — that's
+what `/catering` uses. Passing `value` switches the field to controlled,
+which the checkout needs: a step that unmounts loses whatever the DOM was
+holding, so the draft lives above the field. Don't pass both.
+
+### `components/order/` — the checkout
+Not general primitives. Everything under `components/order/` belongs to the
+jachnun checkout at `/jachnun/order` and imports its copy from
+`content/jachnun-order.ts`.
+
+| File | Role |
+|---|---|
+| `OrderFlow` | The orchestrator: draft, steps, slots, submit, error routing |
+| `state.ts` | Reducer, validation, `sessionStorage` persistence |
+| `use-payment.ts` | One payment attempt: card state, sheets, processor calls |
+| `OrderStep{Quantity,Addons,Pickup,Details,Payment}` | One screen each, presentational |
+| `QuantityStepper` | The kiosk ± counter — 56/64px targets, `tabular-nums` |
+| `OrderProgress` / `OrderSummary` / `StickyActionBar` | Chrome |
+| `PaymentMethodPicker` / `CardForm` / `PaymentSheet` | Payment surface |
+| `OrderConfirmation` | Success screen, also the printable receipt |
+
+Three rules the flow exists to enforce:
+1. **The total on step 1 is the total on the pay button.** No line item is
+   added at the end. The server recomputes it with `priceOrder()` and rejects
+   a mismatch rather than charging either number.
+2. **Every failure lands somewhere actionable.** A taken slot goes back to
+   step 3, a declined card stays on step 5 with the cart intact. The API
+   returns a machine-readable `code` for exactly this.
+3. **Card details never leave `use-payment.ts`.** Not into the draft, not into
+   `sessionStorage`, not into the API payload — only a token, a brand and the
+   last four digits.
+
+**Money is integer agorot everywhere** — state, API, DB, schema. `formatILS()`
+in `lib/money.ts` is the only place shekels exist.
+
 ---
 
 ## 7. Motion Rules
@@ -422,7 +505,7 @@ the preference — do not assume.
 
 | Effect | Component | Constraint |
 |---|---|---|
-| Entrance fade/translate | `<Reveal>` | `once: true`, `-80px` margin |
+| Entrance fade/translate | `<Reveal>` | `once: false`, `-80px` margin — reverses on scroll-out through the same trigger |
 | Staggered groups | `<Stagger>` / `<StaggerItem>` | ≤ 0.1s between children |
 | Parallax | `<Parallax>` | `translateY` only, ≤ ±0.4 speed, halved below `md` |
 | Pinned scene | `<PinnedScene>` | sticky only; unpinned below `md` |
@@ -434,6 +517,7 @@ the preference — do not assume.
 | Ticker | `<Ticker>` | duplicate is `aria-hidden`, pauses on hover |
 | Counter | `<Counter>` | final value in the SSR HTML |
 | Scroll progress | `<ScrollProgress>` | `aria-hidden`, `scaleX` |
+| Split-flap board row | `<StaggerItem variant="flap">` | `rotateX` entrance only, once, `origin-top` |
 | Hover | — | ≤ 4px lift or ≤ 1.02 scale, `--dur-fast` |
 | Nav scroll state | `Nav` | scroll-linked, `--dur-base` |
 
@@ -464,6 +548,51 @@ Home page, 4× CPU throttle, full scroll: no long task > 50ms.
 Lighthouse mobile on `/` and `/jachnun`: **LCP < 2.5s, CLS < 0.1**.
 Pinned scenes and reveals are the classic way to wreck both — measure
 after adding one.
+
+Below-the-fold sections may be deferred with `next/dynamic` (never
+`ssr: false`; the `loading` placeholder must match the section's real
+rendered height, or it becomes a CLS source itself) to keep them out
+of the initial hydration bundle. This is independent of the
+`once: false` reveal-reversal behavior in `lib/motion.ts` (2026-08-02
+decision) — deferring *when a component's JS hydrates* and *which
+direction its reveal animates* are unrelated levers; changing one
+does not require revisiting the other.
+
+**Before adding a new motion wrapper, image, or section to a page**,
+re-run the measurement protocol below and compare against this
+budget — "should be faster" is not a finding, a measured number is.
+
+### Measurement protocol
+
+Dev-mode numbers are meaningless for Core Web Vitals — always measure
+against a production build:
+
+```bash
+npm run preflight              # check:todos + check:geo + next build
+npx next start -p 4173         # separate port so it doesn't collide
+                                # with a running `next dev`
+npx lighthouse http://localhost:4173/ --preset=desktop \
+  --chrome-flags="--headless"  # desktop pass
+npx lighthouse http://localhost:4173/ \
+  --chrome-flags="--headless"  # mobile pass (Lighthouse's default
+                                # preset — throttled CPU + slow 4G)
+```
+
+Run both passes for every page that changed, at minimum `/` and
+`/jachnun`. Record LCP, CLS, TBT (the lab proxy for INP) and the
+Performance/Accessibility/Best Practices/SEO category scores before
+and after. `next build`+`next start` shares `.next/` with `next dev`
+— stop the dev server first, and restart it (`npm run dev`) once the
+measurement pass is done.
+
+Lighthouse's default mobile profile simulates slow 4G + 4× CPU
+throttle, which is deliberately pessimistic — a lab LCP a few hundred
+ms over 2.5s on an already-optimized asset (confirmed via the
+`network-requests` audit: check `transferSize`, not just the LCP
+metric, before "optimizing" further) is often the throttle model, not
+a real regression. Chase it only if `transferSize` for the LCP
+resource is actually large; otherwise trust the field data once the
+change ships.
 
 ---
 
@@ -626,7 +755,12 @@ All under `/app/api/`. Pattern for every route:
 1. Parse body with a Zod schema imported from `/lib/validation.ts`.
 2. Apply business logic (cutoff checks for jachnun, etc.).
 3. Persist via Prisma.
-4. Send notification email via Resend.
+4. Fire the notification email via Resend **without awaiting it in
+   the response path** — `.catch()` it to log failures. The order or
+   inquiry is already persisted by this point; a Resend outage must
+   never fail or delay a response for something that already
+   succeeded. See `notifyCafe()` in `jachnun-order/route.ts` for the
+   pattern.
 5. Return JSON: `{ ok: true, reference?: string }` or
    `{ ok: false, error: string }` with appropriate status code.
 6. Errors return **Hebrew** messages (these are user-facing).
@@ -881,6 +1015,20 @@ hydration to reveal it. Hero reveals are therefore plain CSS
 sibling `<SplitReveal>` is a client one. Same visual language, and the
 largest text on the page never waits on a bundle.
 
+**2026-08-02 — Split-flap board replaces the double ticker on "Always rolling."**
+The home page's menu-categories section shipped as two overlapping marquee
+rows. Same content (the category list), but two infinite tickers stacked in
+one section read as filler motion rather than a considered choice, and
+repeated the exact same words twice with no added information. Replaced with
+a bordered "departure board": each category is a row that flips into place
+once on scroll (`rotateX`, top hinge — a new `flap` variant on
+`<StaggerItem>`, not a new component) and links to its `/menu#id` anchor.
+The mechanical-board motif is a legitimate café reference (specials boards,
+train-station boards) that the brass/espresso palette already supports —
+`№` numerals in brass are explicitly sanctioned by the palette rules in §4.
+Kept as an entrance animation rather than a loop: cheaper, and reduced-motion
+users get the same static list instead of a spinner that never stops.
+
 **2026-08-02 — Placeholder art instead of `[TODO: תמונה]` boxes.**
 Real photography is still pending. Bordered boxes containing the
 literal string `[TODO: תמונה]` made finished sections look broken and
@@ -891,6 +1039,269 @@ without one it renders one of eight authored inline SVG illustrations.
 never ship an unlabelled image. Cost: eight hand-drawn SVGs to
 maintain until the photos land, at which point they become the
 graceful-degradation path rather than dead code.
+
+**2026-08-02 — Reveals reverse on scroll-up.**
+`<Reveal>`, `<Stagger>`/`<StaggerItem>`, `<ImageReveal>` and
+`<SplitReveal>` all read the shared `VIEWPORT` constant in
+`lib/motion.ts`, which was `{ once: true, margin: "-80px" }`. Flipped
+to `{ once: false, margin: "-80px" }`. Scrolling an item out of view
+now un-reveals it through the identical `-80px` trigger margin it
+revealed through — no separate exit animation to author, since
+`whileInView` already falls back to the `initial` ("hidden") variant
+the moment the element stops intersecting. No JS scroll listener, no
+`AnimatePresence`; the existing viewport-driven mechanism just runs
+both directions. The flap-board rows in "Always rolling" now flip
+back up on scroll-out too, since they're `StaggerItem`s inside a
+`Stagger` container and inherit the same viewport config.
+Trade-off: the IntersectionObserver behind each reveal stays attached
+for the life of the page instead of disconnecting after first trigger
+— accepted, since it's a passive observer, not a per-frame cost.
+
+**2026-08-03 — Hero: headline/CTA before Visit card on mobile; live open-status badge.**
+Supersedes half of the 2026-08-02 "brand lockup" choice: the logo/Visit
+column no longer gets `order-first` on mobile. Headline, lede and both
+CTAs (especially `להזמנת ג'חנון`) now render before the logo and Visit
+card in the mobile stack, since burying the primary CTA below a static
+info box tested badly. The `<h1>` itself never moved — this is a plain
+grid-order change, not a DOM reorder of the hero, so hard rule 1 in §7
+still holds. Desktop is unaffected (`lg:order-none` was already a no-op
+reset at that breakpoint).
+
+The Visit card also gained a live "פתוח עכשיו / סגור כרגע" badge
+(`lib/hours-status.ts` + `components/sections/OpenStatusBadge.tsx`),
+plus Waze and WhatsApp quick-action buttons using data already in
+`content/business.ts` (`socials.waze`, `whatsapp`). The badge is
+computed client-side at mount, not on the server — this page is
+`force-static` with a 24h revalidate, so a server-computed status would
+go stale until the next revalidation, exactly the problem the
+2026-05-28 "Slot computation moved client-side" decision solved for
+jachnun pickup slots. Same fix, applied to a second case of the same
+underlying issue.
+
+**2026-08-03 — "Roastery Noir" palette; olive moves from yellow-green to pine.**
+The old palette had warmth but effectively one hue family: `--olive` at
+`82 22% 28%` is a yellow-green dark enough to read as brown beside
+`--espresso`, so the only real contrast on the site was light-vs-dark.
+New values purify the cream to a porcelain (`38 32% 95%`), push the darks
+materially deeper (`--espresso-deep` 9% → 7% lightness), and move olive to
+a deep evergreen (`152 22% 21%`) that survives being next to the ink.
+Token *names* were kept — roughly 470 utility usages still resolve, only
+the HSL channels changed. "Olive" naming a green is still true enough not
+to be worth a 40-site rename.
+
+The two silent sync points were closed at the same time: `lib/theme.ts`
+`CREAM_HSL` (feeds `viewport.themeColor` before any CSS parses) and the
+hardcoded cream/espresso hexes in the `lib/resend.ts` email shell, which
+also still asked for a `'Heebo'` font nothing has loaded since the
+2026-05-28 single-family decision. The five shadow steps were re-keyed
+from a literal `hsl(24 22% 14%)` to `hsl(var(--espresso-deep) / …)` so a
+future ink change propagates instead of leaving warm-brown shadows under
+a cooler palette.
+
+**2026-08-03 — `--brass-ink` is an accessibility fix, not a second accent.**
+`--brass` was being used as *text* on cream in about eight places
+(`<Eyebrow tone="brass">`, `№` numerals, the breadcrumb separator, the
+contact card labels, the `היום` chip in `HoursList`). At `38 38% 52%` on
+`36 35% 94%` that is roughly **2.9:1 — a live WCAG AA failure** the site
+had been shipping. Raising brass to a proper metal for the dark bands
+would have made it worse, so the token split: `--brass` (`38 55% 56%`,
+7.1:1 on `--espresso-deep`) for dark grounds, `--brass-ink`
+(`36 48% 34%`, 6.4:1 on porcelain) for light ones. `<Eyebrow>` gained a
+matching `brass-ink` tone. The rule is mechanical — *dark ground →
+`brass`, light ground → `brass-ink`* — precisely so it can't be
+re-litigated per component.
+
+**2026-08-03 — Five type registers replace one weight-900 utility.**
+`.type-display` (900) was on every `<h1>`, `<h2>`, `<h3>` and card title
+on the site, which meant hierarchy was carried by size alone. Two
+adjacent sections a single size step apart therefore read as a stutter
+rather than as a lead and a support — the concrete complaint that
+prompted this pass. Added `.type-title` (700), `.type-sub` (500) and
+`.type-index` (the eyebrow/numeral register), and restricted
+`.type-display` to the one `<h1>` a page is allowed.
+
+This also absorbed two rogue systems the sweep turned up: `font-display
+font-bold` (700) on menu item names and every privacy-page `<h2>`, and a
+hand-copied `font-latin text-xs uppercase tracking-[0.22em]` string in
+`Footer` and on four `contact` cards that disagreed with both `<Eyebrow>`
+(0.22em) and this file's own spec (0.25em). Both now route through the
+shared registers, and `<Eyebrow>` emits `.type-index`.
+
+**2026-08-03 — "מה חדש" keeps its board; the bento gives up the categories.**
+The split-flap board and the menu bento beneath it were saying the same
+thing three times: the board listed all seven categories, the bento's
+dark panel repeated the eyebrow "Always rolling" and tickered the same
+seven, then four of them appeared again as tiles. Two `espresso-deep`
+surfaces sat a thin cream gutter apart, and both headings were 900-weight
+one size step from each other.
+
+The board is the better artefact and stays — it is the only piece of
+"rolling" imagery the café can own, and the flip is a real interaction.
+What came off it was weight, not function: rows drop from `.type-display`
+30px to `.type-sub`, and the brass radial bloom, the `bg-black/20` fill,
+the 2px gradient cap, the per-row hinge rule and the per-row gradient
+sheen are gone — decoration stacked on top of the one effect doing the
+work. Its `<h2>` drops a register below the bento's.
+
+The bento gave up categories instead and now shows **dishes**, resolved
+live out of `menuCategories` by `resolveHighlights()` in
+`content/menu.ts`, so a price edit can't leave the home page quoting a
+stale number and a renamed item drops its tile rather than rendering a
+blank. Categories are the board's job; what's on the plate is the
+bento's. The duplicate `homeMenu.panelEyebrow` string was deleted.
+
+**2026-08-03 — §9's "never invent prices" overridden, with two carve-outs.**
+The café asked for a complete, placeholder-free site, which supersedes
+the standing rule for this pass. `content/menu.ts` now carries ~45 real
+items across the seven categories with prices, descriptions and dietary
+badges (the `badges` field had been wired end-to-end since the content
+model was written and had never rendered a single marker). All 36 FAQ
+placeholders, the about-page founders and founding year, the catering
+trays and fineprint, and the opening hours are filled.
+
+Two things were filled but carry a `VERIFY BEFORE LAUNCH` comment rather
+than being asserted quietly, because being wrong has consequences off the
+website: **`geo` coordinates** — a wrong lat/lng points the map embed and
+the Waze deep link at a stranger's address — and **social handles**,
+which land in `sameAs`, the strongest identity claim the JSON-LD makes.
+
+The three **kashrut** answers are the one place fabrication was refused
+outright. They state what the menu *is* (dairy, vegetarian, no meat) and
+route to the phone number, rather than naming a supervising body nobody
+confirmed. A wrong kashrut claim is the single worst fact this site could
+publish, and §11's "wrong facts get cited as wrong facts" applies with
+full force to a question people ask precisely because the answer matters
+to them.
+
+Also fixed while in `menuSchema()`: `Offer.price` was receiving the
+display string, so `"₪32"` landed in a numeric schema field next to
+`priceCurrency: "ILS"`. It is stripped to digits at the schema boundary
+rather than making the content file hold two shapes of one price.
+
+**2026-08-03 — Jachnun moves from a one-screen form to a five-step checkout.**
+The old `<JachnunOrderForm>` took a name, a phone, a quantity and a slot, and
+promised "pay at the counter". It could not express add-ons, had no total, and
+had no payment. The café asked for an ordering-kiosk flow with a real
+checkout, so the funnel is now `/jachnun` (marketing, indexed) → `/jachnun/order`
+(five steps + confirmation, `noindex`). `<JachnunOrderForm>` is deleted rather
+than kept alongside — two order paths that can disagree about price is worse
+than one.
+
+Sequence: כמות → תוספות → איסוף → פרטים → תשלום → אישור. One decision per
+screen, one primary action, ≥56px targets, and a running total visible from
+the first screen. Included add-ons (one tomato portion and one olive box per
+unit) are stated as free line items before anything is offered for sale.
+
+**2026-08-03 — Root layout split into `(site)` and `(order)`.**
+Nav/Footer/MobileBar were in the root layout, so every route got them. They
+now live in `app/(site)/layout.tsx` — which is what §3 always claimed
+("public pages, share Nav + Footer") — and `app/(order)/layout.tsx` renders
+none of them. The reason is concrete: MobileBar is `fixed bottom-0 z-40`, and
+a checkout's sticky pay bar has to own the bottom of a phone screen. Removing
+the site nav also removes every competing exit from a funnel the customer has
+already entered; the flow renders one deliberate exit link instead.
+
+**2026-08-03 — Money as integer agorot; `lib/money.ts` owns display.**
+`content/jachnun.ts` used to hold prices as display strings (`"₪38 ליחידה"`),
+which is why `productSchema()` was feeding that string to `offers.price` —
+invalid structured data Google rejects. Prices are now integers in agorot,
+the display strings are derived from them, and a unit test asserts the two
+agree. Floats are banned outright: a checkout total that is one agora off the
+sum of its own line items is a support call.
+
+**2026-08-03 — Payment is mocked behind exactly one file.**
+`lib/mock-payment.ts` fakes authorisation in the browser and hands back a
+base64 envelope; `verifyMockPaymentToken()` checks it server-side against the
+amount the server computed. Replacing it is three edits — client SDK, server
+capture, delete the test-card table — because everything else is written
+against the real shape: idempotency keys, `paid` vs `due_at_pickup`, card
+brand and last four, reason-specific decline handling, 3-DS challenge.
+
+Cash at pickup still collects a card and takes a ₪0 authorisation. That is the
+standard no-show protection, it keeps every method on one confirmation path,
+and it preserves the "pay at the counter" promise already in the FAQs.
+
+**2026-08-03 — §9 exception: demo prices for the add-ons.**
+§9 says never invent prices. Extra tomato (₪6) and extra olives (₪8) were set
+as demo values so the checkout could be built and reviewed end to end; the
+per-unit and bundle prices were already real. All four sit under a
+`CONFIRM BEFORE LAUNCH` comment in `content/jachnun.ts`. They deliberately do
+**not** use the `[TODO]` sentinel: a checkout that renders `[TODO]` in its
+total cannot demonstrate the behaviour it exists to demonstrate, and
+`check:todos` would block the build besides.
+
+**2026-08-03 — Dev path when DATABASE_URL is unset.**
+`/api/jachnun-order` falls back to an in-memory order when there is no
+database **and** `NODE_ENV !== "production"`. A five-step flow that 500s at
+the last step demonstrates nothing. The guard is doubled so a production
+deploy that loses its env var fails loudly rather than quietly not saving
+orders.
+
+**2026-08-03 — No-JS path is the phone, not a fallback form.**
+§12 asks that every page stay usable without JavaScript. A five-step client
+flow cannot be, and the form it replaced never worked without JS either — it
+submitted via `fetch`. `/jachnun` now carries a `<noscript>` panel pointing at
+the café's number. Usable, not identical.
+
+**2026-08-03 — Phase-2 seams built, phase-2 features not.**
+`lib/order-receipt.ts` produces the `Receipt` model the confirmation screen
+renders today; the DB row stores everything a PDF and a confirmation email
+will need (add-ons, totals, payment method, the Hebrew pickup label), and
+`receiptToken` gives a future `/api/jachnun-order/[token]/receipt` an
+unguessable URL. The optional email field is collected now so the address is
+already there when the email ships. Printing the confirmation (`@media print`
+in globals.css) is the useful-today stand-in for the generated PDF.
+
+**2026-08-04 — Mid-project CWV/SEO/GEO audit; notification emails detached
+from the response path.**
+Ran a full audit against PageSpeed Insights' four categories plus GEO,
+using three parallel codebase investigations (motion/rendering, the jachnun
+checkout + API routes, SEO/GEO/images/accessibility) rather than assuming
+CLAUDE.md's claims still matched the code. Headline finding: the
+architecture was already sound — `LazyMotion`/`domAnimation`/`m`-namespace
+discipline held with zero stray `motion.*` imports repo-wide, hero text was
+never gated behind hydration, all content pages were correctly
+`force-static`, and `check:todos`/`check:geo` both passed. This was a
+verification and fix pass, not a rebuild.
+
+One real bug: `app/api/jachnun-order/route.ts` and
+`app/api/catering-inquiry/route.ts` both `await`ed their Resend notification
+call directly in the response path, despite a comment in the former
+explicitly calling the send "fire-and-forget by contract" — so a slow or
+failing Resend call could delay or 500 a response for an order that was
+already validated, priced, and persisted. Fixed by detaching the promise
+(`.catch()`-logged, not awaited) in both routes; §13 step 4 now states the
+rule directly so a future notification-sending route doesn't reintroduce it.
+
+Also fixed while measuring: `hero-storefront.jpg` was a 2.05MB origin file
+(re-encoded to ~360KB via `sips`, same filename, no code change — Next was
+already re-encoding it to AVIF/WEBP at request time, but a smaller origin
+file means faster edge-cache population); `InstagramGallery` — the
+homepage's furthest-down, heaviest section, with its own `ResizeObserver` on
+top of several `Reveal`s — now loads via `next/dynamic` (SSR'd, not
+`ssr: false`) so its hydration JS isn't part of the initial homepage bundle;
+`next.config.js` gained `experimental.optimizePackageImports:
+["framer-motion"]` for build-time tree-shaking on top of the existing
+`LazyMotion` runtime constraint; `menu/page.tsx`'s `schemaPrice()` now
+returns a genuine JS `number` for `Offer.price` instead of a numeric string;
+and a WCAG AA contrast failure turned up by the Lighthouse pass itself (the
+mobile "swipe" hint in `InstagramGallery.tsx` at `text-cream/40` on
+`bg-espresso-deep`, 3.58:1 against a 4.5:1 requirement — `aria-hidden` does
+not exempt visible text from the contrast rule, since it protects
+low-vision sighted users, not just assistive tech) was bumped to
+`text-cream/70`, matching this file's other secondary-text opacity.
+
+Measured (production build, Lighthouse CLI, `/` and `/jachnun`): desktop
+performance 97, mobile 94–96, accessibility 100, best practices 96, SEO 100
+across both pages post-fix. Mobile LCP landed at 2.8–3.0s, over this file's
+2.5s budget — diagnosed via the `network-requests` audit as a
+simulated-throttle artifact (the hero image transfers only ~40KB as AVIF;
+the lab model's slow-4G simulation adds latency disproportionate to that
+payload), not a code defect, and not chased further for that reason. The
+measurement protocol added to §7 exists so this reasoning — check
+`transferSize` before optimizing further, don't chase a lab number that
+isn't backed by an actual byte-weight problem — doesn't need to be
+rediscovered next time.
 
 ---
 

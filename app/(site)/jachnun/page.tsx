@@ -4,6 +4,8 @@ export const revalidate = 86400;
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
+import { Button } from "@/components/ui/Button";
+import { IconArrow } from "@/components/ui/icons";
 import { Card } from "@/components/ui/Card";
 import { CafeImage } from "@/components/ui/CafeImage";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -18,8 +20,8 @@ import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FactualParagraph } from "@/components/sections/FactualParagraph";
-import { JachnunOrderForm } from "@/components/sections/JachnunOrderForm";
-import { jachnun } from "@/content/jachnun";
+import { formatILS } from "@/lib/money";
+import { jachnun, jachnunPricing } from "@/content/jachnun";
 import { jachnunFAQs } from "@/content/faqs";
 import { business } from "@/content/business";
 
@@ -41,7 +43,11 @@ function productSchema() {
       "@type": "Offer",
       availability: "https://schema.org/PreOrder",
       priceCurrency: "ILS",
-      price: jachnun.pricing.perUnit,
+      // Schema.org wants a bare number. This used to be handed the display
+      // string "₪38 ליחידה", which Google rejects outright.
+      price: (jachnunPricing.unitAgorot / 100).toFixed(2),
+      url: `${business.siteUrl}/jachnun`,
+      itemCondition: "https://schema.org/NewCondition",
     },
   };
 }
@@ -108,10 +114,10 @@ export default function JachnunPage() {
           {jachnun.threeReasons.map((r, i) => (
             <StaggerItem key={i} variant="tile">
               <Card padding="lg" tone="cream-3" hoverable className="group h-full">
-                <span className="font-latin text-xs tracking-[0.2em] text-jachnun-soft">
+                <span className="type-index text-jachnun-soft">
                   № 0{i + 1}
                 </span>
-                <div className="mt-3 type-display text-xl text-espresso">{r.title}</div>
+                <div className="mt-3 type-sub text-xl text-espresso">{r.title}</div>
                 <p className="mt-2 text-base text-espresso-soft leading-relaxed">{r.body}</p>
               </Card>
             </StaggerItem>
@@ -136,7 +142,7 @@ export default function JachnunPage() {
             </Stagger>
             <Reveal delay={0.12}>
               <Card padding="md" tone="cream-3" elevation="raised">
-                <div className="type-display text-lg text-espresso mb-3">
+                <div className="type-sub text-lg text-espresso mb-3">
                   {jachnun.reassurance.title}
                 </div>
                 <ol className="space-y-2 text-sm text-espresso-soft list-decimal pe-5">
@@ -149,13 +155,70 @@ export default function JachnunPage() {
           </div>
 
           <div className="lg:col-span-3">
-            {/* The form follows the reading column on desktop — the left
-                rail is short and the form is long, so pinning it keeps the
-                CTA in reach through the whole section. */}
+            {/* The order panel follows the reading column on desktop — the
+                left rail is short, so pinning keeps the CTA in reach through
+                the whole section. */}
             <div className="lg:sticky lg:top-28">
               <Card padding="lg" tone="cream-3" elevation="floating">
-                <h2 className="type-display text-2xl text-espresso mb-6">טופס הזמנה</h2>
-                <JachnunOrderForm />
+                <h2 className="type-title text-2xl text-espresso">להזמנה</h2>
+                <p className="mt-3 text-base text-espresso-soft">
+                  בוחרים כמות ותוספות, חלון איסוף ואמצעי תשלום. ההזמנה מאושרת מיד במסך.
+                </p>
+
+                <div className="mt-6 flex items-baseline gap-3">
+                  <span className="type-display text-4xl text-espresso tabular-nums">
+                    {formatILS(jachnunPricing.unitAgorot)}
+                  </span>
+                  <span className="text-sm text-espresso-soft">ליחידה</span>
+                </div>
+                <p className="mt-1 text-sm text-jachnun">{jachnun.pricing.bundleNote}</p>
+
+                <ol className="mt-6 space-y-2.5 text-sm text-espresso-soft">
+                  {jachnun.reassurance.steps.map((s, idx) => (
+                    <li key={idx} className="flex gap-3">
+                      <span aria-hidden className="type-index text-brass-ink pt-1">
+                        {idx + 1}
+                      </span>
+                      <span>{s}</span>
+                    </li>
+                  ))}
+                </ol>
+
+                <div className="mt-8">
+                  <Button
+                    as="a"
+                    href="/jachnun/order"
+                    variant="primary"
+                    size="xl"
+                    className="w-full"
+                    icon={<IconArrow />}
+                  >
+                    {jachnun.cta.label}
+                  </Button>
+                  <p className="mt-3 text-center text-xs text-espresso-soft">
+                    {jachnun.cta.supporting}
+                  </p>
+                </div>
+
+                {/*
+                  The checkout is a five-step client flow and cannot work
+                  without JavaScript. Rather than ship a form that silently
+                  fails, the no-JS path is the one the café has always had —
+                  the phone. CLAUDE.md §12 asks that every page stay usable
+                  without JS; usable, not identical.
+                */}
+                <noscript>
+                  <div className="mt-6 rounded-card border border-stroke bg-cream-2 px-5 py-4 text-sm text-espresso-soft">
+                    טופס ההזמנה דורש JavaScript. אפשר להזמין ג&apos;חנון מקפה הכרם גם בטלפון:{" "}
+                    <a
+                      href={`tel:${business.phone.tel}`}
+                      className="text-olive underline underline-offset-4"
+                    >
+                      {business.phone.display}
+                    </a>
+                    .
+                  </div>
+                </noscript>
               </Card>
             </div>
           </div>

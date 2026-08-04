@@ -5,19 +5,17 @@
  * Error messages are Hebrew — they bubble up to the user.
  */
 import { z } from "zod";
+import { jachnun, jachnunPricing } from "@/content/jachnun";
+import { PAYMENT_METHODS } from "@/content/jachnun-order";
+import { isValidIsraeliMobile, normalizePhone } from "@/lib/phone";
 
-/* Israeli mobile phone — accepts:
- *   05X-XXXXXXX
- *   05XXXXXXXX
- *   +9725XXXXXXXX
- * Spaces and dashes are stripped before regex test. */
-const israeliPhoneRegex = /^(?:\+9725\d{8}|05\d{8})$/;
-
+/* Israeli mobile phone. The rule itself lives in lib/phone.ts so the
+ * checkout can validate on blur without shipping Zod to the browser. */
 export const phoneSchema = z
   .string()
   .trim()
-  .transform((v) => v.replace(/[\s-]/g, ""))
-  .refine((v) => israeliPhoneRegex.test(v), {
+  .transform(normalizePhone)
+  .refine(isValidIsraeliMobile, {
     message: "מספר טלפון לא תקין. דוגמה: 050-1234567 או +972501234567.",
   });
 
@@ -36,15 +34,33 @@ export const optionalEmailSchema = z
 
 /* ─── Jachnun order ────────────────────────────────────────────── */
 
+/** Ceiling on paid extras, mirroring `maxExtrasFor()` at the top of the range. */
+const MAX_EXTRAS = jachnun.form.maxQuantity * jachnunPricing.maxExtraPerUnit;
+
+const extraCountSchema = z
+  .number({ invalid_type_error: "כמות תוספת לא תקינה." })
+  .int("כמות תוספת חייבת להיות מספר שלם.")
+  .min(0, "כמות תוספת לא תקינה.")
+  .max(MAX_EXTRAS, "יותר מדי תוספות להזמנה אחת.");
+
 export const jachnunOrderSchema = z.object({
   name: nameSchema,
   phone: phoneSchema,
+  email: optionalEmailSchema,
   quantity: z
     .number({ invalid_type_error: "כמות לא תקינה." })
     .int("כמות חייבת להיות מספר שלם.")
-    .min(1, "יש להזמין לפחות יחידה אחת.")
-    .max(20, "להזמנות גדולות מ-20 יחידות — נא לפנות בטלפון."),
-  // ISO-8601 from the slot dropdown; validated against available slots
+    .min(jachnun.form.minQuantity, "יש להזמין לפחות יחידה אחת.")
+    .max(
+      jachnun.form.maxQuantity,
+      `להזמנות גדולות מ-${jachnun.form.maxQuantity} יחידות — נא לפנות בטלפון.`,
+    ),
+  // Paid extras only. What every unit already includes for free is derived
+  // server-side from the unit count — the client cannot ask for more of it.
+  extras: z
+    .object({ tomato: extraCountSchema, olives: extraCountSchema, egg: extraCountSchema })
+    .default({ tomato: 0, olives: 0, egg: 0 }),
+  // ISO-8601 from the slot picker; validated against available slots
   // server-side in the route (not enough info to validate purely from string).
   pickupSlot: z
     .string()
@@ -55,6 +71,19 @@ export const jachnunOrderSchema = z.object({
     .max(500, "ההערה ארוכה מדי.")
     .optional()
     .or(z.literal("").transform(() => undefined)),
+
+  /* ── Payment ──
+     `totalAgorot` is what the browser displayed. The route recomputes the
+     real total from the selection and rejects a mismatch rather than
+     charging either number — a client that can name its own price is the
+     oldest bug in online ordering. */
+  paymentMethod: z.enum(PAYMENT_METHODS, { errorMap: () => ({ message: "אמצעי תשלום לא תקין." }) }),
+  paymentToken: z.string().min(1, "אישור התשלום חסר. נסו שוב."),
+  totalAgorot: z
+    .number({ invalid_type_error: "סכום לא תקין." })
+    .int("סכום לא תקין.")
+    .min(0, "סכום לא תקין."),
+  idempotencyKey: z.string().trim().min(8, "מפתח בקשה לא תקין.").max(64, "מפתח בקשה לא תקין."),
 });
 
 export type JachnunOrderInput = z.infer<typeof jachnunOrderSchema>;
@@ -98,4 +127,15 @@ export function generateReference(prefix: "JCH" | "CAT"): string {
     out += alphabet[Math.floor(Math.random() * alphabet.length)];
   }
   return `${prefix}-${out}`;
+}
+
+/**
+ * Unguessable id for the receipt URL. Unlike `generateReference`, this one is
+ * a security boundary: a phase-2 receipt PDF is served to anyone holding the
+ * token, so 128 bits of real randomness, not four friendly characters.
+ */
+export function generateReceiptToken(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }

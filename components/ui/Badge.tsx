@@ -18,10 +18,12 @@ const labels: Record<BadgeKey, string> = {
   new: "חדש",
 };
 
+// Badges only ever sit on light grounds (menu rows, cards), so the metal
+// one takes `brass-ink`.
 const tones: Record<BadgeKey, string> = {
   vegan: "border-olive/40 text-olive",
   vegetarian: "border-olive/40 text-olive",
-  "gluten-free": "border-brass/50 text-brass",
+  "gluten-free": "border-brass-ink/45 text-brass-ink",
   spicy: "border-jachnun/40 text-jachnun",
   new: "border-espresso/25 text-espresso",
 };

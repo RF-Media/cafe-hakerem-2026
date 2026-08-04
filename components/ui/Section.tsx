@@ -7,9 +7,11 @@ import type { ReactNode } from "react";
  * existed, which is how gutters drift out of alignment between pages.
  */
 
+export type SectionTone = "cream" | "cream-2" | "cream-3" | "espresso" | "jachnun";
+
 export type SectionProps = {
   children: ReactNode;
-  tone?: "cream" | "cream-2" | "cream-3" | "espresso" | "jachnun";
+  tone?: SectionTone;
   spacing?: "none" | "sm" | "md" | "lg";
   /** Full-bleed background with the container applied to the inner wrapper. */
   bleed?: boolean;
@@ -34,6 +36,17 @@ const spacingClasses = {
   md: "py-20 md:py-28",
   lg: "py-24 md:py-36",
 } as const;
+
+/** Light grounds get a paper tooth; dark ones are already textured by the
+ *  photography and grain that sit on them, and noise on espresso-deep just
+ *  reads as banding. */
+const papered: Record<SectionTone, boolean> = {
+  cream: true,
+  "cream-2": true,
+  "cream-3": true,
+  espresso: false,
+  jachnun: false,
+};
 
 export const container = "mx-auto max-w-container px-6 md:px-10 lg:px-16";
 
@@ -62,9 +75,11 @@ export function Section({
     <Tag
       id={id}
       aria-labelledby={ariaLabelledby}
-      className={`${toneClasses[tone]} ${className}`}
+      className={`relative ${toneClasses[tone]} ${papered[tone] ? "paper" : ""} ${className}`}
     >
-      <div className={inner}>{children}</div>
+      {/* `relative z-10` so the paper ::before, which sits at z-index 0,
+          stays behind the content rather than multiplying over the text. */}
+      <div className={`relative z-10 ${inner}`}>{children}</div>
     </Tag>
   );
 }

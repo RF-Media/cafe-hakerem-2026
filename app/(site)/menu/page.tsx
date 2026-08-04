@@ -3,10 +3,12 @@ export const revalidate = 86400;
 
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { BadgeRow } from "@/components/ui/Badge";
 import { FAQBlock } from "@/components/ui/FAQBlock";
+import { IconArrow } from "@/components/ui/icons";
 import { Section, container } from "@/components/ui/Section";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitText } from "@/components/motion/SplitText";
@@ -19,12 +21,21 @@ import { FactualParagraph } from "@/components/sections/FactualParagraph";
 import { menuCategories, menuIntro } from "@/content/menu";
 import { menuFAQs } from "@/content/faqs";
 import { business } from "@/content/business";
+import { jachnun } from "@/content/jachnun";
 
 export const metadata: Metadata = {
   title: "התפריט שלנו | קפה הכרם — בית קפה בגני תקווה",
   description:
     "התפריט המלא של קפה הכרם: קפה איכותי, ארוחות בוקר, כריכים, סלטים, מאפים ובורקסים. בית קפה בוטיקי ברחוב הכרמל 20, גני תקווה.",
 };
+
+/** `Offer.price` is a number in schema.org terms, and `priceCurrency` already
+ *  carries the ILS. Passing the display string through put a ₪ glyph in a
+ *  numeric field — strip it to digits here rather than making content/menu.ts
+ *  hold two shapes of the same price. */
+function schemaPrice(display: string): number {
+  return Number(display.replace(/[^\d.]/g, ""));
+}
 
 function menuSchema() {
   return {
@@ -34,16 +45,70 @@ function menuSchema() {
     hasMenuSection: menuCategories.map((c) => ({
       "@type": "MenuSection",
       name: c.title.he,
-      hasMenuItem: c.items
-        .filter((i) => !i.name.startsWith("[TODO"))
-        .map((i) => ({
-          "@type": "MenuItem",
-          name: i.name,
-          description: i.description,
-          offers: { "@type": "Offer", price: i.price, priceCurrency: "ILS" },
-        })),
+      description: c.blurb,
+      hasMenuItem: c.items.map((i) => ({
+        "@type": "MenuItem",
+        name: i.name,
+        description: i.description,
+        offers: {
+          "@type": "Offer",
+          price: schemaPrice(i.price),
+          priceCurrency: "ILS",
+        },
+      })),
     })),
   };
+}
+
+/** Weekday opening line for the masthead, read out of business.ts so it can
+ *  never drift from the hours block on /contact or the JSON-LD in the root
+ *  layout. Groups the run of identical weekdays and names Friday separately. */
+const weekdayHours = (() => {
+  const open = business.hours.filter((h) => h.open && h.close);
+  if (open.length === 0) return "לפי הודעה";
+  const first = open[0];
+  const last = open[open.length - 1];
+  const sameAsFirst = open.filter((h) => h.open === first.open && h.close === first.close);
+  const run = `${sameAsFirst[0].label.he}–${sameAsFirst[sameAsFirst.length - 1].label.he} ${first.open}–${first.close}`;
+  return last === sameAsFirst[sameAsFirst.length - 1]
+    ? run
+    : `${run} · ${last.label.he} ${last.open}–${last.close}`;
+})();
+
+/** Cheapest and dearest thing on the menu, for the at-a-glance strip. */
+const priceBand = (() => {
+  const values = menuCategories
+    .flatMap((c) => c.items)
+    .map((i) => Number(i.price.replace(/[^\d.]/g, "")))
+    .filter((n) => Number.isFinite(n) && n > 0);
+  return `₪${Math.min(...values)}–₪${Math.max(...values)}`;
+})();
+
+/** The one dark beat on a long light page. Contained rather than full-bleed:
+ *  it sits inside the page's container, between two category sections. */
+function MenuInterlude() {
+  return (
+    <Reveal>
+      <aside className="mt-16 md:mt-20 rounded-card bg-espresso-deep text-cream px-6 py-10 md:px-10 md:py-12">
+        <div className="grid gap-6 md:grid-cols-12 md:items-end">
+          <div className="md:col-span-8">
+            <Eyebrow tone="brass">שבת בבוקר</Eyebrow>
+            <h2 className="mt-4 type-title text-2xl md:text-3xl">
+              ג'חנון של שבת, להזמנה מראש
+            </h2>
+            <p className="mt-4 type-lede text-base text-cream/75 max-w-prose-he">
+              {jachnun.hero.lede} ההזמנות נסגרות ביום חמישי בשעה 18:00.
+            </p>
+          </div>
+          <div className="md:col-span-4 md:text-start">
+            <Button as="a" href="/jachnun" variant="onDark" icon={<IconArrow />}>
+              להזמנת ג'חנון
+            </Button>
+          </div>
+        </div>
+      </aside>
+    </Reveal>
+  );
 }
 
 export default function MenuPage() {
@@ -54,11 +119,16 @@ export default function MenuPage() {
 
       <Breadcrumb items={[{ name: "התפריט" }]} />
 
-      <section className={`${container} pt-12 md:pt-20 pb-10 md:pb-14`}>
+      {/* Masthead. The page used to open on a bare heading sitting directly
+          on the page ground, which read as starting mid-document. The
+          at-a-glance strip gives it a threshold and puts the three facts
+          people scan a menu page for — hours, band, dietary marking — above
+          the fold in extractable form. */}
+      <header className={`${container} pt-12 md:pt-20 pb-10 md:pb-14`}>
         <div className="hero-fade" style={{ ["--d" as never]: 0 }}>
           <Eyebrow withRule>{menuIntro.eyebrow}</Eyebrow>
         </div>
-        <h1 className="mt-4 type-display text-4xl md:text-6xl text-espresso">
+        <h1 className="mt-4 type-display text-4xl md:text-6xl text-espresso max-w-4xl">
           <SplitText text={menuIntro.title} delay={70} />
         </h1>
         <p
@@ -67,12 +137,29 @@ export default function MenuPage() {
         >
           {menuIntro.body}
         </p>
-      </section>
+
+        <dl
+          className="hero-fade mt-10 grid gap-px overflow-hidden rounded-card border border-stroke
+                     bg-stroke sm:grid-cols-3"
+          style={{ ["--d" as never]: 480 }}
+        >
+          {[
+            { term: "שעות", desc: weekdayHours },
+            { term: "טווח מחירים", desc: `${business.priceRange} · ${priceBand}` },
+            { term: "סימון בתפריט", desc: "טבעוני, צמחוני, ללא גלוטן וחריף" },
+          ].map((fact) => (
+            <div key={fact.term} className="bg-cream-3 px-5 py-4">
+              <dt className="type-index text-brass-ink">{fact.term}</dt>
+              <dd className="mt-2 text-sm text-espresso-soft">{fact.desc}</dd>
+            </div>
+          ))}
+        </dl>
+      </header>
 
       {/* Sticky in-page nav */}
       <nav
         aria-label="ניווט בתפריט"
-        className="sticky top-[72px] md:top-20 z-30 bg-cream/90 backdrop-blur-lg border-y border-stroke"
+        className="sticky top-14 z-30 bg-cream/90 backdrop-blur-lg border-b border-stroke"
       >
         <div className={`${container} py-2.5`}>
           <MenuCategoryRail
@@ -81,32 +168,52 @@ export default function MenuPage() {
         </div>
       </nav>
 
-      <div className={`${container} py-14 md:py-16 space-y-20 md:space-y-28`}>
-        {menuCategories.map((c) => (
+      <div className={`${container} py-14 md:py-16 space-y-20 md:space-y-24`}>
+        {menuCategories.map((c, ci) => (
           <section key={c.id} id={c.id} className="scroll-mt-40">
             <Reveal>
-              <header className="mb-6 md:mb-8">
-                <h2 className="type-display text-3xl md:text-4xl text-espresso">
-                  {c.title.he}
-                </h2>
-                <span aria-hidden className="mt-4 block h-px w-12 bg-brass/55" />
-                {c.blurb ? (
-                  <p className="mt-4 text-base text-espresso-soft max-w-prose-he">{c.blurb}</p>
-                ) : null}
+              <header className="mb-6 md:mb-8 flex items-baseline gap-5">
+                {/* Ghost numeral — the running order of a printed menu. */}
+                <span
+                  aria-hidden
+                  className="type-display text-3xl md:text-5xl text-brass-ink/25 tabular-nums shrink-0"
+                >
+                  {String(ci + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h2 className="type-title text-3xl md:text-4xl text-espresso">
+                    {c.title.he}
+                  </h2>
+                  <span aria-hidden className="mt-4 block h-px w-12 bg-brass-ink/45" />
+                  {c.blurb ? (
+                    <p className="mt-4 text-base text-espresso-soft max-w-prose-he">
+                      {c.blurb}
+                    </p>
+                  ) : null}
+                </div>
               </header>
             </Reveal>
 
-            <Stagger as="ul" className="divide-y divide-stroke" stagger={0.05}>
+            {/* Two columns on md+, the way a printed menu sets a long list.
+                `grid`, not CSS `columns` — Framer writes `transform` onto
+                each StaggerItem and multi-column fragmentation breaks it. */}
+            <Stagger
+              as="ul"
+              className="md:grid md:grid-cols-2 md:gap-x-14"
+              stagger={0.04}
+            >
               {c.items.map((item, i) => (
                 <StaggerItem
                   key={i}
                   as="li"
-                  className="group/row py-4 flex items-baseline gap-4 md:gap-6
-                             transition-colors duration-fast hover:text-espresso"
+                  className="group/row flex items-baseline gap-4 md:gap-5 border-b border-stroke py-4"
                 >
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                      <span className="font-display font-bold text-lg md:text-xl text-espresso">
+                      {/* Weight 500. This was the site's third heading system
+                          — `font-display font-bold` at 700, matching nothing
+                          else — and is now the shared `.type-sub` register. */}
+                      <span className="type-sub text-lg md:text-xl text-espresso">
                         {item.name}
                       </span>
                       <BadgeRow badges={item.badges} />
@@ -119,14 +226,20 @@ export default function MenuPage() {
                       the reason printed menus have used them for a century. */}
                   <span
                     aria-hidden
-                    className="hidden md:block flex-1 border-b border-dotted border-stroke translate-y-[-0.25rem]"
+                    className="hidden md:block flex-1 min-w-[1.5rem] border-b border-dotted
+                               border-stroke translate-y-[-0.25rem]"
                   />
-                  <div className="font-medium text-espresso shrink-0 tabular-nums">
+                  <div className="shrink-0 tabular-nums text-brass-ink font-medium">
                     {item.price}
                   </div>
                 </StaggerItem>
               ))}
             </Stagger>
+
+            {/* One dark beat partway down, so seven light sections in a row
+                get a break — and the jachnun cross-link lands where someone
+                is already reading about food rather than at the page foot. */}
+            {ci === 1 ? <MenuInterlude /> : null}
           </section>
         ))}
       </div>

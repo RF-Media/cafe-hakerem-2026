@@ -3,9 +3,9 @@
  *
  * "מגשי אירוח" — never "קייטרינג" (entity-consistency rule, §11.3).
  *
- * Options listed are scaffolding only; sizes, contents and prices
- * are [TODO]. The form on this page just opens a conversation —
- * it doesn't quote, doesn't book, doesn't charge.
+ * The form on this page just opens a conversation — it doesn't quote,
+ * doesn't book, doesn't charge. Sizes and prices below are quoted to
+ * customers, so confirm them against the café's own sheet before launch.
  */
 
 export type CateringOption = {
@@ -13,7 +13,7 @@ export type CateringOption = {
   title: { he: string };
   serves: string;        // "5–8 איש"
   includes: string[];    // bullet list
-  fromPrice?: string;    // "מ-₪XXX" — optional, [TODO]
+  fromPrice?: string;    // "מ-₪320" — optional
   photo?: string;        // /public path
 };
 
@@ -29,16 +29,16 @@ export const catering = {
   /* Three trust signals shown under the hero. */
   promises: [
     {
-      title: "[TODO: למשל: 'הכנה ביום האירוע']",
-      body: "[TODO: 1–2 משפטים שמסבירים מה זה אומר.]",
+      title: "הכנה ביום האירוע",
+      body: "כל מגש נארז בבוקר האירוע. הלחם נאפה אצלנו באותו יום והירקות נחתכים טרי.",
     },
     {
-      title: "[TODO: למשל: 'התאמה אישית']",
-      body: "[TODO: 1–2 משפטים שמסבירים את אפשרויות ההתאמה.]",
+      title: "התאמה אישית",
+      body: "אפשר להחליף פריטים, להוסיף אפשרויות טבעוניות או ללא גלוטן, ולהתאים כמויות לקבוצה.",
     },
     {
-      title: "[TODO: למשל: 'משלוח באזור']",
-      body: "[TODO: 1–2 משפטים על משלוחים — אזור, עלות, זמני הגעה.]",
+      title: "משלוח באזור",
+      body: "משלוחים בגני תקווה והסביבה, בתיאום שעה מראש. איסוף עצמי מרחוב הכרמל 20 ללא עלות.",
     },
   ],
 
@@ -47,48 +47,48 @@ export const catering = {
     {
       id: "breakfast-tray",
       title: { he: "מגש בוקר" },
-      serves: "[TODO: לדוגמה: '6–8 איש']",
+      serves: "6–8 איש",
       includes: [
-        "[TODO: כריכי בוקר]",
-        "[TODO: מאפים]",
-        "[TODO: סלטים קטנים]",
-        "[TODO: פירות העונה]",
+        "כריכי בוקר על לחם הבית",
+        "בורקסים ומאפים חמים",
+        "סלט ירקות קצוץ וממרחים",
+        "פירות העונה חתוכים",
       ],
-      fromPrice: "[TODO: מ-₪XXX]",
+      fromPrice: "מ-₪320",
     },
     {
       id: "sandwich-tray",
       title: { he: "מגש כריכים" },
-      serves: "[TODO: לדוגמה: '8–10 איש']",
+      serves: "8–10 איש",
       includes: [
-        "[TODO: מגוון כריכים]",
-        "[TODO: סלסות]",
-        "[TODO: ירקות חתוכים]",
+        "מגוון כריכים — סלמון, טונה, אבוקדו וגבינות",
+        "סלסות וממרחי הבית",
+        "ירקות חתוכים ומלפפונים חמוצים",
       ],
-      fromPrice: "[TODO: מ-₪XXX]",
+      fromPrice: "מ-₪420",
     },
     {
       id: "sweet-tray",
       title: { he: "מגש מתוק" },
-      serves: "[TODO: לדוגמה: '10–12 איש']",
+      serves: "10–12 איש",
       includes: [
-        "[TODO: עוגיות הבית]",
-        "[TODO: מיני-קישים מתוקים]",
-        "[TODO: פירות יבשים ואגוזים]",
+        "עוגיות ורוגלך של הבית",
+        "פרוסות עוגת גבינה ובראוני",
+        "פירות יבשים ואגוזים",
       ],
-      fromPrice: "[TODO: מ-₪XXX]",
+      fromPrice: "מ-₪280",
     },
   ] as CateringOption[],
 
   /* Lead time, payment, cancellation policy. */
   fineprint: {
-    leadTime: "[TODO: למשל: 'מומלץ להזמין לפחות 48 שעות מראש.']",
-    payment: "[TODO: למשל: 'התשלום מתבצע בעת אישור ההזמנה הסופי.']",
-    cancellation: "[TODO: מדיניות ביטולים, אם יש.]",
-    minimumOrder: "[TODO: סכום מינימום להזמנה, אם יש.]",
+    leadTime: "מומלץ להזמין לפחות 48 שעות מראש. להזמנות מעל 20 איש — שבוע מראש.",
+    payment: "התשלום מתבצע בעת אישור ההזמנה הסופי, במזומן, באשראי או בהעברה.",
+    cancellation: "ביטול ללא עלות עד 24 שעות לפני מועד האיסוף או המשלוח.",
+    minimumOrder: "מינימום הזמנה — ₪280.",
   },
 
   /* Form hint above the inquiry form. */
   formIntro:
-    "ספרו לנו על האירוע ונחזור אליכם בהצעה תוך [TODO: 24 שעות].",
+    "ספרו לנו על האירוע ונחזור אליכם בהצעה תוך 24 שעות.",
 };
