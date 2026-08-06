@@ -517,7 +517,6 @@ the preference — do not assume.
 | Ticker | `<Ticker>` | duplicate is `aria-hidden`, pauses on hover |
 | Counter | `<Counter>` | final value in the SSR HTML |
 | Scroll progress | `<ScrollProgress>` | `aria-hidden`, `scaleX` |
-| Split-flap board row | `<StaggerItem variant="flap">` | `rotateX` entrance only, once, `origin-top` |
 | Hover | — | ≤ 4px lift or ≤ 1.02 scale, `--dur-fast` |
 | Nav scroll state | `Nav` | scroll-linked, `--dur-base` |
 
@@ -1393,6 +1392,74 @@ in-flow line above the title — same information, zero clipping risk
 regardless of ancestor overflow, and it reserves its own line height on
 every card (via a same-height empty spacer on non-popular cards) so the row
 doesn't have three tall cards and one short one.
+
+**2026-08-06 — "מה חדש" becomes a static category-card grid; item counts removed.**
+Supersedes the layout half of the 2026-08-03 "מה חדש keeps its board" entry
+— the decision to keep this section's *content role* (owning the category
+index, distinct from the bento's dishes directly beneath it) still stands;
+only its *presentation* changes. Ten categories stacked as a single-column
+vertical list ran well below the fold at typical viewport heights, and the
+per-row item count (`X פריטים`) added visual noise without adding
+information a click into `/menu#id` doesn't already answer.
+
+A `<HorizontalRail>` pass (the same pin-scroll pattern `InstagramGallery`
+and the catering options section use) was tried first and reverted the same
+day: for ten short text cards it cost far more scroll distance than the
+horizontal travel needed, leaving the row stranded at the bottom edge of a
+mostly-empty pinned section — a bad trade when nothing here needs pinning
+in the first place. Shipped instead as a plain wrapping grid (`grid-cols-2
+sm:grid-cols-3 md:grid-cols-5`, `<Stagger>`/`<StaggerItem variant="tile">`
+for the entrance) — every category visible at once, no scroll interaction,
+no new motion primitive. Each category is a small card (numeral, title,
+hover arrow); the pastries 🔥 stays, still keyed off `cat.id === "pastries"`
+rather than a new content field, since it's a single one-off marker.
+
+The `flap` variant on `<StaggerItem>` (2026-08-02) is now unused by
+anything in the codebase and is deleted from `lib/motion.ts` and
+`components/motion/Stagger.tsx` — along with its row in §7's Allowed
+table — rather than kept as a compatibility shim, per this file's own
+standing rule that unused code is deleted, not preserved "just in case."
+
+**2026-08-06 — Instagram gallery: root-caused the `<PinnedScene>` failure and
+redesigned as a filterable bento grid.**
+"רגעים אחרונים" was reported completely broken — production-build screenshots
+(Playwright, desktop + mobile) showed the section as a solid `espresso-deep`
+void for the full length of its scroll range, with the gallery cards visible
+only in a sliver at the very top and bottom edges. Diagnosed with
+`getBoundingClientRect()`/`getComputedStyle()` on the live DOM mid-scroll:
+the sticky child's `top` was hundreds of pixels negative — i.e. it had never
+pinned at all and was scrolling with the page like a normal block. Root
+cause: `InstagramGallery`'s own outer wrapper carried `overflow-hidden`, and
+`position: sticky` breaks for any descendant once an ancestor between it and
+the viewport has `overflow` set to anything but `visible` (`hidden` included,
+per the CSS containing-block rules for sticky) — the same mechanism the
+"מה חדש" pin attempt above hit and worked around by dropping the pin
+entirely, just not diagnosed there. `<HorizontalRail>`/`<PinnedScene>` are
+not at fault — the catering page's `<HorizontalRail>` (`/catering`, "סוגי
+מגשים") sits under a plain `<section>` with no `overflow-hidden` ancestor
+and pins correctly; this was a one-off styling mistake on this section's
+wrapper, not a defect in the shared component.
+
+Given a second independent failure of the same pin mechanism on this page in
+one day, the rebuild does not re-attempt pinning here: the section now
+renders via `<Section tone="espresso">` (fixing the bug outright, since
+`Section` never sets `overflow-hidden`) with a CSS-grid bento layout —
+`grid-cols-6 md:auto-rows-[170px] md:grid-flow-row-dense`, a repeating span
+pattern for one hero tile + varied satellites — entered via the existing
+`<Stagger>`/`<StaggerItem variant="tile">` pair, the same primitives the menu
+bento (§ home page section 4) already uses, so the two bento grids on this
+page share one visual vocabulary. `dense` packing means a filtered subset
+never leaves a gap.
+
+The category chips (`instagramCategories`, exported from
+`content/instagram.ts` since 2026-05-28 but never rendered anywhere) are now
+wired up: real `<button aria-pressed>` filter controls that key the
+`<Stagger>` container, so switching categories fully remounts and
+recascades the grid rather than just swapping content instantly. Each tile
+is a real `<a aria-label={post.alt}>` — necessary because `<CafeImage>`'s
+placeholder branch is deliberately `aria-hidden` with no `alt` (2026-08-02),
+which would otherwise leave a placeholder-only tile with no accessible name
+at all.
 
 ---
 

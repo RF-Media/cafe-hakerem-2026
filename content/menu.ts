@@ -29,6 +29,11 @@ export type MenuCategory = {
   title: { he: string }; // Section heading
   blurb?: string;        // 1-line Hebrew intro shown under the heading
   items: MenuItem[];
+  /** Optional background photo for the "מה חדש" category tile on the home
+   *  page (`AlwaysRollingSection`). Categories without one keep the plain
+   *  text tile — this fills in per-category as photography arrives. */
+  image?: string;
+  imageAlt?: string;
 };
 
 export const menuCategories: MenuCategory[] = [
@@ -39,6 +44,8 @@ export const menuCategories: MenuCategory[] = [
     items: [
       { name: "בורקס תורכי בעבודת יד", description: "4 יחידות בורקס תורכי בעבודת יד", price: "₪46" },
     ],
+    image: "/images/menu/burekas.jpg",
+    imageAlt: "מגש בורקסים תורכיים טריים מהתנור של קפה הכרם, מוזהבים ומפוזרים במלח גס",
   },
   {
     id: "sandwiches",

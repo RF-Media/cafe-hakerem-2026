@@ -261,13 +261,12 @@ export default function HomePage() {
       {/* 2 — Three values */}
       <WhyVisitSection eyebrow={homeValues.eyebrow} title={homeValues.title} items={homeValues.items} />
 
-      {/* 3 — "מה חדש": the split-flap board. Owns the category index. */}
+      {/* 3 — "מה חדש": the category rail. Owns the category index. */}
       <AlwaysRollingSection
         categories={menuCategories}
         eyebrow={homeAlwaysRolling.eyebrow}
         title={homeAlwaysRolling.title}
         subtitle={homeAlwaysRolling.subtitle}
-        itemsLabel={homeMenu.itemsLabel}
         caption={homeAlwaysRolling.caption}
       />
 

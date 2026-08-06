@@ -1,24 +1,17 @@
 /**
- * "מה חדש" — the menu categories as a split-flap departure board.
+ * "מה חדש" — the menu categories as a static, evenly-arranged card grid.
  *
- * The board itself is the point and stays: rows that flip into place on
- * scroll, each one a real link into its section of /menu. What changed on
- * 2026-08-03 is the *weight*, because this section was fighting the menu
- * bento directly beneath it —
- *
- *   1. rows sat at `.type-display` (900) / 30px, one step off the bento's
- *      own headings, so two adjacent sections read at the same volume;
- *   2. the frame stacked a brass radial bloom, a 2px brass gradient cap, a
- *      `bg-black/20` fill, a per-row hinge rule, a per-row gradient sheen
- *      and five hover transitions — decoration on top of the one effect
- *      that was actually doing the work;
- *   3. the bento repeated the same seven categories in a ticker and the
- *      words "Always rolling" in its eyebrow.
- *
- * So: rows drop to `.type-sub` (500), the heading drops a register below
- * the bento's, the decoration comes off, and the bento no longer lists
- * categories at all — it shows dishes now. The flap stays.
+ * Replaces the vertical split-flap board (2026-08-02/08-03): ten rows
+ * stacked in a single column ran well below the fold at typical viewport
+ * heights. A `<HorizontalRail>` pin-scroll pass was tried and reverted the
+ * same day — for ten short text cards it burned far more scroll distance
+ * than it needed to and left them stranded at the bottom edge of a mostly
+ * empty section. A plain wrapping grid shows every category at once with
+ * no scroll interaction at all — see CLAUDE.md's Decision Log for the full
+ * reasoning. The content role is unchanged: this section still owns the
+ * category index, distinct from the menu bento's dishes below it.
  */
+import Image from "next/image";
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { IconArrow } from "@/components/ui/icons";
@@ -32,7 +25,6 @@ type AlwaysRollingSectionProps = {
   eyebrow: string;
   title: string;
   subtitle: string;
-  itemsLabel: string;
   caption: string;
 };
 
@@ -41,77 +33,104 @@ export function AlwaysRollingSection({
   eyebrow,
   title,
   subtitle,
-  itemsLabel,
   caption,
 }: AlwaysRollingSectionProps) {
   return (
     <section className="relative bg-espresso-deep text-cream py-20 md:py-28 overflow-hidden">
-      <div className={`${container} relative z-10`}>
-        <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
-          {/* Intro — sits beside the board on desktop, above it on mobile */}
-          <div className="md:col-span-4">
-            <Reveal>
-              <Eyebrow tone="brass">{eyebrow}</Eyebrow>
-            </Reveal>
-            <Reveal delay={0.05}>
-              {/* One register below the bento heading that follows. This
-                  section supports; that one leads. */}
-              <h2 className="mt-4 type-title text-2xl md:text-3xl">{title}</h2>
-            </Reveal>
-            <Reveal delay={0.1}>
-              <p className="mt-5 type-lede text-base text-cream/75 max-w-sm">{subtitle}</p>
-            </Reveal>
-          </div>
+      <div className={container}>
+        <Reveal>
+          <Eyebrow tone="brass">{eyebrow}</Eyebrow>
+        </Reveal>
+        <Reveal delay={0.05}>
+          <h2 className="mt-4 type-title text-3xl md:text-4xl max-w-xl">{title}</h2>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <p className="mt-5 type-lede text-base md:text-lg text-cream/75 max-w-md">{subtitle}</p>
+        </Reveal>
 
-          {/* The board */}
-          <div className="md:col-span-8">
-            <Reveal delay={0.1}>
-              <div className="rounded-card border border-cream/10 overflow-hidden [perspective:800px]">
-                <Stagger as="ul" stagger={0.07}>
-                  {categories.map((cat, i) => (
-                    <StaggerItem key={cat.id} as="li" variant="flap" className="origin-top block">
-                      <Link
-                        href={`/menu#${cat.id}`}
-                        className="group/row grid grid-cols-[auto_1fr_auto] items-center gap-4 md:gap-6
-                                   px-5 md:px-8 py-4 md:py-5
-                                   transition-colors duration-fast
-                                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass
-                                   focus-visible:ring-offset-2 focus-visible:ring-offset-espresso-deep
-                                   [&:not(:last-child)]:border-b [&:not(:last-child)]:border-cream/10"
-                      >
-                        <span className="type-index text-brass/70 w-8 md:w-10 shrink-0">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
+        <Stagger
+          className="mt-10 md:mt-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"
+          stagger={0.05}
+        >
+          {categories.map((cat, i) => (
+            <StaggerItem key={cat.id} variant="tile">
+              <Link
+                href={`/menu#${cat.id}`}
+                className={`group/card relative block h-full min-h-[132px] md:min-h-[152px]
+                           overflow-hidden rounded-card border border-cream/15
+                           transition-[border-color,transform] duration-fast
+                           hover:border-brass/40 hover:-translate-y-1
+                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass
+                           focus-visible:ring-offset-2 focus-visible:ring-offset-espresso-deep
+                           ${cat.image ? "" : "bg-cream/5 hover:bg-cream/10"}`}
+              >
+                {cat.image && (
+                  <>
+                    <Image
+                      src={cat.image}
+                      alt={cat.imageAlt ?? ""}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw"
+                      quality={75}
+                      className="object-cover"
+                    />
+                    {/* Dark curtain, at rest. Wipes away on hover/focus — the "swipe"
+                        reveal — in the same right-to-left direction ImageReveal uses
+                        for scroll reveals, so it reads as one house style. Reverses
+                        on mouse-leave: the curtain redraws and the photo darkens. */}
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 bg-gradient-to-b from-espresso-deep/85 to-espresso-deep/55
+                                 [clip-path:inset(0_0_0_0)]
+                                 transition-[clip-path] duration-slow ease-out-soft
+                                 group-hover/card:[clip-path:inset(0_0_0_100%)]
+                                 group-focus-visible/card:[clip-path:inset(0_0_0_100%)]"
+                    />
+                    {/* Permanent soft vignette behind the text only, independent of the
+                        curtain above — once the curtain wipes fully clear, this is what
+                        keeps the title readable against a bright, busy photo. */}
+                    <span
+                      aria-hidden
+                      className="absolute inset-6 rounded-2xl bg-espresso-deep/50 blur-xl"
+                    />
+                  </>
+                )}
 
-                        {/* Weight 500, not 900 — the flip is what makes this a
-                            board; the type doesn't also have to shout. */}
-                        <span className="type-sub text-lg md:text-2xl text-cream transition-colors duration-fast group-hover/row:text-brass inline-flex items-center gap-2">
-                          {cat.title.he}
-                          {cat.id === "pastries" && (
-                            <span aria-hidden="true" className="shrink-0">
-                              🔥
-                            </span>
-                          )}
-                        </span>
+                <div className="relative flex flex-col items-center justify-center gap-2 text-center h-full p-5">
+                  <span
+                    className={`type-index text-brass/70 transition-colors duration-fast
+                               group-hover/card:text-brass
+                               ${cat.image ? "[text-shadow:0_1px_6px_rgba(0,0,0,0.7)]" : ""}`}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
 
-                        <span className="flex items-center gap-3 shrink-0">
-                          <span className="hidden md:inline text-xs text-cream/40 tabular-nums">
-                            {cat.items.length} {itemsLabel}
-                          </span>
-                          <IconArrow className="w-4 h-4 text-brass opacity-0 transition-opacity duration-fast group-hover/row:opacity-100" />
-                        </span>
-                      </Link>
-                    </StaggerItem>
-                  ))}
-                </Stagger>
-              </div>
-            </Reveal>
+                  <span
+                    className={`type-sub text-base md:text-lg text-cream inline-flex items-center gap-2
+                               transition-colors duration-fast group-hover/card:text-brass
+                               ${cat.image ? "[text-shadow:0_1px_6px_rgba(0,0,0,0.7)]" : ""}`}
+                  >
+                    {cat.title.he}
+                    {cat.id === "pastries" && (
+                      <span aria-hidden="true" className="shrink-0">
+                        🔥
+                      </span>
+                    )}
+                  </span>
 
-            <Reveal delay={0.15}>
-              <p className="mt-4 text-xs md:text-sm text-cream/40 px-1">{caption}</p>
-            </Reveal>
-          </div>
-        </div>
+                  <IconArrow
+                    className="w-4 h-4 text-brass opacity-0 transition-opacity duration-fast
+                               group-hover/card:opacity-100"
+                  />
+                </div>
+              </Link>
+            </StaggerItem>
+          ))}
+        </Stagger>
+
+        <Reveal delay={0.15}>
+          <p className="mt-6 md:mt-8 text-xs md:text-sm text-cream/40">{caption}</p>
+        </Reveal>
       </div>
     </section>
   );

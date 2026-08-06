@@ -120,7 +120,7 @@ export const business = {
   // the business. Confirm each, and delete any profile that doesn't exist
   // rather than leaving a guess in place.
   socials: {
-    instagram: "https://instagram.com/cafehakerem",
+    instagram: "https://www.instagram.com/cafehakerem/",
     facebook:  "https://facebook.com/cafehakerem",
     google:    "https://g.page/cafehakerem",
     waze:      "https://waze.com/ul?ll=32.0619,34.8742&navigate=yes",

@@ -49,7 +49,6 @@ export const homeMenu = {
   title: "מה אופים השבוע.",
   cta: "לתפריט המלא",
   categoriesLabel: "קטגוריות",
-  itemsLabel: "פריטים",
 };
 
 export const homeAlwaysRolling = {

@@ -107,7 +107,10 @@ export function Footer() {
 
       <div className="border-t border-cream/10">
         <div className={`${container} py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs text-cream/50`}>
-          <div>© {new Date().getFullYear()} {business.name.he}. כל הזכויות שמורות.</div>
+          <div className="flex items-center gap-4">
+            <span>© {new Date().getFullYear()} {business.name.he}. כל הזכויות שמורות.</span>
+            <span dir="ltr">Powered by CoffeeStream ♡</span>
+          </div>
           <Link href="/privacy" className="hover:text-brass transition-colors">
             פרטיות
           </Link>

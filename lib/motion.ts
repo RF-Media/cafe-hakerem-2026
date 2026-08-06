@@ -78,20 +78,6 @@ export const tileItem = {
   },
 };
 
-/** Split-flap board entrance — rotates down from a top hinge, like a
- *  departure-board row dropping into place. Replays in reverse (flaps back
- *  up) on scroll-out via the shared `VIEWPORT`; pair with `origin-top` on
- *  the element (transform-origin isn't animatable). */
-export const flapItem = {
-  hidden: { opacity: 0, rotateX: -90, transformPerspective: 600 },
-  visible: {
-    opacity: 1,
-    rotateX: 0,
-    transformPerspective: 600,
-    transition: { duration: DUR.slow, ease: EASE_OUT_SOFT },
-  },
-};
-
 /** Nav dropdown panel — open/close, not an entrance. Both states carry a
  *  transition (unlike the one-directional reveal variants above) because
  *  `AnimatePresence` plays the `hidden` transition on exit, and this one
