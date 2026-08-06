@@ -13,30 +13,77 @@
 import { formatILS } from "@/lib/money";
 
 /* ────────────────────────────────────────────────────────────────
-   CONFIRM BEFORE LAUNCH — every number below is a real commitment.
+   Real pricing, confirmed by the café (2026-08-05) — supersedes the
+   2026-08-03 demo unit/bundle-threshold model. Jachnun is sold as four
+   fixed-size packages, not a continuous quantity, because that is how
+   the kitchen actually bakes and prices it: each size is its own line
+   on the board, not "N × a per-unit price".
 
    These are integer agorot, never shekel floats (see lib/money.ts).
-   The display strings further down are derived from them, so the hero
-   pill, the FAQ and the checkout total cannot drift apart.
-
-   CLAUDE.md §9 says never invent prices. These were set as demo values
-   so the ordering flow could be built and reviewed end to end; the café
-   confirms or replaces the four numbers before launch. Logged in the
-   Decision Log (2026-08-03).
    ──────────────────────────────────────────────────────────────── */
 
-const UNIT_AGOROT = 3800;
-const BUNDLE_UNIT_AGOROT = 3400;
-const BUNDLE_THRESHOLD = 4;
+export const PACKAGE_IDS = ["solo", "duo", "quintet", "deca"] as const;
+export type PackageId = (typeof PACKAGE_IDS)[number];
+
+export type JachnunPackage = {
+  id: PackageId;
+  /** Card title, e.g. "ג'חנון לזוג". */
+  title: string;
+  /** One-line description of what's in the package. */
+  description: string;
+  /** Number of jachnun units in the package — drives add-on caps and included-item counts. */
+  units: number;
+  totalAgorot: number;
+  /** Shows the "פופולרי" badge on the package card. */
+  popular: boolean;
+};
+
+/**
+ * `units` must stay unique across packages — receipts for orders already
+ * placed are reconstructed from the stored unit count alone (see
+ * `packageForUnits` in lib/jachnun-pricing.ts), not from a separate stored
+ * package id. Two packages sharing a unit count would make that lookup
+ * ambiguous.
+ */
+export const jachnunPackages: JachnunPackage[] = [
+  {
+    id: "solo",
+    title: "ג'חנון",
+    description: "ג'חנון עבודת יד. עם ביצה קשה, רסק וסחוג חריף.",
+    units: 1,
+    totalAgorot: 3500,
+    popular: true,
+  },
+  {
+    id: "duo",
+    title: "ג'חנון לזוג",
+    description: "2 ג'חנונים, עבודת יד. עם ביצים, רסק וחריף.",
+    units: 2,
+    totalAgorot: 6700,
+    popular: true,
+  },
+  {
+    id: "quintet",
+    title: "ג'חנון לחמישה",
+    description: "חמישה ג'חנונים, עבודת יד. עם ביצים, רסק וחריף.",
+    units: 5,
+    totalAgorot: 17000,
+    popular: true,
+  },
+  {
+    id: "deca",
+    title: "10 ג'חנון קומפלט",
+    description: "10 יחידות ג'חנון עם ביצים, רסק וסחוג.",
+    units: 10,
+    totalAgorot: 33900,
+    popular: false,
+  },
+];
+
+/** The single-unit package is the reference price for "you saved ₪X" on the bigger ones. */
+export const jachnunStartingPriceAgorot = jachnunPackages[0].totalAgorot;
 
 export const jachnunPricing = {
-  /** Price of one jachnun below the bundle threshold. */
-  unitAgorot: UNIT_AGOROT,
-  /** Price per jachnun once the order reaches `bundleThreshold` units. */
-  bundleUnitAgorot: BUNDLE_UNIT_AGOROT,
-  /** Units required for the bundle price. Applies to the whole order. */
-  bundleThreshold: BUNDLE_THRESHOLD,
-
   /**
    * Add-ons. Every jachnun unit ships with `includedPerUnit` of each at no
    * charge — that is the "מגיע עם הכל" promise on the page, and charging
@@ -83,9 +130,9 @@ export type AddonKey = keyof typeof jachnunPricing.addons;
 export const jachnun = {
   hero: {
     eyebrow: "ג'חנון של שבת",
-    title: "ג'חנון להזמנה מראש — איסוף בשבת בבוקר",
+    title: "ג'חנון הכרם",
     lede:
-      "קפה הכרם אופה ג'חנון תימני מסורתי לאיסוף בשבת בבוקר. " +
+      "בקפה הכרם אנחנו אופים ג'חנון תימני מסורתי לאיסוף בשבת בבוקר. " +
       "ההזמנה והתשלום מתבצעים מראש באתר, האיסוף בשבת בבוקר.",
   },
 
@@ -115,16 +162,12 @@ export const jachnun = {
 
   /* Display strings, derived so they can never contradict the numbers. */
   pricing: {
-    perUnit: `${formatILS(UNIT_AGOROT)} ליחידה`,
-    bundleNote: `מ-${BUNDLE_THRESHOLD} יחידות — ${formatILS(BUNDLE_UNIT_AGOROT)} ליחידה.`,
+    perUnit: `${formatILS(jachnunStartingPriceAgorot)} ליחידה`,
+    bundleNote: "אפשר גם בחבילה: זוג, חמישייה או עשרה - משתלם יותר ליחידה.",
   },
 
   /* Order-flow configuration. */
   form: {
-    minQuantity: 1,
-    maxQuantity: 20,
-    quantityHint: "מינימום 1, מקסימום 20 יחידות להזמנה אחת.",
-
     // Pickup slots are generated dynamically by /lib/jachnun-cutoff.ts.
     // The label below introduces the slot picker.
     slotLabel: "בחר/י חלון איסוף",
@@ -133,14 +176,28 @@ export const jachnun = {
       "הזמנות שיתקבלו לאחר מכן יישמרו לשבת הבאה.",
   },
 
-  /* Closing reassurance block above the FAQ. */
+  /* Standalone "how it works" walkthrough — its own section on the page,
+     not folded into the order card (see Decision Log 2026-08-05). Each
+     step keeps the original sentence, split into a short title (the scan
+     line) and a supporting clause (the detail), rather than inventing
+     new copy. */
   reassurance: {
-    title: "איך זה עובד",
+    eyebrow: "איך זה עובד",
+    title: "מהזמנה ועד לשולחן, בארבעה צעדים",
     steps: [
-      "בוחרים כמות ותוספות בטופס ההזמנה כאן באתר.",
-      "משלמים באתר — אשראי, Apple Pay, Google Pay, ביט או מזומן באיסוף.",
-      "מקבלים אישור הזמנה במסך (ושומרים את מספר ההזמנה).",
-      "מגיעים בשבת בבוקר לרחוב הכרמל 20 בחלון האיסוף שבחרתם.",
+      { title: "בוחרים כמות ותוספות", body: "בטופס ההזמנה כאן באתר." },
+      {
+        title: "משלמים באתר",
+        body: "אשראי, Apple Pay, Google Pay, ביט או מזומן באיסוף.",
+      },
+      {
+        title: "מקבלים אישור מיידי",
+        body: "במסך - כדאי לשמור את מספר ההזמנה.",
+      },
+      {
+        title: "מגיעים בשבת בבוקר",
+        body: "לרחוב הכרמל 20, בחלון האיסוף שבחרתם.",
+      },
     ],
   },
 

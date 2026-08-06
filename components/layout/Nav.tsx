@@ -209,7 +209,7 @@ export function Nav() {
       <nav
         aria-label="ניווט ראשי"
         className={
-          "w-full border-b transition-[background-color,box-shadow,border-color,padding,backdrop-filter] " +
+          "relative w-full border-b transition-[background-color,box-shadow,border-color,padding,backdrop-filter] " +
           "duration-[250ms] ease-out-soft " +
           (scrolled
             ? "bg-cream/95 backdrop-blur-lg border-stroke/70 shadow-sm"
@@ -320,9 +320,10 @@ export function Nav() {
             {open ? <IconClose className="w-6 h-6" /> : <IconMenu className="w-6 h-6" />}
           </button>
 
-          <div className="pointer-events-none absolute inset-x-0 -bottom-px overflow-hidden">
-            <ScrollProgress className={scrolled ? "opacity-100" : "opacity-0"} />
-          </div>
+        </div>
+
+        <div className="pointer-events-none absolute inset-x-0 -bottom-px overflow-hidden">
+          <ScrollProgress className={scrolled ? "opacity-100" : "opacity-0"} />
         </div>
       </nav>
 

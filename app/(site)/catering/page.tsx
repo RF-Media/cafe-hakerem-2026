@@ -23,9 +23,9 @@ import { cateringFAQs } from "@/content/faqs";
 import { business } from "@/content/business";
 
 export const metadata: Metadata = {
-  title: "מגשי אירוח להזמנה | קפה הכרם — גני תקווה",
+  title: "מגשי אירוח להזמנה | קפה הכרם - גני תקווה",
   description:
-    "מגשי אירוח של קפה הכרם — מגשי בוקר, כריכים ומתוקים לישיבות עבודה, אירועים משפחתיים וברית באזור גני תקווה. הזמנה דרך טופס הפנייה.",
+    "מגשי אירוח של קפה הכרם - מגשי בוקר, כריכים ומתוקים לישיבות עבודה, אירועים משפחתיים וברית באזור גני תקווה. הזמנה דרך טופס הפנייה.",
 };
 
 function serviceSchema() {
@@ -33,7 +33,7 @@ function serviceSchema() {
     "@context": "https://schema.org",
     "@type": "Service",
     serviceType: "Catering",
-    name: "מגשי אירוח — קפה הכרם",
+    name: "מגשי אירוח - קפה הכרם",
     provider: { "@id": `${business.siteUrl}/#cafe` },
     areaServed: { "@type": "Place", name: `${business.address.city.he} והסביבה` },
   };
@@ -47,13 +47,13 @@ export default function CateringPage() {
 
       <Breadcrumb items={[{ name: "מגשי אירוח" }]} />
 
-      <section className={`${container} pt-12 md:pt-20 pb-14 md:pb-16`}>
-        <div className="grid lg:grid-cols-12 gap-10 items-end">
+      <section className="relative flex items-center min-h-[70svh] md:min-h-[78svh]">
+        <div className={`${container} w-full grid lg:grid-cols-12 gap-10 items-center`}>
           <div className="lg:col-span-7">
             <div className="hero-fade" style={{ ["--d" as never]: 0 }}>
               <Eyebrow withRule>{catering.hero.eyebrow}</Eyebrow>
             </div>
-            <h1 className="mt-4 type-display text-4xl md:text-6xl text-espresso">
+            <h1 className="mt-5 type-display text-[2.75rem] leading-[1.03] md:text-7xl lg:text-8xl text-espresso">
               <SplitText text={catering.hero.title} delay={70} />
             </h1>
             <p
@@ -66,7 +66,7 @@ export default function CateringPage() {
           <div className="lg:col-span-5 hero-fade" style={{ ["--d" as never]: 520 }}>
             <CafeImage
               variant="tray"
-              alt="מגש אירוח של קפה הכרם — כריכים, מאפים וסלטים"
+              alt="מגש אירוח של קפה הכרם - כריכים, מאפים וסלטים"
               ratio="aspect-[5/3]"
               tone="olive"
               priority
@@ -111,7 +111,7 @@ export default function CateringPage() {
               <Card padding="lg" tone="cream-3" hoverable elevation="raised" className="h-full">
                 <CafeImage
                   variant="tray"
-                  alt={`${o.title.he} — מגש אירוח של קפה הכרם`}
+                  alt={`${o.title.he} - מגש אירוח של קפה הכרם`}
                   ratio="aspect-[5/3]"
                   tone="brass"
                   className="mb-5"

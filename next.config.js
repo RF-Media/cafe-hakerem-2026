@@ -11,7 +11,7 @@ const nextConfig = {
     imageSizes: [16, 32, 64, 96, 128, 256],
   },
   async headers() {
-    return [
+    const rules = [
       {
         source: "/:path*",
         headers: [
@@ -20,13 +20,21 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         ],
       },
-      {
+    ];
+    // Dev-mode /_next/static chunks (e.g. webpack.js) are not content-hashed —
+    // the same URL is reused across rebuilds. An immutable cache-control on
+    // them means the browser never re-fetches after a restart, so it keeps
+    // running an old webpack runtime against a new module map. Prod chunks
+    // are hashed, so this only needs to apply there.
+    if (process.env.NODE_ENV === "production") {
+      rules.push({
         source: "/_next/static/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
-      },
-    ];
+      });
+    }
+    return rules;
   },
   async redirects() {
     // [TODO: enumerate legacy WordPress URLs once Search Console access is available.

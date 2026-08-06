@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/ratelimit";
 import { getAvailableSlots, isAvailableSlot } from "@/lib/jachnun-cutoff";
 import { generateReceiptToken, generateReference, jachnunOrderSchema } from "@/lib/validation";
-import { priceOrder } from "@/lib/jachnun-pricing";
+import { packageForUnits, priceOrder } from "@/lib/jachnun-pricing";
 import { verifyMockPaymentToken } from "@/lib/mock-payment";
 import { buildReceipt, type Receipt, type ReceiptPaymentStatus } from "@/lib/order-receipt";
 import { formatILS } from "@/lib/money";
@@ -122,7 +122,7 @@ export async function POST(req: Request) {
   /* ── Money ──
      Recomputed from the selection. `data.totalAgorot` is only ever compared
      against, never used. */
-  const priced = priceOrder({ units: data.quantity, extras: data.extras });
+  const priced = priceOrder({ packageId: data.packageId, extras: data.extras });
   if (priced.totalAgorot !== data.totalAgorot) {
     return err("המחירים התעדכנו בזמן ההזמנה. בדקו את הסיכום ואשרו שוב.", 409, "total_mismatch");
   }
@@ -161,7 +161,7 @@ export async function POST(req: Request) {
       name: data.name,
       phone: data.phone,
       email: data.email ?? null,
-      quantity: data.quantity,
+      quantity: priced.units,
       extraTomato: data.extras.tomato,
       extraOlives: data.extras.olives,
       extraEgg: data.extras.egg,
@@ -198,7 +198,7 @@ export async function POST(req: Request) {
           name: data.name,
           phone: data.phone,
           email: data.email,
-          quantity: data.quantity,
+          quantity: priced.units,
           extraTomato: data.extras.tomato,
           extraOlives: data.extras.olives,
           extraEgg: data.extras.egg,
@@ -264,8 +264,12 @@ const devOrders = new Map<string, OrderRow>();
  * charged, and the receipt shows it.
  */
 function receiptFromRow(order: OrderRow): Receipt {
+  // The row stores the package's unit count, not its id — reconstructed here
+  // via the (unit count → package) reverse lookup, since every package has a
+  // distinct unit count (see content/jachnun.ts).
+  const pkg = packageForUnits(order.quantity);
   const priced = priceOrder({
-    units: order.quantity,
+    packageId: pkg?.id ?? null,
     extras: { tomato: order.extraTomato, olives: order.extraOlives, egg: order.extraEgg },
   });
 
@@ -308,20 +312,20 @@ async function notifyCafe(receipt: Receipt): Promise<void> {
         `<tr><td style="padding:4px 10px;">${escapeHtml(l.label)}${
           l.note ? ` (${escapeHtml(l.note)})` : ""
         }</td><td style="padding:4px 10px;">× ${l.qty}</td><td style="padding:4px 10px;">${
-          l.included ? "—" : formatILS(l.totalAgorot)
+          l.included ? "-" : formatILS(l.totalAgorot)
         }</td></tr>`,
     )
     .join("");
 
   const paymentLine =
     receipt.payment.status === "due_at_pickup"
-      ? `לתשלום במקום — ${formatILS(receipt.totalAgorot)} (${escapeHtml(receipt.payment.methodLabel)})`
-      : `שולם — ${formatILS(receipt.totalAgorot)} (${escapeHtml(receipt.payment.methodLabel)}${
+      ? `לתשלום במקום - ${formatILS(receipt.totalAgorot)} (${escapeHtml(receipt.payment.methodLabel)})`
+      : `שולם - ${formatILS(receipt.totalAgorot)} (${escapeHtml(receipt.payment.methodLabel)}${
           receipt.payment.last4 ? `, •••• ${escapeHtml(receipt.payment.last4)}` : ""
         })`;
 
   const html = rtlEmail(
-    `הזמנת ג'חנון חדשה — ${receipt.reference}`,
+    `הזמנת ג'חנון חדשה - ${receipt.reference}`,
     `
       <p>התקבלה הזמנת ג'חנון חדשה דרך האתר.</p>
       <table cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
@@ -341,5 +345,5 @@ async function notifyCafe(receipt: Receipt): Promise<void> {
     `,
   );
 
-  await sendNotification({ subject: `הזמנת ג'חנון חדשה — ${receipt.reference}`, html });
+  await sendNotification({ subject: `הזמנת ג'חנון חדשה - ${receipt.reference}`, html });
 }

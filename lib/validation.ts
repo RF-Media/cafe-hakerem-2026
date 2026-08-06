@@ -5,7 +5,7 @@
  * Error messages are Hebrew — they bubble up to the user.
  */
 import { z } from "zod";
-import { jachnun, jachnunPricing } from "@/content/jachnun";
+import { PACKAGE_IDS, jachnunPackages, jachnunPricing } from "@/content/jachnun";
 import { PAYMENT_METHODS } from "@/content/jachnun-order";
 import { isValidIsraeliMobile, normalizePhone } from "@/lib/phone";
 
@@ -22,7 +22,7 @@ export const phoneSchema = z
 export const nameSchema = z
   .string()
   .trim()
-  .min(2, "שם קצר מדי — נא להזין שם מלא.")
+  .min(2, "שם קצר מדי - נא להזין שם מלא.")
   .max(80, "שם ארוך מדי.");
 
 export const optionalEmailSchema = z
@@ -34,8 +34,9 @@ export const optionalEmailSchema = z
 
 /* ─── Jachnun order ────────────────────────────────────────────── */
 
-/** Ceiling on paid extras, mirroring `maxExtrasFor()` at the top of the range. */
-const MAX_EXTRAS = jachnun.form.maxQuantity * jachnunPricing.maxExtraPerUnit;
+/** Ceiling on paid extras, mirroring `maxExtrasFor()` at the largest package size. */
+const MAX_PACKAGE_UNITS = Math.max(...jachnunPackages.map((p) => p.units));
+const MAX_EXTRAS = MAX_PACKAGE_UNITS * jachnunPricing.maxExtraPerUnit;
 
 const extraCountSchema = z
   .number({ invalid_type_error: "כמות תוספת לא תקינה." })
@@ -47,14 +48,10 @@ export const jachnunOrderSchema = z.object({
   name: nameSchema,
   phone: phoneSchema,
   email: optionalEmailSchema,
-  quantity: z
-    .number({ invalid_type_error: "כמות לא תקינה." })
-    .int("כמות חייבת להיות מספר שלם.")
-    .min(jachnun.form.minQuantity, "יש להזמין לפחות יחידה אחת.")
-    .max(
-      jachnun.form.maxQuantity,
-      `להזמנות גדולות מ-${jachnun.form.maxQuantity} יחידות — נא לפנות בטלפון.`,
-    ),
+  // Jachnun is sold as fixed-size packages, not a continuous quantity — the
+  // total is derived server-side from the package definition, never from a
+  // client-supplied unit count or price.
+  packageId: z.enum(PACKAGE_IDS, { errorMap: () => ({ message: "חבילה לא תקינה." }) }),
   // Paid extras only. What every unit already includes for free is derived
   // server-side from the unit count — the client cannot ask for more of it.
   extras: z

@@ -24,9 +24,9 @@ import { homeFAQs } from "@/content/faqs";
 import { business } from "@/content/business";
 
 export const metadata: Metadata = {
-  title: "הסיפור שלנו | קפה הכרם — בית קפה בגני תקווה",
+  title: "הסיפור שלנו | קפה הכרם - בית קפה בגני תקווה",
   description:
-    "הסיפור של קפה הכרם — בית קפה בוטיקי בגבעת סביון, גני תקווה. הכירו את הבעלים, המסורת וההערכה של השכונה שהפכה את המקום לחלק מחייה.",
+    "הסיפור של קפה הכרם - בית קפה בוטיקי בגבעת סביון, גני תקווה. הכירו את הבעלים, המסורת וההערכה של השכונה שהפכה את המקום לחלק מחייה.",
 };
 
 function aboutSchema() {
@@ -68,19 +68,21 @@ export default function AboutPage() {
 
       <Breadcrumb items={[{ name: "עלינו" }]} />
 
-      <section className={`${container} pt-12 md:pt-20 pb-14 md:pb-16`}>
-        <div className="hero-fade" style={{ ["--d" as never]: 0 }}>
-          <Eyebrow withRule>{about.hero.eyebrow}</Eyebrow>
+      <section className="relative flex items-center min-h-[70svh] md:min-h-[78svh]">
+        <div className={`${container} w-full`}>
+          <div className="hero-fade" style={{ ["--d" as never]: 0 }}>
+            <Eyebrow withRule>{about.hero.eyebrow}</Eyebrow>
+          </div>
+          <h1 className="mt-5 type-display text-[2.75rem] leading-[1.03] md:text-7xl lg:text-8xl text-espresso max-w-4xl">
+            <SplitText text={about.hero.title} delay={70} />
+          </h1>
+          <p
+            className="hero-fade mt-6 max-w-prose-he type-lede text-base md:text-xl text-espresso-soft"
+            style={{ ["--d" as never]: 360 }}
+          >
+            {about.hero.lede}
+          </p>
         </div>
-        <h1 className="mt-4 type-display text-4xl md:text-6xl text-espresso max-w-4xl">
-          <SplitText text={about.hero.title} delay={70} />
-        </h1>
-        <p
-          className="hero-fade mt-6 max-w-prose-he type-lede text-base md:text-xl text-espresso-soft"
-          style={{ ["--d" as never]: 360 }}
-        >
-          {about.hero.lede}
-        </p>
       </section>
 
       {/* Story, set against a parallax gallery column. */}
@@ -139,7 +141,7 @@ export default function AboutPage() {
                     <CafeImage
                       variant="founder"
                       src={f.photo}
-                      alt={`${f.name} — ${f.role} בקפה הכרם`}
+                      alt={`${f.name} - ${f.role} בקפה הכרם`}
                       ratio="aspect-square"
                       tone="olive"
                       sizes="96px"

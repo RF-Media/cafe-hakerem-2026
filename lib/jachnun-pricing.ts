@@ -1,5 +1,5 @@
 /**
- * Jachnun order pricing — pure functions over `jachnunPricing`.
+ * Jachnun order pricing — pure functions over `jachnunPackages`.
  *
  * Imported by both the checkout UI and `/api/jachnun-order`. The API
  * recomputes the total from the selection and compares it to the number the
@@ -10,9 +10,9 @@
  * All amounts are integer agorot (see lib/money.ts).
  */
 
-import { jachnun, jachnunPricing, type AddonKey } from "@/content/jachnun";
+import { jachnunPackages, jachnunPricing, type AddonKey, type JachnunPackage, type PackageId } from "@/content/jachnun";
 
-export type { AddonKey };
+export type { AddonKey, PackageId };
 
 /** Paid extras, on top of what every unit already includes for free. */
 export type Extras = Record<AddonKey, number>;
@@ -32,40 +32,51 @@ export type PriceLine = {
 };
 
 export type PricedOrder = {
+  packageId: PackageId | null;
+  /** Jachnun units in the selected package. `0` when nothing is selected yet. */
+  units: number;
   lines: PriceLine[];
-  /** Effective per-jachnun price after the bundle rule. */
-  unitPriceAgorot: number;
-  bundleApplied: boolean;
-  /** What the bundle rule saved on this order. `0` when it did not apply. */
+  /** What the package saves versus buying `units` singles at the solo price. `0` for the solo package or an empty order. */
   savingsAgorot: number;
   totalAgorot: number;
 };
 
-/** How close the order is to the bundle price — drives the step-1 nudge. */
-export type BundleNudge = {
-  unitsAway: number;
-  bundleUnitAgorot: number;
-  savingsAgorot: number;
+const EMPTY_PRICED: PricedOrder = {
+  packageId: null,
+  units: 0,
+  lines: [],
+  savingsAgorot: 0,
+  totalAgorot: 0,
 };
 
 export const EMPTY_EXTRAS: Extras = { tomato: 0, olives: 0, egg: 0 };
 
 export const ADDON_KEYS = Object.keys(jachnunPricing.addons) as AddonKey[];
 
-/** Ceiling on paid extras of one kind, given the number of units ordered. */
-export function maxExtrasFor(units: number): number {
-  return Math.max(0, clampUnits(units) * jachnunPricing.maxExtraPerUnit);
+export function packageById(id: PackageId): JachnunPackage {
+  const pkg = jachnunPackages.find((p) => p.id === id);
+  if (!pkg) throw new Error(`Unknown jachnun package id: ${id}`);
+  return pkg;
 }
 
-export function clampUnits(units: number): number {
-  const n = Number.isFinite(units) ? Math.round(units) : jachnun.form.minQuantity;
-  return Math.min(jachnun.form.maxQuantity, Math.max(jachnun.form.minQuantity, n));
+/** Reverse lookup for reconstructing a receipt from a stored unit count (see content/jachnun.ts). */
+export function packageForUnits(units: number): JachnunPackage | undefined {
+  return jachnunPackages.find((p) => p.units === units);
+}
+
+export function unitsForPackage(id: PackageId | null): number {
+  return id ? packageById(id).units : 0;
+}
+
+/** Ceiling on paid extras of one kind, given the number of units in the selected package. */
+export function maxExtrasFor(units: number): number {
+  return Math.max(0, units) * jachnunPricing.maxExtraPerUnit;
 }
 
 /**
- * Bring extras back inside the cap. Called whenever the unit count drops —
- * otherwise lowering units from 5 to 1 would leave 15 paid tomato portions
- * silently attached to a one-jachnun order.
+ * Bring extras back inside the cap. Called whenever the selected package
+ * shrinks — otherwise switching from the ten-pack to a solo would leave 30
+ * paid tomato portions silently attached to a one-jachnun order.
  */
 export function clampExtras(units: number, extras: Extras): Extras {
   const cap = maxExtrasFor(units);
@@ -77,10 +88,9 @@ export function clampExtras(units: number, extras: Extras): Extras {
   return out;
 }
 
-export function unitPriceFor(units: number): number {
-  return units >= jachnunPricing.bundleThreshold
-    ? jachnunPricing.bundleUnitAgorot
-    : jachnunPricing.unitAgorot;
+/** The solo package IS the per-unit reference every other package's saving is measured against. */
+function soloUnitAgorot(): number {
+  return packageForUnits(1)?.totalAgorot ?? 0;
 }
 
 /**
@@ -89,20 +99,20 @@ export function unitPriceFor(units: number): number {
  * summary than silence, and it stops customers paying for extras they already
  * have.
  */
-export function priceOrder(input: { units: number; extras: Extras }): PricedOrder {
-  const units = clampUnits(input.units);
-  const extras = clampExtras(units, input.extras ?? EMPTY_EXTRAS);
+export function priceOrder(input: { packageId: PackageId | null; extras: Extras }): PricedOrder {
+  if (!input.packageId) return EMPTY_PRICED;
 
-  const unitPriceAgorot = unitPriceFor(units);
-  const bundleApplied = unitPriceAgorot === jachnunPricing.bundleUnitAgorot;
+  const pkg = packageById(input.packageId);
+  const units = pkg.units;
+  const extras = clampExtras(units, input.extras ?? EMPTY_EXTRAS);
 
   const lines: PriceLine[] = [
     {
-      key: "jachnun",
-      label: "ג'חנון",
-      qty: units,
-      unitAgorot: unitPriceAgorot,
-      totalAgorot: units * unitPriceAgorot,
+      key: "package",
+      label: pkg.title,
+      qty: 1,
+      unitAgorot: pkg.totalAgorot,
+      totalAgorot: pkg.totalAgorot,
     },
   ];
 
@@ -132,31 +142,13 @@ export function priceOrder(input: { units: number; extras: Extras }): PricedOrde
   }
 
   const totalAgorot = lines.reduce((sum, l) => sum + l.totalAgorot, 0);
-  const savingsAgorot = bundleApplied
-    ? units * (jachnunPricing.unitAgorot - jachnunPricing.bundleUnitAgorot)
-    : 0;
+  const savingsAgorot = Math.max(0, units * soloUnitAgorot() - pkg.totalAgorot);
 
-  return { lines, unitPriceAgorot, bundleApplied, savingsAgorot, totalAgorot };
-}
-
-/**
- * The step-1 upsell. Returns null once the bundle already applies, or when
- * the order is empty — a nudge shown to someone who has not chosen anything
- * yet reads as pressure, not help.
- */
-export function bundleNudge(units: number): BundleNudge | null {
-  const n = clampUnits(units);
-  const { bundleThreshold, unitAgorot, bundleUnitAgorot } = jachnunPricing;
-  if (n < 1 || n >= bundleThreshold) return null;
-  return {
-    unitsAway: bundleThreshold - n,
-    bundleUnitAgorot,
-    savingsAgorot: bundleThreshold * (unitAgorot - bundleUnitAgorot),
-  };
+  return { packageId: pkg.id, units, lines, savingsAgorot, totalAgorot };
 }
 
 /** Total number of physical items, for the "X פריטים" summary line. */
 export function itemCount(units: number, extras: Extras): number {
   const e = clampExtras(units, extras);
-  return clampUnits(units) + ADDON_KEYS.reduce((sum, k) => sum + e[k], 0);
+  return units + ADDON_KEYS.reduce((sum, k) => sum + e[k], 0);
 }

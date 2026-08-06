@@ -1,18 +1,18 @@
 import { describe, expect, it } from "vitest";
 import {
-  bundleNudge,
   clampExtras,
-  clampUnits,
   itemCount,
   maxExtrasFor,
+  packageById,
+  packageForUnits,
   priceOrder,
-  unitPriceFor,
+  unitsForPackage,
 } from "@/lib/jachnun-pricing";
 import { formatILS } from "@/lib/money";
-import { jachnun, jachnunPricing } from "@/content/jachnun";
+import { jachnun, jachnunPackages, jachnunPricing, jachnunStartingPriceAgorot } from "@/content/jachnun";
 
 const NO_EXTRAS = { tomato: 0, olives: 0, egg: 0 };
-const { unitAgorot, bundleUnitAgorot, bundleThreshold, addons, maxExtraPerUnit } = jachnunPricing;
+const { addons, maxExtraPerUnit } = jachnunPricing;
 
 describe("formatILS", () => {
   it("drops the decimals on whole shekels", () => {
@@ -26,74 +26,78 @@ describe("formatILS", () => {
   });
 });
 
-describe("bundle threshold", () => {
-  it("charges the full price one unit below the threshold", () => {
-    const units = bundleThreshold - 1;
-    const priced = priceOrder({ units, extras: NO_EXTRAS });
-    expect(priced.bundleApplied).toBe(false);
-    expect(priced.unitPriceAgorot).toBe(unitAgorot);
-    expect(priced.totalAgorot).toBe(units * unitAgorot);
+describe("packages", () => {
+  it("charges exactly the package's price with no extras", () => {
+    for (const pkg of jachnunPackages) {
+      const priced = priceOrder({ packageId: pkg.id, extras: NO_EXTRAS });
+      expect(priced.units).toBe(pkg.units);
+      expect(priced.totalAgorot).toBe(pkg.totalAgorot);
+    }
+  });
+
+  it("has no savings on the solo package", () => {
+    const priced = priceOrder({ packageId: "solo", extras: NO_EXTRAS });
     expect(priced.savingsAgorot).toBe(0);
   });
 
-  it("applies the bundle price to the whole order at the threshold", () => {
-    const priced = priceOrder({ units: bundleThreshold, extras: NO_EXTRAS });
-    expect(priced.bundleApplied).toBe(true);
-    expect(priced.unitPriceAgorot).toBe(bundleUnitAgorot);
-    expect(priced.totalAgorot).toBe(bundleThreshold * bundleUnitAgorot);
-    expect(priced.savingsAgorot).toBe(bundleThreshold * (unitAgorot - bundleUnitAgorot));
+  it("shows savings on a multi-unit package versus buying singles", () => {
+    const duo = packageById("duo");
+    const priced = priceOrder({ packageId: "duo", extras: NO_EXTRAS });
+    expect(priced.savingsAgorot).toBe(duo.units * jachnunStartingPriceAgorot - duo.totalAgorot);
+    expect(priced.savingsAgorot).toBeGreaterThan(0);
   });
 
-  it("keeps the bundle price above the threshold", () => {
-    expect(unitPriceFor(bundleThreshold + 3)).toBe(bundleUnitAgorot);
-  });
-});
-
-describe("bundleNudge", () => {
-  it("names the gap and the saving below the threshold", () => {
-    const nudge = bundleNudge(bundleThreshold - 1);
-    expect(nudge).not.toBeNull();
-    expect(nudge!.unitsAway).toBe(1);
-    expect(nudge!.savingsAgorot).toBe(bundleThreshold * (unitAgorot - bundleUnitAgorot));
+  it("returns an empty priced order when nothing is selected", () => {
+    const priced = priceOrder({ packageId: null, extras: NO_EXTRAS });
+    expect(priced.units).toBe(0);
+    expect(priced.lines).toHaveLength(0);
+    expect(priced.totalAgorot).toBe(0);
   });
 
-  it("goes quiet once the bundle already applies", () => {
-    expect(bundleNudge(bundleThreshold)).toBeNull();
-    expect(bundleNudge(bundleThreshold + 5)).toBeNull();
+  it("resolves a package by its unit count (receipt reconstruction)", () => {
+    for (const pkg of jachnunPackages) {
+      expect(packageForUnits(pkg.units)?.id).toBe(pkg.id);
+    }
+    expect(packageForUnits(9999)).toBeUndefined();
+  });
+
+  it("keeps unit counts unique across packages", () => {
+    const seen = new Set(jachnunPackages.map((p) => p.units));
+    expect(seen.size).toBe(jachnunPackages.length);
   });
 });
 
 describe("included add-ons", () => {
   it("gives every unit its free portion and charges nothing for it", () => {
-    const units = 3;
-    const priced = priceOrder({ units, extras: NO_EXTRAS });
+    const priced = priceOrder({ packageId: "quintet", extras: NO_EXTRAS });
     const included = priced.lines.filter((l) => l.included);
 
     expect(included).toHaveLength(2);
     for (const line of included) {
-      expect(line.qty).toBe(units);
+      expect(line.qty).toBe(priced.units);
       expect(line.totalAgorot).toBe(0);
     }
-    expect(priced.totalAgorot).toBe(units * unitAgorot);
+    expect(priced.totalAgorot).toBe(packageById("quintet").totalAgorot);
   });
 });
 
 describe("paid extras", () => {
-  it("adds each extra at its own price", () => {
-    const priced = priceOrder({ units: 2, extras: { tomato: 2, olives: 1, egg: 0 } });
+  it("adds each extra at its own price on top of the package price", () => {
+    const duo = packageById("duo");
+    const priced = priceOrder({ packageId: "duo", extras: { tomato: 2, olives: 1, egg: 0 } });
     expect(priced.totalAgorot).toBe(
-      2 * unitAgorot + 2 * addons.tomato.extraAgorot + 1 * addons.olives.extraAgorot,
+      duo.totalAgorot + 2 * addons.tomato.extraAgorot + 1 * addons.olives.extraAgorot,
     );
   });
 
   it("keeps the total equal to the sum of its own lines", () => {
-    const priced = priceOrder({ units: 7, extras: { tomato: 3, olives: 5, egg: 2 } });
+    const priced = priceOrder({ packageId: "deca", extras: { tomato: 3, olives: 5, egg: 2 } });
     const sum = priced.lines.reduce((acc, l) => acc + l.totalAgorot, 0);
     expect(priced.totalAgorot).toBe(sum);
   });
 
   it("never lists a not-included-by-default addon (egg) as included, only as a paid line", () => {
-    const priced = priceOrder({ units: 3, extras: { tomato: 0, olives: 0, egg: 2 } });
+    const priced = priceOrder({ packageId: "quintet", extras: { tomato: 0, olives: 0, egg: 2 } });
     const included = priced.lines.filter((l) => l.included);
     expect(included.every((l) => l.label !== addons.egg.label)).toBe(true);
     const eggLine = priced.lines.find((l) => l.key === "egg-extra");
@@ -110,17 +114,10 @@ describe("caps and clamping", () => {
     expect(clamped.egg).toBe(2 * maxExtraPerUnit);
   });
 
-  it("re-clamps extras when the unit count drops", () => {
-    // 5 units allow 15 extras; dropping to 1 unit must not leave 12 behind.
-    const clamped = clampExtras(1, { tomato: 12, olives: 0, egg: 0 });
+  it("re-clamps extras when the package shrinks", () => {
+    // The duo package allows 6 extras; dropping to solo must not leave 5 behind.
+    const clamped = clampExtras(unitsForPackage("solo"), { tomato: 12, olives: 0, egg: 0 });
     expect(clamped.tomato).toBe(maxExtraPerUnit);
-  });
-
-  it("clamps units to the configured order bounds", () => {
-    expect(clampUnits(0)).toBe(jachnun.form.minQuantity);
-    expect(clampUnits(9999)).toBe(jachnun.form.maxQuantity);
-    expect(clampUnits(Number.NaN)).toBe(jachnun.form.minQuantity);
-    expect(clampUnits(3.4)).toBe(3);
   });
 
   it("rejects negative extras", () => {
@@ -140,8 +137,6 @@ describe("itemCount", () => {
 
 describe("display strings", () => {
   it("keeps the marketing copy in step with the numbers", () => {
-    expect(jachnun.pricing.perUnit).toContain(formatILS(unitAgorot));
-    expect(jachnun.pricing.bundleNote).toContain(formatILS(bundleUnitAgorot));
-    expect(jachnun.pricing.bundleNote).toContain(String(bundleThreshold));
+    expect(jachnun.pricing.perUnit).toContain(formatILS(jachnunStartingPriceAgorot));
   });
 });

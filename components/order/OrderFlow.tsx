@@ -83,10 +83,10 @@ export function OrderFlow() {
   const step: OrderStepId = ORDER_STEPS[stepIndex];
   const stepCopy = orderCopy.steps[step];
   const priced = useMemo(
-    () => priceOrder({ units: draft.units, extras: draft.extras }),
-    [draft.units, draft.extras],
+    () => priceOrder({ packageId: draft.packageId, extras: draft.extras }),
+    [draft.packageId, draft.extras],
   );
-  const count = itemCount(draft.units, draft.extras);
+  const count = itemCount(priced.units, draft.extras);
   const maxIndex = furthestReachableStep(draft);
   const selectedSlot = slots?.find((s) => s.iso === draft.pickupSlotIso) ?? null;
 
@@ -199,7 +199,7 @@ export function OrderFlow() {
             name: draft.name,
             phone: draft.phone,
             email: draft.email || undefined,
-            quantity: draft.units,
+            packageId: draft.packageId,
             extras: draft.extras,
             pickupSlot: draft.pickupSlotIso,
             notes: draft.notes || undefined,
@@ -349,7 +349,7 @@ export function OrderFlow() {
 
         <div
           ref={contentPaneRef}
-          className="mx-auto w-full max-w-container px-6 md:px-10 lg:px-16 py-8 md:py-14 md:flex-1 md:min-h-0 md:overflow-y-auto"
+          className="mx-auto w-full max-w-container px-6 md:px-10 lg:px-16 py-6 md:py-10 md:flex-1 md:min-h-0 md:overflow-y-auto"
         >
         <div className="grid lg:grid-cols-[minmax(0,1fr)_340px] gap-10 lg:gap-14">
           <div className="min-w-0">
@@ -365,11 +365,11 @@ export function OrderFlow() {
               <h1
                 ref={headingRef}
                 tabIndex={-1}
-                className="md:mt-3 type-display text-3xl md:text-5xl text-espresso outline-none"
+                className="md:mt-2 type-display text-3xl md:text-5xl text-espresso outline-none"
               >
                 {stepCopy.title}
               </h1>
-              <p className="mt-4 type-lede text-base md:text-lg text-espresso-soft max-w-prose-he">
+              <p className="mt-3 type-lede text-base md:text-lg text-espresso-soft max-w-prose-he">
                 {stepCopy.lede}
               </p>
             </header>
@@ -377,7 +377,7 @@ export function OrderFlow() {
             {/* No `aria-live` here: focus moves to the step heading on every
                 change, which announces the new screen without re-reading the
                 entire step body on each keystroke inside it. */}
-            <div className="mt-8 md:mt-10">
+            <div className="mt-6 md:mt-8">
               <AnimatePresence mode="wait" initial={false}>
                 <m.div
                   key={step}
@@ -389,15 +389,14 @@ export function OrderFlow() {
                 >
                   {step === "quantity" ? (
                     <OrderStepQuantity
-                      units={draft.units}
-                      onChange={(value) => dispatch({ type: "units", value })}
-                      priced={priced}
+                      selectedId={draft.packageId}
+                      onSelect={(id) => dispatch({ type: "package", id })}
                     />
                   ) : null}
 
                   {step === "addons" ? (
                     <OrderStepAddons
-                      units={draft.units}
+                      units={priced.units}
                       extras={draft.extras}
                       onChange={(key, value) => dispatch({ type: "extra", key, value })}
                     />
@@ -450,14 +449,12 @@ export function OrderFlow() {
               </AnimatePresence>
             </div>
 
-            {/* Desktop actions: pinned to the bottom of the scrollable content
-                pane above, so the primary action is always in the fold
-                regardless of step height. On a phone these live in the
-                sticky bar instead. */}
-            <div
-              className="hidden md:flex items-center gap-4 mt-10 md:sticky md:bottom-0 md:z-10
-                         md:border-t md:border-stroke md:bg-cream md:py-4"
-            >
+            {/* Desktop actions: plain flow directly under the step content —
+                with the condensed step layout the whole column now fits one
+                fold, so a sticky bottom bar just left dead space between the
+                content and the button. On a phone these live in the sticky
+                bar instead. */}
+            <div className="hidden md:flex items-center gap-4 mt-8 pt-6 border-t border-stroke">
               <Button
                 variant="primary"
                 size="xl"

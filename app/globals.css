@@ -208,17 +208,6 @@
   from { transform: translate3d(0, 0, 0); }
   to   { transform: translate3d(50%, 0, 0); }
 }
-@keyframes flame-flicker {
-  0%, 100% { transform: scale(1, 1) rotate(-2deg); }
-  25%      { transform: scale(1.08, 0.94) rotate(2deg); }
-  50%      { transform: scale(0.95, 1.06) rotate(-1deg); }
-  75%      { transform: scale(1.05, 0.97) rotate(1deg); }
-}
-.flame-flicker {
-  transform-origin: 50% 90%;
-  animation: flame-flicker 1.6s var(--ease-in-out) infinite;
-}
-
 /* Per-word mask reveal for hero headlines. The word span holds a real
    text node — nothing is duplicated or aria-hidden — so the accessibility
    tree and the crawler's text extraction are identical to plain markup. */

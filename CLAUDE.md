@@ -1252,6 +1252,30 @@ unguessable URL. The optional email field is collected now so the address is
 already there when the email ships. Printing the confirmation (`@media print`
 in globals.css) is the useful-today stand-in for the generated PDF.
 
+**2026-08-04 — Real menu replaces the 2026-08-03 placeholder set; categories
+restructured to match.**
+The café supplied its actual menu and pricing (from its ordering-system
+export). This replaces every price and item in `content/menu.ts` — not just
+the four demo add-on prices already flagged — and the ten categories below
+replace the previous seven (`coffee`, `breakfast`, `sandwiches`, `salads`,
+`pastries`, `kids`, `desserts`). New set: `burekas`, `sandwiches`, `salads`,
+`specials`, `pastries`, `cakes`, `drinks`, `juices`, `soft-drinks`,
+`coffee-products`. `menuHighlights` (the home-page bento) now points at six
+of the café's own "המוזמנים ביותר" (most-ordered) items, one per category
+for spread. `Nav`'s menu dropdown and the split-flap board on the home page
+needed no code change — both already derive their rows from
+`menuCategories` — so the swap was a single content file plus the `/menu`
+metadata description, which still named the removed `breakfast`/`coffee`
+categories.
+
+Two things from the old menu are not in the café's supplied list and were
+therefore dropped rather than carried forward as guesses: a hot-coffee
+section (espresso/cappuccino/etc.) and a dedicated kids' menu. Two FAQ
+answers still assert both as fact (`content/faqs.ts`: "יש תפריט ילדים
+ייעודי" and a breakfast-pricing Q&A) — flagged for the café to confirm
+rather than silently rewritten, since §9 forbids inventing facts and this
+cuts the other way: an existing claim may now be stale, not a gap to fill.
+
 **2026-08-04 — Mid-project CWV/SEO/GEO audit; notification emails detached
 from the response path.**
 Ran a full audit against PageSpeed Insights' four categories plus GEO,
@@ -1302,6 +1326,73 @@ measurement protocol added to §7 exists so this reasoning — check
 `transferSize` before optimizing further, don't chase a lab number that
 isn't backed by an actual byte-weight problem — doesn't need to be
 rediscovered next time.
+
+**2026-08-05 — Jachnun sold as four fixed packages, replacing the
+continuous quantity + bundle-threshold model.**
+The café supplied real pricing as four named, flat-priced bundles — solo
+(₪35), pair (₪67), five-pack (₪170), ten-pack (₪339) — not a per-unit price
+with a bulk discount above a threshold. This is a pricing-model change, not
+just new numbers: `content/jachnun.ts` now exports `jachnunPackages`, an
+ordered array of `{ id, title, description, units, totalAgorot, popular }`,
+replacing `unitAgorot` / `bundleUnitAgorot` / `bundleThreshold`. Step 1 of
+the checkout (`OrderStepQuantity`) is a set of four selectable price cards
+(native radio inputs under styled `<label>` cards, so arrow-key navigation
+and screen-reader grouping come from the platform, not custom JS) instead
+of the `QuantityStepper`; there is no free-quantity fallback; a customer
+who wants a size these four don't cover calls the café, same as an order
+over the old 20-unit ceiling always did.
+
+`OrderDraft.units: number` became `OrderDraft.packageId: PackageId | null`
+throughout the checkout (state, `OrderFlow`, the API payload, the Zod
+schema). `lib/jachnun-pricing.ts`'s `priceOrder()` now takes a `packageId`
+and looks up the package's flat price instead of computing `units × rate`;
+`bundleNudge` and `unitPriceFor` are gone since there is no continuous range
+to nudge across. The "you saved ₪X" line on multi-unit packages is still
+shown — it is now the package price compared against `units × soloPrice`
+(the solo package doubles as the per-unit reference) rather than a
+threshold discount.
+
+No Prisma migration: `JachnunOrder.quantity` still stores the package's
+unit count, and a receipt for an already-placed order reconstructs which
+package that was via a reverse lookup, `packageForUnits()`, matching the
+stored unit count back to a package. This only works because every
+package's `units` is distinct (1/2/5/10) — a comment on `jachnunPackages`
+in content/jachnun.ts states this invariant so a future package sharing a
+unit count with an existing one doesn't silently break receipt
+reconstruction. Storing `packageId` as its own column would remove that
+constraint, but was judged unnecessary migration weight for what four
+fixed, distinct package sizes already guarantee.
+
+**2026-08-05 — Step 1 gets a +/- stepper back, cycling the 4 packages rather
+than reintroducing free quantity.**
+The all-card layout was two problems at once: the "פופולרי" badge, an
+absolute `-top-3` element, had no reserved space above the card row and
+read as clipped, and four full-height cards in a 2×2 grid pushed the "next"
+button below the fold on a normal laptop viewport inside the fixed-height
+app shell (`OrderFlow`'s desktop content pane scrolls internally — see
+2026-08-03 "root layout split" — so anything taller than the pane hides the
+CTA, not just requires a page scroll).
+
+This does **not** reopen the 2026-08-05 flat-package pricing decision
+above: the stepper's number is `jachnunPackages[i].units`, stepping through
+the same four fixed indices (1/2/5/10), never an arbitrary integer. There is
+still no per-unit price and no fifth size — a customer who wants one still
+calls the café. The stepper is a second, always-in-sync control for the
+identical selection the cards make: clicking a card moves the stepper's
+number, and +/- moves the highlighted card. Pressing +/- with nothing
+selected yet lands on the first package (solo) rather than skipping to the
+second, so the control never appears to jump.
+
+Cards themselves shrank from a portrait, description-bearing layout to a
+single landscape row: description text is `sr-only` now (screen readers
+still get "עם ביצה קשה, רסק וסחוג חריף" per package; sighted users get title
++ price + per-unit + savings only), the radio-dot indicator was dropped in
+favour of the existing border/background selected-state treatment, and the
+popular badge moved from an overflowing absolute corner tag to a normal
+in-flow line above the title — same information, zero clipping risk
+regardless of ancestor overflow, and it reserves its own line height on
+every card (via a same-height empty spacer on non-popular cards) so the row
+doesn't have three tall cards and one short one.
 
 ---
 

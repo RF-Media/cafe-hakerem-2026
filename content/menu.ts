@@ -1,11 +1,12 @@
 /**
  * Menu content for /menu.
  *
- * Filled 2026-08-03 at the café's explicit instruction, overriding the
- * original "structure only, never invent prices" policy this file used to
- * carry. See the Decision Log in CLAUDE.md. Prices are a realistic 2026
- * boutique-café schedule for גני תקווה and must be confirmed against the
- * counter board before the site goes live.
+ * Replaced 2026-08-04 with the café's real menu and pricing, supplied
+ * directly by the café — supersedes the 2026-08-03 placeholder set (which
+ * had invented prices flagged "confirm before launch"). Categories changed
+ * shape along with the prices: the old coffee/breakfast/kids sections are
+ * gone because the café's list doesn't include them, replaced by the ten
+ * real sections below. See the Decision Log in CLAUDE.md.
  *
  * Categories are ordered the way they should appear on /menu. Each `id` is
  * a live `#fragment` target and an IntersectionObserver key in
@@ -32,147 +33,194 @@ export type MenuCategory = {
 
 export const menuCategories: MenuCategory[] = [
   {
-    id: "coffee",
-    title: { he: "קפה ושתייה חמה" },
-    blurb: "תערובת בית של ערביקה מקלייה בינונית, נטחנת טרי לכל כוס. חלב שקדים, שיבולת שועל או סויה ללא תוספת תשלום.",
+    id: "burekas",
+    title: { he: "בורקס הכרם" },
+    blurb: "בורקס תורכי בעבודת יד, מוכן במטבח שלנו לפי מתכון מסורתי.",
     items: [
-      { name: "אספרסו", price: "₪10" },
-      { name: "אספרסו כפול", price: "₪12" },
-      { name: "מקיאטו", price: "₪11" },
-      { name: "קפה הפוך קטן", price: "₪14" },
-      { name: "קפה הפוך גדול", price: "₪16" },
-      { name: "קפוצ'ינו", price: "₪15" },
-      { name: "אמריקנו", price: "₪13" },
-      { name: "קורטדו", price: "₪13" },
-      { name: "פלאט וייט", price: "₪16" },
-      { name: "אייס קפה", description: "אספרסו כפול על קרח, עם או בלי חלב", price: "₪16" },
-      { name: "אייס לאטה", price: "₪18" },
-      { name: "מאצ'ה לאטה", price: "₪19", badges: ["vegetarian", "new"] },
-      { name: "צ'אי לאטה", price: "₪17", badges: ["vegetarian"] },
-      { name: "שוקו חם", description: "שוקולד מריר מומס בחלב מוקצף", price: "₪16", badges: ["vegetarian"] },
-      { name: "תה צמחים", description: "נענע, לואיזה, קמומיל או תערובת הבית", price: "₪12", badges: ["vegan", "gluten-free"] },
-    ],
-  },
-  {
-    id: "breakfast",
-    title: { he: "ארוחות בוקר" },
-    blurb: "מוגשות מהפתיחה ועד 12:30, ובסופי שבוע עד 13:00. כל ארוחה מגיעה עם לחם הבית וסלט ירקות קצוץ.",
-    items: [
-      {
-        name: "ארוחת בוקר הכרם",
-        description: "שתי ביצים כרצונכם, גבינות, סלט ירקות, ממרחים, לחם הבית ושתייה חמה",
-        price: "₪62",
-        badges: ["vegetarian"],
-      },
-      {
-        name: "בוקר זוגי",
-        description: "ארוחת הכרם לשניים, עם מגוון גבינות מורחב ושתי שתייה חמה",
-        price: "₪118",
-        badges: ["vegetarian"],
-      },
-      {
-        name: "שקשוקה",
-        description: "ברוטב עגבניות של הבית, עם פטה ולחם הבית",
-        price: "₪56",
-        badges: ["vegetarian", "spicy"],
-      },
-      {
-        name: "בוקר טבעוני",
-        description: "טופו מוקפץ, אבוקדו, טחינה, ירקות העונה ולחם מחמצת",
-        price: "₪58",
-        badges: ["vegan"],
-      },
-      {
-        name: "יוגורט וגרנולה",
-        description: "יוגורט כבשים, גרנולה של הבית, פירות העונה ודבש",
-        price: "₪38",
-        badges: ["vegetarian"],
-      },
-      {
-        name: "לחם, ביצים ומטבל",
-        description: "ביצת עין, טחינה גולמית, זעתר ושמן זית",
-        price: "₪42",
-        badges: ["vegetarian"],
-      },
+      { name: "בורקס תורכי בעבודת יד", description: "4 יחידות בורקס תורכי בעבודת יד", price: "₪46" },
     ],
   },
   {
     id: "sandwiches",
-    title: { he: "כריכים וטוסטים" },
-    blurb: "על לחם מחמצת או לחמנייה של הבית, לאכול כאן או לקחת.",
+    title: { he: "כריכים" },
+    blurb: "טוסטים ופוקאצ'ות אפויות אצלנו, לאכול כאן או לקחת.",
     items: [
-      { name: "טוסט גבינות", description: "מוצרלה, קשקבל ועגבנייה", price: "₪38", badges: ["vegetarian"] },
-      { name: "כריך סלמון", description: "סלמון מעושן, גבינת שמנת, בצל סגול וצלפים", price: "₪56" },
-      { name: "כריך טונה", description: "טונה, ביצה קשה, מלפפון חמוץ וחסה", price: "₪42" },
-      { name: "כריך אבוקדו", description: "אבוקדו, טחינה, עגבנייה וירקות העונה", price: "₪44", badges: ["vegan"] },
-      { name: "קרואסון גבינה", description: "קרואסון חמאה עם גבינת שמנת וירקות", price: "₪38", badges: ["vegetarian"] },
-      { name: "לחם הבית עם ממרחים", description: "טחינה, מטבוחה וחמאת עשבים", price: "₪34", badges: ["vegetarian"] },
+      { name: "טוסט ספיישל", description: "לחם קסטן, גבינת גאודה, בצל מקורמל וביצה קשה", price: "₪42", badges: ["vegetarian"] },
+      { name: "טוסט בהרכבה", description: "טוסט בלחם קסטן לבן בהרכבה אישית", price: "₪39" },
+      {
+        name: "פוקאצ'ה קפרזה רומאית",
+        description: "פוקאצ'ה דאבל קראסט עם שמנת, פסטו, עגבנייה, רוקט, בלסמי מצומצם ומוצרלה פרסקה",
+        price: "₪52",
+        badges: ["vegetarian"],
+      },
+      {
+        name: "פוקאצ'ה טוניסאית",
+        description: "פוקאצ'ה רומאית עם סלט טונה, לימון כבוש, אריסה פיקנטית, ביצה קשה ועלי רוקט",
+        price: "₪49",
+        badges: ["spicy"],
+      },
+      {
+        name: "פוקאצ'ה כמהין",
+        description: "פוקאצ'ה עם שמנת, מנצ'גו כמהין, רוקט וארטישוק אלה רומנה",
+        price: "₪49",
+        badges: ["vegetarian"],
+      },
+      {
+        name: "פוקאצ'ת סביח",
+        description: "טחינה אסלית, חצילים קלויים, בצל מקורמל, פרוסות עגבנייה ועלי רוקט",
+        price: "₪49",
+        badges: ["vegan"],
+      },
+      {
+        name: "כריך אבוקדו",
+        description: "ממרח אבוקדו, ביצה קשה, עגבנייה, צנונית וחסה לליק, בתיבול \"על הבייגל\", בפוקאצ'ה אישית מחיטה מלאה",
+        price: "₪39",
+        badges: ["vegetarian"],
+      },
+      {
+        name: "כריך גאודה",
+        description: "גבינת שמנת, ממרח עגבניות מיובשות, גאודה הולנדית, חסה לליק ופרוסות עגבנייה בלחם כוסמין",
+        price: "₪29",
+        badges: ["vegetarian"],
+      },
+      {
+        name: "ביס סלט ביצים ובצל מקורמל",
+        description: "סלט ביצים עשיר עם בצל מקורמל, עגבנייה וחסה לליק, בלחמניית ביס מחיטה מלאה",
+        price: "₪27",
+        badges: ["vegetarian"],
+      },
+      {
+        name: "כריך סלמון",
+        description: "גבינת שמנת, סלמון מעושן נורווגי, תיבול \"על הבייגל\", חסה לליק וגפרורי סלק, בלחם כוסמין",
+        price: "₪34",
+      },
+      {
+        name: "פוקאצ'ה בטטה",
+        description: "פוקאצ'ה רומאית עם גבינת שמנת, בטטה מתקתקה אפויה בתנור, בצל ירוק וגבינת פטה",
+        price: "₪49",
+        badges: ["vegetarian"],
+      },
     ],
   },
   {
     id: "salads",
     title: { he: "סלטים" },
-    blurb: "ירקות מהשוק, נחתכים בבוקר. אפשר להוסיף ביצה קשה, אבוקדו או פטה.",
+    blurb: "ירקות טריים מהשוק, מוגשים בגודל ארוחה.",
     items: [
       {
-        name: "סלט הכרם",
-        description: "ירקות קצוצים דק, נענע, גרעיני חמנייה ולימון",
-        price: "₪52",
-        badges: ["vegan", "gluten-free"],
-      },
-      {
-        name: "סלט קיסר",
-        description: "חסה רומאית, קרוטונים, פרמזן ורוטב הבית",
-        price: "₪54",
-        badges: ["vegetarian"],
-      },
-      {
-        name: "סלט עדשים",
-        description: "עדשים שחורות, בטטה צלויה, רוקט וויניגרט הדרים",
-        price: "₪48",
-        badges: ["vegan", "gluten-free"],
-      },
-      {
         name: "סלט יווני",
-        description: "מלפפון, עגבנייה, פלפל, זיתי קלמטה ופטה",
-        price: "₪50",
+        description: "מיקס חסות, מלפפון, עגבנייה, פלפל, זיתי קלמטה, בצל סגול וגבינת פטה, בתיבול שמן זית ולימון טרי",
+        price: "₪64",
+        badges: ["vegetarian", "gluten-free"],
+      },
+      {
+        name: "סלט קפרזה",
+        description: "חסה קראנצ'ית, עלי רוקט, שרי בצבעים, קרעי מוצרלה פרסקה, בצל סגול ובלסמי מצומצם, עם נגיעות פסטו בזיליקום, מוגש עם חומץ בלסמי",
+        price: "₪69",
         badges: ["vegetarian", "gluten-free"],
       },
     ],
   },
   {
+    id: "specials",
+    title: { he: "מיוחדים" },
+    blurb: "מנות שמצטרפות לתפריט מדי פעם, לפי מה שטרי באותו שבוע.",
+    items: [
+      {
+        name: "מוזלי הבית",
+        description: "יוגורט 4%, ענבים ואוכמניות וגרנולת ביתית. הפירות במוזלי עשויים להשתנות לפי העונה - ניתן לבקש דבש או סילאן בהערות",
+        price: "₪31",
+        badges: ["vegetarian"],
+      },
+    ],
+  },
+  {
     id: "pastries",
-    title: { he: "מאפים ובורקסים" },
+    title: { he: "מאפים" },
     blurb: "נאפים אצלנו כל בוקר. מי שמגיע מוקדם תופס אותם חמים מהתנור.",
     items: [
-      { name: "בורקס גבינה", price: "₪18", badges: ["vegetarian"] },
-      { name: "בורקס תפוחי אדמה", price: "₪18", badges: ["vegan"] },
-      { name: "קרואסון חמאה", price: "₪14", badges: ["vegetarian"] },
-      { name: "קרואסון שוקולד", price: "₪16", badges: ["vegetarian"] },
-      { name: "מאפה קינמון", price: "₪16", badges: ["vegetarian"] },
-      { name: "רוגלך", description: "יחידה", price: "₪8", badges: ["vegetarian"] },
+      { name: "קרואסון שוקולד", price: "₪18", badges: ["vegetarian"] },
+      { name: "קרואסון שקדים", price: "₪22", badges: ["vegetarian"] },
+      { name: "קרואסון חמאה", price: "₪18", badges: ["vegetarian"] },
+      { name: "פאן סוויס", description: "מאפה חמאה מדופדף במילוי קרם פטיסייר ושוקולד צ'יפס", price: "₪23", badges: ["vegetarian"] },
+      { name: "סינבון עננים", description: "רול קינמון בציפוי קרם ריבת חלב וניל", price: "₪34", badges: ["vegetarian"] },
+      { name: "3 רוגלך", description: "3 יחידות", price: "₪20", badges: ["vegetarian"] },
+      {
+        name: "מאפה ריקוטה ותותים",
+        description: "מאפה במילוי ריקוטה ותותים. הפרי במאפה משתנה לפי העונה (אוכמניות/תותים)",
+        price: "₪32",
+        badges: ["vegetarian"],
+      },
+      {
+        name: "ספוליאטלה איטלקי",
+        description: "4 יחידות. מאפה מדופדף במילוי ריקוטה מאיטליה, בזילוף קרם פיסטוק או נוטלה לבחירה",
+        price: "₪44",
+        badges: ["vegetarian"],
+      },
     ],
   },
   {
-    id: "kids",
-    title: { he: "תפריט ילדים" },
-    blurb: "מנות קטנות לגילאי עשר ומטה, מגיעות עם מיץ או מים.",
+    id: "cakes",
+    title: { he: "עוגות ועוגיות" },
+    blurb: "אפויות במטבח שלנו, משתנות לפי מה שיצא באותו יום.",
     items: [
-      { name: "טוסט ילדים", description: "גבינה צהובה בלחם לבן", price: "₪26", badges: ["vegetarian"] },
-      { name: "פסטה חמאה או רוטב עגבניות", price: "₪32", badges: ["vegetarian"] },
-      { name: "פנקייק ילדים", description: "שתי יחידות עם סילאן או ריבה", price: "₪28", badges: ["vegetarian"] },
+      { name: "פרוסת עוגת גבינה באסקית", price: "₪44", badges: ["vegetarian"] },
+      { name: "פרוסת עוגת גזר", price: "₪24", badges: ["vegetarian"] },
+      { name: "פרוסת עוגת תפוזים", price: "₪23", badges: ["vegetarian"] },
+      { name: "כדורי שוקולד", description: "3 יחידות", price: "₪17", badges: ["vegetarian"] },
+      { name: "קוביות בראוניז \"חלומות\"", description: "4 יחידות", price: "₪24", badges: ["vegetarian"] },
+      { name: "פרוסת עוגת גבינה פירות יער אפויה", price: "₪42", badges: ["vegetarian"] },
     ],
   },
   {
-    id: "desserts",
-    title: { he: "קינוחים" },
-    blurb: "אפויים במטבח שלנו, משתנים לפי מה שיצא באותו יום.",
+    id: "drinks",
+    title: { he: "משקאות" },
+    blurb: "קפה קר, תה וצ'אי - מוגשים לאורך כל היום.",
     items: [
-      { name: "עוגת גבינה אפויה", price: "₪28", badges: ["vegetarian"] },
-      { name: "בראוני שוקולד", price: "₪26", badges: ["vegetarian"] },
-      { name: "עוגת שוקולד חמה", description: "מוגשת עם כדור גלידת וניל", price: "₪28", badges: ["vegetarian"] },
-      { name: "מלבי", description: "מי ורדים, פיסטוק וסילאן", price: "₪24", badges: ["vegetarian", "gluten-free"] },
-      { name: "פאי תפוחים", price: "₪28", badges: ["vegetarian"] },
+      { name: "חליטת תה קר", description: "חליטה קרה, נענע ולימון", price: "₪21", badges: ["vegan", "gluten-free"] },
+      { name: "מאצ'ה קרה", description: "מאצ'ה של MIX&MATCHA, מוגש בבקבוק", price: "₪27", badges: ["vegetarian"] },
+      {
+        name: "צ'אי מסאלה",
+        description: "משקה על בסיס תערובת תבלינים הודית מתקתקה, מוגש עם מקל קינמון",
+        price: "₪23",
+        badges: ["vegetarian"],
+      },
+      { name: "קפה קר", description: "חלב, קוביות קרח ואספרסו. ניתן לבקש חיזוק אספרסו בהערות", price: "₪22", badges: ["vegetarian"] },
+      { name: "אמריקנו קר", description: "מים, קוביות קרח ואספרסו כפול", price: "₪20", badges: ["vegan", "gluten-free"] },
+    ],
+  },
+  {
+    id: "juices",
+    title: { he: "מיצים סחוטים" },
+    blurb: "סחוטים טריים כל בוקר, בלי תוספת סוכר.",
+    items: [
+      { name: "רימונים", price: "₪25", badges: ["vegan", "gluten-free"] },
+      { name: "לימונענע", price: "₪25", badges: ["vegan", "gluten-free"] },
+      { name: "תפוחים", price: "₪25", badges: ["vegan", "gluten-free"] },
+      { name: "תפוזים", price: "₪25", badges: ["vegan", "gluten-free"] },
+      { name: "תפוגזר כורכום", description: "תפוזים, גזר וכורכום", price: "₪25", badges: ["vegan", "gluten-free"] },
+    ],
+  },
+  {
+    id: "soft-drinks",
+    title: { he: "שתייה קלה" },
+    blurb: "בקבוקים קרים, לשולחן או לקחת.",
+    items: [
+      { name: "קולה", description: "בקבוק זכוכית, 250 מ״ל", price: "₪15" },
+      { name: "קולה זירו", description: "בקבוק זכוכית, 250 מ״ל", price: "₪15" },
+      { name: "פיוזטי", description: "בקבוק זכוכית, 330 מ״ל", price: "₪15" },
+      { name: "מים מינרליים", description: "בקבוק פלסטיק, 500 מ״ל", price: "₪12" },
+      { name: "קינלי סודה", description: "בקבוק זכוכית, 250 מ״ל", price: "₪12" },
+      { name: "מיץ ענבים", price: "₪14" },
+    ],
+  },
+  {
+    id: "coffee-products",
+    title: { he: "מוצרי קפה" },
+    blurb:
+      "מותג קפה איטלקי פרימיום שנוסד ב-1892 בעיר טריאסטה. הקפה נקלה באיטיות במסורת עתיקה, לשמירה על ארומה עשירה וטעם מאוזן. מיובא מאיטליה ומשולב מזני ערביקה ורובוסטה מובחרים.",
+    items: [
+      { name: "אבקת מאצ'ה MIX&MATCHA", description: "30 גרם", price: "₪139" },
     ],
   },
 ];
@@ -186,14 +234,17 @@ export const menuCategories: MenuCategory[] = [
  * names a real item from the list above — `resolveHighlights()` below reads
  * its live price out of `menuCategories`, so a price change in one place
  * can't leave the home page quoting an old number.
+ *
+ * Picked from the café's own "המוזמנים ביותר" (most-ordered) list, one per
+ * category for spread across the bento.
  */
 export const menuHighlights: { categoryId: string; itemName: string }[] = [
-  { categoryId: "breakfast", itemName: "ארוחת בוקר הכרם" },
-  { categoryId: "breakfast", itemName: "שקשוקה" },
-  { categoryId: "coffee", itemName: "פלאט וייט" },
-  { categoryId: "sandwiches", itemName: "כריך סלמון" },
-  { categoryId: "salads", itemName: "סלט הכרם" },
-  { categoryId: "pastries", itemName: "בורקס גבינה" },
+  { categoryId: "burekas", itemName: "בורקס תורכי בעבודת יד" },
+  { categoryId: "sandwiches", itemName: "פוקאצ'ה קפרזה רומאית" },
+  { categoryId: "salads", itemName: "סלט קפרזה" },
+  { categoryId: "pastries", itemName: "סינבון עננים" },
+  { categoryId: "cakes", itemName: "פרוסת עוגת גזר" },
+  { categoryId: "drinks", itemName: "קפה קר" },
 ];
 
 export type ResolvedHighlight = MenuItem & { categoryId: string; categoryTitle: string };

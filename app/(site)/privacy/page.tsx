@@ -10,7 +10,7 @@ import { business } from "@/content/business";
 
 export const metadata: Metadata = {
   title: "מדיניות פרטיות | קפה הכרם",
-  description: "מדיניות הפרטיות של אתר קפה הכרם בגני תקווה — איזה מידע אנחנו אוספים מהזמנות וטפסים, כיצד הוא מוגן, ואיזה זכויות יש לך כלקוח.",
+  description: "מדיניות הפרטיות של אתר קפה הכרם בגני תקווה - איזה מידע אנחנו אוספים מהזמנות וטפסים, כיצד הוא מוגן, ואיזה זכויות יש לך כלקוח.",
   robots: { index: false, follow: true },
 };
 
@@ -23,7 +23,7 @@ export default function PrivacyPage() {
           and nothing else. Choreographing a privacy policy would be a tell
           that the motion is decorative rather than considered. */}
       <article className="mx-auto max-w-3xl px-6 md:px-10 lg:px-16 pt-12 md:pt-20 pb-20 space-y-8">
-        <h1 className="type-display text-4xl md:text-5xl text-espresso">מדיניות פרטיות</h1>
+        <h1 className="type-display text-[2.75rem] leading-[1.03] md:text-7xl lg:text-8xl text-espresso">מדיניות פרטיות</h1>
         <p className="text-sm text-espresso-soft">עודכן: 3 באוגוסט 2026</p>
 
         <Reveal as="section" className="space-y-3">

@@ -76,7 +76,7 @@ export function JachnunPromo() {
           <ImageReveal className="rounded-card">
             <CafeImage
               variant="jachnun"
-              alt="ג'חנון תימני מגולגל על מגש, עם ביצה ועגבנייה — כפי שנאסף בשבת בבוקר בקפה הכרם"
+              alt="ג'חנון תימני מגולגל על מגש, עם ביצה ועגבנייה - כפי שנאסף בשבת בבוקר בקפה הכרם"
               tone="jachnun"
               ratio="aspect-[4/3]"
               sizes="(max-width: 1024px) 100vw, 45vw"

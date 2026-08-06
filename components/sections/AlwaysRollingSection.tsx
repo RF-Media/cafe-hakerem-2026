@@ -21,7 +21,7 @@
  */
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { IconArrow, IconFlame } from "@/components/ui/icons";
+import { IconArrow } from "@/components/ui/icons";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { container } from "@/components/ui/Section";
@@ -88,7 +88,9 @@ export function AlwaysRollingSection({
                         <span className="type-sub text-lg md:text-2xl text-cream transition-colors duration-fast group-hover/row:text-brass inline-flex items-center gap-2">
                           {cat.title.he}
                           {cat.id === "pastries" && (
-                            <IconFlame className="flame-flicker w-5 h-5 md:w-6 md:h-6 shrink-0" />
+                            <span aria-hidden="true" className="shrink-0">
+                              🔥
+                            </span>
                           )}
                         </span>
 

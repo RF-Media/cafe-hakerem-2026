@@ -84,7 +84,7 @@ export function OrderConfirmation({ receipt, onOrderAgain }: Props) {
                 ) : null}
               </span>
               <span className="tabular-nums shrink-0">
-                {line.included ? "—" : formatILS(line.totalAgorot)}
+                {line.included ? "-" : formatILS(line.totalAgorot)}
               </span>
             </li>
           ))}

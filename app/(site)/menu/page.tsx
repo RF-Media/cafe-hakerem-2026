@@ -24,9 +24,9 @@ import { business } from "@/content/business";
 import { jachnun } from "@/content/jachnun";
 
 export const metadata: Metadata = {
-  title: "התפריט שלנו | קפה הכרם — בית קפה בגני תקווה",
+  title: "התפריט שלנו | קפה הכרם - בית קפה בגני תקווה",
   description:
-    "התפריט המלא של קפה הכרם: קפה איכותי, ארוחות בוקר, כריכים, סלטים, מאפים ובורקסים. בית קפה בוטיקי ברחוב הכרמל 20, גני תקווה.",
+    "התפריט המלא של קפה הכרם: בורקס תורכי בעבודת יד, כריכים ופוקאצ'ות, סלטים, מאפים, עוגות, קפה קר ומיצים סחוטים. בית קפה בוטיקי ברחוב הכרמל 20, גני תקווה.",
 };
 
 /** `Offer.price` is a number in schema.org terms, and `priceCurrency` already
@@ -124,36 +124,38 @@ export default function MenuPage() {
           at-a-glance strip gives it a threshold and puts the three facts
           people scan a menu page for — hours, band, dietary marking — above
           the fold in extractable form. */}
-      <header className={`${container} pt-12 md:pt-20 pb-10 md:pb-14`}>
-        <div className="hero-fade" style={{ ["--d" as never]: 0 }}>
-          <Eyebrow withRule>{menuIntro.eyebrow}</Eyebrow>
-        </div>
-        <h1 className="mt-4 type-display text-4xl md:text-6xl text-espresso max-w-4xl">
-          <SplitText text={menuIntro.title} delay={70} />
-        </h1>
-        <p
-          className="hero-fade mt-6 max-w-prose-he type-lede text-base md:text-lg text-espresso-soft"
-          style={{ ["--d" as never]: 340 }}
-        >
-          {menuIntro.body}
-        </p>
+      <header className="relative flex items-center min-h-[70svh] md:min-h-[78svh]">
+        <div className={`${container} w-full`}>
+          <div className="hero-fade" style={{ ["--d" as never]: 0 }}>
+            <Eyebrow withRule>{menuIntro.eyebrow}</Eyebrow>
+          </div>
+          <h1 className="mt-5 type-display text-[2.75rem] leading-[1.03] md:text-7xl lg:text-8xl text-espresso max-w-4xl">
+            <SplitText text={menuIntro.title} delay={70} />
+          </h1>
+          <p
+            className="hero-fade mt-6 max-w-prose-he type-lede text-base md:text-lg text-espresso-soft"
+            style={{ ["--d" as never]: 340 }}
+          >
+            {menuIntro.body}
+          </p>
 
-        <dl
-          className="hero-fade mt-10 grid gap-px overflow-hidden rounded-card border border-stroke
-                     bg-stroke sm:grid-cols-3"
-          style={{ ["--d" as never]: 480 }}
-        >
-          {[
-            { term: "שעות", desc: weekdayHours },
-            { term: "טווח מחירים", desc: `${business.priceRange} · ${priceBand}` },
-            { term: "סימון בתפריט", desc: "טבעוני, צמחוני, ללא גלוטן וחריף" },
-          ].map((fact) => (
-            <div key={fact.term} className="bg-cream-3 px-5 py-4">
-              <dt className="type-index text-brass-ink">{fact.term}</dt>
-              <dd className="mt-2 text-sm text-espresso-soft">{fact.desc}</dd>
-            </div>
-          ))}
-        </dl>
+          <dl
+            className="hero-fade mt-10 grid gap-px overflow-hidden rounded-card border border-stroke
+                       bg-stroke sm:grid-cols-3"
+            style={{ ["--d" as never]: 480 }}
+          >
+            {[
+              { term: "שעות", desc: weekdayHours },
+              { term: "טווח מחירים", desc: `${business.priceRange} · ${priceBand}` },
+              { term: "סימון בתפריט", desc: "טבעוני, צמחוני, ללא גלוטן וחריף" },
+            ].map((fact) => (
+              <div key={fact.term} className="bg-cream-3 px-5 py-4">
+                <dt className="type-index text-brass-ink">{fact.term}</dt>
+                <dd className="mt-2 text-sm text-espresso-soft">{fact.desc}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </header>
 
       {/* Sticky in-page nav */}

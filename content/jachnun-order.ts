@@ -15,7 +15,7 @@ export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
 export const orderCopy = {
   meta: {
-    title: "הזמנת ג'חנון | קפה הכרם — גני תקווה",
+    title: "הזמנת ג'חנון | קפה הכרם - גני תקווה",
     description:
       "הזמנת ג'חנון של שבת מקפה הכרם בגני תקווה: בחירת כמות, תוספות וחלון איסוף, ותשלום מאובטח באתר. איסוף בשבת בבוקר ברחוב הכרמל 20.",
   },
@@ -33,19 +33,21 @@ export const orderCopy = {
   /** Ordered, and indexed by `ORDER_STEPS`. */
   steps: {
     quantity: {
-      shortLabel: "כמות",
-      title: "כמה ג'חנונים?",
-      lede: "כל ג'חנון נאפה לילה שלם ומגיע עם ביצה קשה, רסק עגבניות וסחוג של הבית.",
-      unitLabel: "ג'חנון",
-      unitLabelPlural: "ג'חנונים",
+      shortLabel: "חבילה",
+      title: "איזו חבילה?",
+      lede: "כל ג'חנון נאפה לילה שלם ומגיע עם ביצה קשה, רסק עגבניות וסחוג של הבית. בחרו את הגודל שמתאים לכם.",
+      popularBadge: "פופולרי",
+      /** Shown next to a multi-unit package's price, e.g. "₪33.50 ליחידה". */
       perUnit: "ליחידה",
-      decreaseAria: "הפחתת ג'חנון אחד",
-      increaseAria: "הוספת ג'חנון אחד",
-      minReached: "מינימום יחידה אחת להזמנה.",
-      maxReached: "להזמנות גדולות יותר — התקשרו אלינו ונסדר.",
-      /** `{units}` and `{price}` are replaced at render time. */
-      nudge: "עוד {units} ומחיר היחידה יורד — חיסכון של {savings} על ההזמנה.",
-      bundleApplied: "מחיר הכמות חל על ההזמנה — חסכתם {savings}.",
+      /** `{savings}` replaced at render time. */
+      savings: "חיסכון של {savings} לעומת הזמנה בודדת",
+      /** Compact form for the package cards. `{savings}` replaced at render time. */
+      savingsShort: "חיסכון {savings}",
+      selectAria: "בחירת {title}",
+      /** Label above the +/- stepper, which cycles the same 4 packages by unit count. */
+      stepperLabel: "מספר יחידות",
+      decreaseAria: "כמות קטנה יותר",
+      increaseAria: "כמות גדולה יותר",
       next: "לתוספות",
     },
 
@@ -95,7 +97,7 @@ export const orderCopy = {
       },
       notes: {
         label: "בקשות מיוחדות (אופציונלי)",
-        hint: "אלרגיות, אריזה נפרדת, שעה מדויקת — כל דבר שכדאי שנדע.",
+        hint: "אלרגיות, אריזה נפרדת, שעה מדויקת - כל דבר שכדאי שנדע.",
       },
       next: "לתשלום",
     },
@@ -161,14 +163,14 @@ export const orderCopy = {
     heading: "לאבטחת ההזמנה",
     body: "נבקש פרטי אשראי כדי לשמור לכם את הג'חנון, אבל לא נחייב אתכם. התשלום מתבצע בקפה באיסוף.",
     badge: "לא תחויבו עכשיו",
-    confirmedNote: "לא חויבתם — התשלום מתבצע בקפה באיסוף.",
+    confirmedNote: "לא חויבתם - התשלום מתבצע בקפה באיסוף.",
   },
 
   wallet: {
     approve: "אישור התשלום",
     cancel: "ביטול",
     processing: "ממתין לאישור…",
-    cancelled: "התשלום בוטל. ההזמנה שלכם נשמרה — אפשר לנסות שוב או לבחור אמצעי תשלום אחר.",
+    cancelled: "התשלום בוטל. ההזמנה שלכם נשמרה - אפשר לנסות שוב או לבחור אמצעי תשלום אחר.",
     mockBadge: "הדמיה",
   },
 
@@ -205,7 +207,7 @@ export const orderCopy = {
     eyebrow: "ההזמנה אושרה",
     title: "תודה! הג'חנון שלכם מוזמן.",
     referenceLabel: "מספר הזמנה",
-    referenceHint: "שמרו את המספר — נשתמש בו באיסוף.",
+    referenceHint: "שמרו את המספר - נשתמש בו באיסוף.",
     pickupHeading: "מתי ואיפה",
     addressLine: "רחוב הכרמל 20, גני תקווה",
     orderHeading: "מה הזמנתם",
@@ -222,11 +224,11 @@ export const orderCopy = {
   /** Field-level validation. Server messages take precedence when they arrive. */
   fieldErrors: {
     nameRequired: "נא להזין שם מלא.",
-    nameShort: "שם קצר מדי — נא להזין שם מלא.",
+    nameShort: "שם קצר מדי - נא להזין שם מלא.",
     phoneRequired: "נא להזין מספר טלפון נייד.",
     phoneInvalid: "מספר טלפון לא תקין. דוגמה: 050-1234567.",
     emailInvalid: "כתובת אימייל לא תקינה.",
-    notesLong: "הבקשה ארוכה מדי — עד 500 תווים.",
+    notesLong: "הבקשה ארוכה מדי - עד 500 תווים.",
     slotRequired: "בחרו חלון איסוף כדי להמשיך.",
     cardNumberRequired: "נא להזין מספר כרטיס.",
     cardNumberInvalid: "מספר הכרטיס אינו תקין.",
@@ -244,14 +246,14 @@ export const orderCopy = {
     declined: "הכרטיס נדחה. נסו כרטיס אחר או אמצעי תשלום אחר.",
     insufficientFunds: "אין מספיק יתרה בכרטיס. נסו כרטיס אחר.",
     expiredCard: "הכרטיס פג תוקף. נסו כרטיס אחר.",
-    processorError: "שירות התשלומים לא הגיב. לא בוצע חיוב — אפשר לנסות שוב.",
-    network: "אין חיבור לרשת. ההזמנה לא נשלחה — בדקו את החיבור ונסו שוב.",
+    processorError: "שירות התשלומים לא הגיב. לא בוצע חיוב - אפשר לנסות שוב.",
+    network: "אין חיבור לרשת. ההזמנה לא נשלחה - בדקו את החיבור ונסו שוב.",
     rateLimited: "יותר מדי ניסיונות. נסו שוב בעוד {seconds} שניות.",
     slotTaken: "חלון האיסוף שבחרתם התמלא. בחרו חלון אחר ונשלים את ההזמנה.",
     cutoffPassed:
-      "חלון ההזמנות לשבת הקרובה נסגר בזמן שמילאתם את הטופס. בחרו חלון חדש — ההזמנה תישמר לשבת הבאה.",
+      "חלון ההזמנות לשבת הקרובה נסגר בזמן שמילאתם את הטופס. בחרו חלון חדש - ההזמנה תישמר לשבת הבאה.",
     totalMismatch: "המחירים התעדכנו בזמן ההזמנה. בדקו את הסיכום ואשרו שוב.",
-    generic: "משהו השתבש. לא בוצע חיוב — אפשר לנסות שוב.",
+    generic: "משהו השתבש. לא בוצע חיוב - אפשר לנסות שוב.",
     retry: "נסו שוב",
     changeMethod: "אמצעי תשלום אחר",
     backToPickup: "בחירת חלון איסוף",
@@ -260,6 +262,6 @@ export const orderCopy = {
   /** Dev-only helper panel listing the mock processor's test cards. */
   devPanel: {
     heading: "כרטיסי בדיקה (מצב פיתוח בלבד)",
-    note: "לחיצה על כרטיס ממלאת את הטופס. תוקף ו-CVV — כל ערך תקין.",
+    note: "לחיצה על כרטיס ממלאת את הטופס. תוקף ו-CVV - כל ערך תקין.",
   },
 };

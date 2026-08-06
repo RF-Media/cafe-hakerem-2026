@@ -24,7 +24,7 @@ import { business } from "@/content/business";
 import { contactFAQs } from "@/content/faqs";
 
 export const metadata: Metadata = {
-  title: "צור קשר, שעות וכתובת | קפה הכרם — בית קפה בגני תקווה",
+  title: "צור קשר, שעות וכתובת | קפה הכרם - בית קפה בגני תקווה",
   description:
     "קפה הכרם, רחוב הכרמל 20, גני תקווה. טלפון, וואטסאפ, שעות פתיחה ומפה. בית קפה בוטיקי בגבעת סביון. ניתן לפנות גם להזמנת ג'חנון או מגשי אירוח.",
 };
@@ -49,12 +49,13 @@ export default function ContactPage() {
 
       <Breadcrumb items={[{ name: "צור קשר" }]} />
 
-      <section className={`${container} pt-12 md:pt-20 pb-16 grid lg:grid-cols-2 gap-10 lg:gap-14`}>
+      <section className="relative flex items-center min-h-[70svh] md:min-h-[78svh]">
+        <div className={`${container} w-full grid lg:grid-cols-2 gap-10 lg:gap-14`}>
         <div>
           <div className="hero-fade" style={{ ["--d" as never]: 0 }}>
             <Eyebrow withRule>Visit</Eyebrow>
           </div>
-          <h1 className="mt-4 type-display text-4xl md:text-6xl text-espresso">
+          <h1 className="mt-5 type-display text-[2.75rem] leading-[1.03] md:text-7xl lg:text-8xl text-espresso">
             <SplitText text="איך מגיעים לקפה הכרם" delay={70} />
           </h1>
 
@@ -128,7 +129,7 @@ export default function ContactPage() {
           <ImageReveal className="rounded-card border border-stroke bg-cream-2 aspect-square">
             {business.geo.latitude && business.geo.longitude ? (
               <iframe
-                title={`מפה — ${business.name.he}`}
+                title={`מפה - ${business.name.he}`}
                 src={`https://www.google.com/maps?q=${business.geo.latitude},${business.geo.longitude}&hl=he&z=16&output=embed`}
                 className="w-full h-full"
                 loading="lazy"
@@ -155,6 +156,7 @@ export default function ContactPage() {
           <p className="mt-4 text-sm text-espresso-soft">
             לחיצה על המפה תפתח את Google Maps עם מסלול לקפה הכרם.
           </p>
+        </div>
         </div>
       </section>
 

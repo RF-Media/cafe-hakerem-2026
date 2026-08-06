@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: business.name.he,
     short_name: business.name.he,
-    description: "בית קפה בוטיקי בגני תקווה — ארוחות בוקר, קפה, מאפים, מגשי אירוח וג'חנון של שבת.",
+    description: "בית קפה בוטיקי בגני תקווה - ארוחות בוקר, קפה, מאפים, מגשי אירוח וג'חנון של שבת.",
     start_url: "/",
     display: "browser",
     background_color: CREAM_HEX,

@@ -100,43 +100,6 @@ export function IconInstagram({ className }: IconProps) {
   );
 }
 
-/** Filled, not stroked, and deliberately NOT `currentColor` — a flame only
- *  reads as fire if it's actually red/orange, so it carries its own
- *  gradient rather than the brass/olive accent set in CLAUDE.md §4.
- *  Two tongues (a tall main body + a smaller side wisp, the wisp being the
- *  main body's own path scaled/shifted — not new curve data, so it can't
- *  come out malformed) plus a true cut-out core so whatever sits behind
- *  the icon shows through, matching the reference mark. Pair with the
- *  `.flame-flicker` CSS animation (globals.css) for the idle loop; the
- *  icon alone is a static mark. Single instance on the page today, so the
- *  gradient id is hardcoded rather than generated. */
-export function IconFlame({ className }: IconProps) {
-  const body =
-    "M12.9 2c.6 2.1-.3 3.4-1.7 4.9-1.7 1.8-3 3.6-3 6A3.8 3.8 0 0 0 12 16.7a3.8 3.8 0 0 0 3.8-3.8c0-1-.3-1.7-.7-2.4 1.4 1 2.4 2.7 2.4 4.7A5.5 5.5 0 0 1 12 20.7a5.5 5.5 0 0 1-5.5-5.5c0-2.3.9-3.8 2.1-5.4C10.3 7.4 12 5.7 12.9 2z";
-  const core =
-    "M12.2 9.6c.3 1-.1 1.7-.8 2.4-.7.7-1.2 1.5-1.2 2.5a1.9 1.9 0 0 0 1.9 1.9 1.9 1.9 0 0 0 1.9-1.9c0-.4-.1-.7-.3-1 .6.5.9 1.2.9 1.9a2.6 2.6 0 0 1-2.6 2.6 2.6 2.6 0 0 1-2.6-2.6c0-1.1.4-1.8 1-2.4.6-.7 1.4-1.5 1.8-3.4z";
-  return (
-    <svg
-      viewBox="0 0 22 22"
-      aria-hidden="true"
-      focusable="false"
-      className={className ?? "w-5 h-5"}
-    >
-      <defs>
-        <linearGradient id="flame-grad" x1="12" y1="2" x2="12" y2="21" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#EA2A1E" />
-          <stop offset="100%" stopColor="#FF9A1E" />
-        </linearGradient>
-      </defs>
-      {/* Wisp: the same body curve, scaled down and shifted left. */}
-      <path transform="translate(-2 7) scale(0.5)" fill="url(#flame-grad)" d={body} />
-      {/* Main tongue, with the core cut out (fill-rule evenodd) rather
-          than filled — the hole shows the surface behind the icon. */}
-      <path transform="translate(4 0)" fill="url(#flame-grad)" fillRule="evenodd" d={`${body} ${core}`} />
-    </svg>
-  );
-}
-
 export function IconCup({ className }: IconProps) {
   return (
     <svg {...base} className={className ?? size}>

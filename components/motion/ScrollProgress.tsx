@@ -19,7 +19,7 @@ export function ScrollProgress({ className }: { className?: string }) {
       aria-hidden
       style={{ scaleX: scale }}
       className={
-        "h-px w-full origin-right bg-brass/70 will-change-transform " + (className ?? "")
+        "h-[3px] w-full origin-right bg-brass-ink will-change-transform " + (className ?? "")
       }
     />
   );

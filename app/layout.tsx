@@ -28,11 +28,11 @@ const fontStyle: React.CSSProperties = {
 export const metadata: Metadata = {
   metadataBase: new URL(business.siteUrl),
   title: {
-    default: "קפה הכרם — בית קפה בוטיקי בגני תקווה",
+    default: "קפה הכרם - בית קפה בוטיקי בגני תקווה",
     template: "%s",
   },
   description:
-    "קפה הכרם — בית קפה בוטיקי ואינטימי ברחוב הכרמל 20, גני תקווה. ארוחות בוקר, קפה איכותי, מאפים טריים, מגשי אירוח וג'חנון של שבת להזמנה מראש.",
+    "קפה הכרם - בית קפה בוטיקי ואינטימי ברחוב הכרמל 20, גני תקווה. ארוחות בוקר, קפה איכותי, מאפים טריים, מגשי אירוח וג'חנון של שבת להזמנה מראש.",
   openGraph: {
     type: "website",
     locale: "he_IL",

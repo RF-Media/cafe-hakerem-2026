@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 
   const { rtlEmail, sendNotification } = await import("@/lib/resend");
   const html = rtlEmail(
-    `פנייה חדשה למגשי אירוח — ${reference}`,
+    `פנייה חדשה למגשי אירוח - ${reference}`,
     `
       <p>התקבלה פנייה חדשה למגשי אירוח דרך האתר.</p>
       <table cellspacing="0" cellpadding="6" style="border-collapse:collapse;">
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
     `,
   );
   sendNotification({
-    subject: `פנייה חדשה למגשי אירוח — ${reference}`,
+    subject: `פנייה חדשה למגשי אירוח - ${reference}`,
     html,
   }).catch((e) => console.error("[catering-inquiry] notify failed:", e));
 

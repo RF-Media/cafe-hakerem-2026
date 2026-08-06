@@ -103,6 +103,24 @@ export const dropdownPanel = {
   visible: { opacity: 1, y: 0, transition: { duration: DUR.fast, ease: EASE_OUT_SOFT } },
 };
 
+/** Filterable grid tile — click-triggered (category chips), not a scroll
+ *  reveal, so it doesn't read `VIEWPORT`; `AnimatePresence` drives enter/exit
+ *  directly off `hidden`/`visible`/`exit`. Exit is quicker than entrance —
+ *  clearing space for the new filter should feel snappier than the reveal. */
+export const filterTileItem = {
+  hidden: { opacity: 0, scale: 0.85 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: DUR.base, ease: EASE_OUT_SOFT },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.85,
+    transition: { duration: DUR.fast, ease: EASE_OUT_SOFT },
+  },
+};
+
 /** Magnetic hover — spring config and the hard cap on travel. */
 export const MAGNET = {
   maxOffset: 6,

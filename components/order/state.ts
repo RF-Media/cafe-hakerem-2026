@@ -13,17 +13,19 @@
 import {
   ADDON_KEYS,
   clampExtras,
-  clampUnits,
   EMPTY_EXTRAS,
   maxExtrasFor,
+  unitsForPackage,
   type AddonKey,
   type Extras,
+  type PackageId,
 } from "@/lib/jachnun-pricing";
+import { PACKAGE_IDS } from "@/content/jachnun";
 import { isValidIsraeliMobile } from "@/lib/phone";
 import { orderCopy, ORDER_STEPS, type OrderStepId, type PaymentMethod } from "@/content/jachnun-order";
 
 export type OrderDraft = {
-  units: number;
+  packageId: PackageId | null;
   extras: Extras;
   /** ISO timestamp of the chosen pickup window; null until step 3 is done. */
   pickupSlotIso: string | null;
@@ -35,7 +37,7 @@ export type OrderDraft = {
 };
 
 export const EMPTY_DRAFT: OrderDraft = {
-  units: 1,
+  packageId: null,
   extras: { ...EMPTY_EXTRAS },
   pickupSlotIso: null,
   name: "",
@@ -48,7 +50,7 @@ export const EMPTY_DRAFT: OrderDraft = {
 export type DetailsField = "name" | "phone" | "email" | "notes";
 
 export type OrderAction =
-  | { type: "units"; value: number }
+  | { type: "package"; id: PackageId }
   | { type: "extra"; key: AddonKey; value: number }
   | { type: "slot"; iso: string }
   | { type: "clearSlot" }
@@ -59,14 +61,15 @@ export type OrderAction =
 
 export function orderReducer(state: OrderDraft, action: OrderAction): OrderDraft {
   switch (action.type) {
-    case "units": {
-      const units = clampUnits(action.value);
-      // Lowering the unit count lowers the extras ceiling with it, otherwise
-      // dropping from 5 jachnun to 1 leaves 15 paid tomato portions attached.
-      return { ...state, units, extras: clampExtras(units, state.extras) };
+    case "package": {
+      const units = unitsForPackage(action.id);
+      // Switching packages moves the extras ceiling with it, otherwise
+      // dropping from the ten-pack to a solo leaves 30 paid tomato portions
+      // attached.
+      return { ...state, packageId: action.id, extras: clampExtras(units, state.extras) };
     }
     case "extra": {
-      const cap = maxExtrasFor(state.units);
+      const cap = maxExtrasFor(unitsForPackage(state.packageId));
       const value = Math.min(cap, Math.max(0, Math.round(action.value)));
       return { ...state, extras: { ...state.extras, [action.key]: value } };
     }
@@ -120,7 +123,7 @@ export function validateDetails(draft: OrderDraft): DetailsErrors {
 export function isStepComplete(step: OrderStepId, draft: OrderDraft): boolean {
   switch (step) {
     case "quantity":
-      return draft.units >= 1;
+      return draft.packageId !== null;
     case "addons":
       // Add-ons are entirely optional — the step is always satisfiable.
       return true;
@@ -194,14 +197,17 @@ export function loadDraft(): { draft: OrderDraft; stepIndex: number } | null {
     }
 
     const d = parsed.draft;
-    const units = clampUnits(Number(d.units));
+    const packageId: PackageId | null = PACKAGE_IDS.includes(d.packageId as PackageId)
+      ? (d.packageId as PackageId)
+      : null;
+    const units = unitsForPackage(packageId);
     const extras = clampExtras(units, {
       tomato: Number(d.extras?.tomato ?? 0),
       olives: Number(d.extras?.olives ?? 0),
       egg: Number(d.extras?.egg ?? 0),
     });
     const draft: OrderDraft = {
-      units,
+      packageId,
       extras,
       pickupSlotIso: typeof d.pickupSlotIso === "string" ? d.pickupSlotIso : null,
       name: String(d.name ?? "").slice(0, 80),
