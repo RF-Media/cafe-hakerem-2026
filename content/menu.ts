@@ -108,6 +108,8 @@ export const menuCategories: MenuCategory[] = [
         badges: ["vegetarian"],
       },
     ],
+    image: "/images/menu/sandwiches.jpg",
+    imageAlt: "כריך וטוסט טריים מוגשים על צלחת בקפה הכרם",
   },
   {
     id: "salads",

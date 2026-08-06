@@ -83,8 +83,8 @@ export function AlwaysRollingSection({
                       className="absolute inset-0 bg-gradient-to-b from-espresso-deep/85 to-espresso-deep/55
                                  [clip-path:inset(0_0_0_0)]
                                  transition-[clip-path] duration-slow ease-out-soft
-                                 group-hover/card:[clip-path:inset(0_0_0_100%)]
-                                 group-focus-visible/card:[clip-path:inset(0_0_0_100%)]"
+                                 group-hover/card:[clip-path:inset(0_100%_0_0)]
+                                 group-focus-visible/card:[clip-path:inset(0_100%_0_0)]"
                     />
                     {/* Permanent soft vignette behind the text only, independent of the
                         curtain above — once the curtain wipes fully clear, this is what

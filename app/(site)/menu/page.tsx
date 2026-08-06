@@ -2,6 +2,7 @@ export const dynamic = "force-static";
 export const revalidate = 86400;
 
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -85,18 +86,43 @@ const priceBand = (() => {
 })();
 
 /** The one dark beat on a long light page. Contained rather than full-bleed:
- *  it sits inside the page's container, between two category sections. */
+ *  it sits inside the page's container, between two category sections.
+ *  Same swipe-curtain hover as the "מה חדש" category grid on the home page
+ *  (`AlwaysRollingSection`): a dark curtain sits over the photo at rest and
+ *  wipes clear on hover/focus, so the two photo-reveal moments on the site
+ *  read as one house style rather than two unrelated effects. */
 function MenuInterlude() {
   return (
     <Reveal>
-      <aside className="mt-16 md:mt-20 rounded-card bg-espresso-deep text-cream px-6 py-10 md:px-10 md:py-12">
-        <div className="grid gap-6 md:grid-cols-12 md:items-end">
+      <aside className="group/cta relative mt-16 md:mt-20 overflow-hidden rounded-card text-cream px-6 py-10 md:px-10 md:py-12 focus-within:outline-none">
+        <Image
+          src="/images/jachnun-band.jpg"
+          alt="מגש בורקס תורכי, ביצים קשות, זיתים וסחוג, כפי שמוגשים בקפה הכרם"
+          fill
+          sizes="(max-width: 768px) 100vw, 1024px"
+          quality={75}
+          className="object-cover"
+        />
+        {/* Curtain, at rest. Wipes away right-to-left on hover/focus. */}
+        <span
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-espresso-deep/85 to-espresso-deep/55
+                     [clip-path:inset(0_0_0_0)]
+                     transition-[clip-path] duration-slow ease-out-soft
+                     group-hover/cta:[clip-path:inset(0_100%_0_0)]
+                     group-focus-within/cta:[clip-path:inset(0_100%_0_0)]"
+        />
+        {/* Permanent vignette so the text stays legible once the curtain
+            has wiped fully clear. */}
+        <span aria-hidden className="absolute inset-0 bg-espresso-deep/50" />
+
+        <div className="relative grid gap-6 md:grid-cols-12 md:items-end">
           <div className="md:col-span-8">
             <Eyebrow tone="brass">שבת בבוקר</Eyebrow>
-            <h2 className="mt-4 type-title text-2xl md:text-3xl">
+            <h2 className="mt-4 type-title text-2xl md:text-3xl [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]">
               ג'חנון של שבת, להזמנה מראש
             </h2>
-            <p className="mt-4 type-lede text-base text-cream/75 max-w-prose-he">
+            <p className="mt-4 type-lede text-base text-cream/75 max-w-prose-he [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]">
               {jachnun.hero.lede} ההזמנות נסגרות ביום חמישי בשעה 18:00.
             </p>
           </div>
