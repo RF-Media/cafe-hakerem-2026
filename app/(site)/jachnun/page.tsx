@@ -2,16 +2,15 @@ export const dynamic = "force-static";
 export const revalidate = 86400;
 
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Button } from "@/components/ui/Button";
 import { IconArrow } from "@/components/ui/icons";
 import { Card } from "@/components/ui/Card";
-import { CafeImage } from "@/components/ui/CafeImage";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { FAQBlock } from "@/components/ui/FAQBlock";
 import { Section, container } from "@/components/ui/Section";
-import { ImageReveal } from "@/components/motion/ImageReveal";
 import { Parallax } from "@/components/motion/Parallax";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitText } from "@/components/motion/SplitText";
@@ -60,55 +59,69 @@ export default function JachnunPage() {
 
       <Breadcrumb items={[{ name: "ג'חנון" }]} />
 
-      {/* Sub-brand hero — terracotta accents */}
-      <section className="relative flex items-center min-h-[70svh] md:min-h-[78svh] bg-cream-2 overflow-hidden">
+      {/* Sub-brand hero — full-bleed photo behind cream text, same
+          treatment as the home hero (§7 hard rule 1: the h1 reveal is CSS
+          keyframes, never gated behind hydration). Terracotta accents
+          throughout instead of the home hero's brass, per the jachnun
+          sub-brand palette. */}
+      <section className="relative isolate flex min-h-[70svh] md:min-h-[78svh] items-center overflow-hidden bg-espresso-deep">
+        <Image
+          src={jachnun.hero.image}
+          alt={jachnun.hero.imageAlt}
+          fill
+          priority
+          quality={85}
+          sizes="100vw"
+          className="object-cover"
+        />
+
+        <div aria-hidden className="absolute inset-0 bg-espresso-deep/35" />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-t from-espresso-deep via-espresso-deep/50 to-transparent"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-l from-espresso-deep/60 via-espresso-deep/15 to-transparent"
+        />
+
+        <Parallax speed={-0.35} className="pointer-events-none absolute inset-0">
+          <div className="hero-grain" aria-hidden />
+        </Parallax>
+
         <div
           aria-hidden
           className="pointer-events-none absolute -top-32 -end-32 w-[34rem] h-[34rem] rounded-full
-                     bg-[radial-gradient(circle,hsl(var(--jachnun)/0.12),transparent_65%)] blur-2xl"
+                     bg-[radial-gradient(circle,hsl(var(--jachnun)/0.25),transparent_65%)] blur-2xl"
         />
-        <div className={`${container} relative w-full py-12 md:py-14 grid lg:grid-cols-12 gap-10 lg:gap-14 items-center`}>
-          <div className="lg:col-span-7">
+
+        <div className={`${container} relative w-full py-16 md:py-20`}>
+          <div className="max-w-2xl">
             <div className="hero-fade" style={{ ["--d" as never]: 0 }}>
               <Eyebrow tone="jachnun" withRule>{jachnun.hero.eyebrow}</Eyebrow>
             </div>
-            <h1 className="mt-5 type-display text-[2.75rem] leading-[1.03] md:text-7xl lg:text-8xl text-espresso">
+            <h1 className="mt-5 type-display text-[2.75rem] leading-[1.03] md:text-7xl lg:text-8xl text-cream">
               <SplitText text={jachnun.hero.title} delay={70} />
             </h1>
             <p
-              className="hero-fade mt-6 type-lede text-base md:text-xl text-espresso-soft max-w-prose-he"
+              className="hero-fade mt-6 type-lede text-base md:text-xl text-cream/85 max-w-prose-he"
               style={{ ["--d" as never]: 380 }}
             >
               {jachnun.hero.lede}
             </p>
             <div
-              className="hero-fade mt-6 inline-flex items-center gap-2 rounded-pill border border-jachnun/30
-                         bg-jachnun/5 px-4 py-2 text-sm text-jachnun"
+              className="hero-fade mt-6 inline-flex items-center gap-2 rounded-pill border border-jachnun-soft/40
+                         bg-cream/10 px-4 py-2 text-sm text-cream"
               style={{ ["--d" as never]: 500 }}
             >
               {jachnun.pricing.perUnit}
               {jachnun.pricing.bundleNote ? ` · ${jachnun.pricing.bundleNote}` : ""}
             </div>
             <div className="hero-fade mt-6" style={{ ["--d" as never]: 620 }}>
-              <Button as="a" href="/jachnun/order" variant="primary" size="lg" icon={<IconArrow />}>
+              <Button as="a" href="/jachnun/order" variant="onDark" size="lg" icon={<IconArrow />}>
                 להזמנה
               </Button>
             </div>
-          </div>
-
-          <div className="lg:col-span-5">
-            <Parallax speed={0.14}>
-              <ImageReveal className="rounded-card">
-                <CafeImage
-                  variant="jachnun"
-                  alt="ג'חנון של שבת מקפה הכרם, מוגש עם ביצה קשה ורסק עגבניות"
-                  ratio="aspect-[4/5]"
-                  tone="jachnun"
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 40vw"
-                />
-              </ImageReveal>
-            </Parallax>
           </div>
         </div>
       </section>
