@@ -44,6 +44,9 @@ export function JachnunPromo() {
               {homeJachnun.body}
             </p>
           </Reveal>
+          <Reveal delay={0.15}>
+            <p className="mt-2 text-sm text-cream/60 max-w-lg">{homeJachnun.reassurance}</p>
+          </Reveal>
 
           {/* Deadline and CTA share one card on purpose — the clock a
               visitor is on and the button that beats it belong in the

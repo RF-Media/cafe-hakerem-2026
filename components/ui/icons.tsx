@@ -100,6 +100,17 @@ export function IconInstagram({ className }: IconProps) {
   );
 }
 
+/** Filled triangle — the explicit tap-to-play control shown under
+ *  `prefers-reduced-motion`, where hover/focus no longer auto-trigger
+ *  video playback. */
+export function IconPlay({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden focusable="false" className={className ?? size}>
+      <path d="M7 5.5v13l12-6.5z" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 export function IconCup({ className }: IconProps) {
   return (
     <svg {...base} className={className ?? size}>

@@ -1,13 +1,13 @@
 /**
- * "ספיישל פטיסרי — סוף שבוע": chapter one of the weekend, on the home page.
+ * "הסופ״ש של הכרם": the general weekend teaser, on the home page.
  *
- * The café's weekend has two beats — sweet Friday, then salty Saturday
- * (the existing jachnun offering, which already owns "Saturday morning").
- * This section sits directly above `<JachnunPromo>` and frames the pair
- * explicitly as chapter one / chapter two, so the two promo bands read as
- * one continuous story on scroll instead of two unrelated blocks. The
- * second chip is a real anchor into the Jachnun band below, not just a
- * label.
+ * Covers both weekend staples — burekas (baked daily, not weekend-only)
+ * and jachnun (genuinely Saturday-only, pre-order). This section sits
+ * directly above `<JachnunPromo>`, which owns the jachnun-specific detail
+ * (steps, deadline). The two chips read as "what's always here" / "what's
+ * Saturday" rather than a numbered chapter sequence — the café's brief
+ * explicitly asked to drop "Chapter A / Chapter B" framing. The second
+ * chip is a real anchor into the Jachnun band below, not just a label.
  *
  * `tone="cream-3"` plus a low-opacity brass bloom (same technique as the
  * hero's) keep this visually distinct from the terracotta Jachnun band
@@ -68,7 +68,7 @@ export function PatisserieSpecial() {
 
           <Reveal delay={0.24}>
             <div className="mt-8">
-              <Button variant="secondary" as="a" href="/menu#pastries" icon={<IconArrow />}>
+              <Button variant="secondary" as="a" href="/jachnun" icon={<IconArrow />}>
                 {homePatisserie.cta}
               </Button>
             </div>

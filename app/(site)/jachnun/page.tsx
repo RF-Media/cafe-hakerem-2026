@@ -177,7 +177,10 @@ export default function JachnunPage() {
                     להזמין ג&apos;חנון לשבת
                   </h2>
                   <p className="mt-3 text-base text-cream/80">
-                    בוחרים חבילה ותוספות, משלמים באתר בביטחון מלא - והג&apos;חנון מחכה לכם חם בשבת בבוקר.
+                    בוחרים חבילה ותוספות, מזמינים באתר ואוספים חם בשבת בבוקר.
+                  </p>
+                  <p className="mt-1.5 text-sm text-cream/60">
+                    רוצים להיות בטוחים שיש? מומלץ להזמין מראש.
                   </p>
 
                   <div className="mt-7 flex flex-wrap items-baseline gap-x-3 gap-y-1">

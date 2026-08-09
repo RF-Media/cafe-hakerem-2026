@@ -15,35 +15,53 @@ export type CateringOption = {
   includes: string[];    // bullet list
   fromPrice?: string;    // "מ-₪320" — optional
   photo?: string;        // /public path
+  popular?: boolean;     // shows a "מומלץ!" ribbon
 };
 
 export const catering = {
   hero: {
     eyebrow: "מגשי אירוח",
-    title: "מגשי אירוח מקפה הכרם - לכל אירוע",
+    title: "אתם מארחים. אנחנו נדאג לשולחן.",
     lede:
-      "מגשי אירוח שמתאימים לישיבת עבודה, ברית, יום הולדת או כנס. " +
-      "כל מגש נארז ביום האירוע משחומרי גלם טריים של קפה הכרם.",
+      "מגשי האירוח של הכרם מתאימים לישיבות במשרד, אירוח בבית, ימי הולדת ואירועים קטנים - " +
+      "טריים, יפים ומוכנים להגשה.",
   },
 
   /* Three trust signals shown under the hero. */
   promises: [
     {
-      title: "הכנה ביום האירוע",
-      body: "כל מגש נארז בבוקר האירוע. הלחם נאפה אצלנו באותו יום והירקות נחתכים טרי.",
+      title: "מוכנים בדיוק לזמן שלכם",
+      body: "מתאמים מראש ודואגים שהכול יהיה מוכן בזמן שקבעתם.",
     },
     {
-      title: "התאמה אישית",
-      body: "אפשר להחליף פריטים, להוסיף אפשרויות טבעוניות או ללא גלוטן, ולהתאים כמויות לקבוצה.",
+      title: "מתאימים את ההזמנה אליכם",
+      body: "בוחרים את המגשים והכמויות לפי סוג האירוח ומספר האורחים.",
     },
     {
-      title: "משלוח באזור",
-      body: "משלוחים בגני תקווה והסביבה, בתיאום שעה מראש. איסוף עצמי מרחוב הכרמל 20 ללא עלות.",
+      title: "איסוף או משלוח",
+      body: "אוספים מקפה הכרם או מתאמים משלוח באזור.",
     },
   ],
 
   /* Catalogue of trays. Render as a grid on the page. */
   options: [
+    {
+      id: "burekas-tray",
+      title: { he: "מגש בורקס טורקי" },
+      // CONFIRM BEFORE LAUNCH: serves count and filling list are plausible
+      // placeholders, not sourced from the café's own sheet — same
+      // treatment as the 2026-08-03 "§9 exception: demo prices" entry.
+      // No fromPrice for the same reason (§9 forbids inventing prices;
+      // the field is optional and the UI already renders without it).
+      serves: "10–15 איש",
+      includes: [
+        "מבחר בורקס טורקי במילוי גבינה, תפוחי אדמה ותרד",
+        "רוטב עגבניות ביתי לצד",
+        "זעתר ושמן זית לגימור",
+      ],
+      photo: "/images/host-burekas.jpg",
+      popular: true,
+    },
     {
       id: "breakfast-tray",
       title: { he: "מגש בוקר" },
@@ -66,6 +84,7 @@ export const catering = {
         "ירקות חתוכים ומלפפונים חמוצים",
       ],
       fromPrice: "מ-₪420",
+      photo: "/images/sandwitches_guests.jpg",
     },
     {
       id: "sweet-tray",
@@ -90,5 +109,5 @@ export const catering = {
 
   /* Form hint above the inquiry form. */
   formIntro:
-    "ספרו לנו על האירוע ונחזור אליכם בהצעה תוך 24 שעות.",
+    "השאירו כמה פרטים ונחזור אליכם עם הצעה שמתאימה לאירוח שלכם.",
 };

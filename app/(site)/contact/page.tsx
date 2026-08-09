@@ -53,7 +53,7 @@ export default function ContactPage() {
         <div className={`${container} w-full grid lg:grid-cols-2 gap-10 lg:gap-14`}>
         <div>
           <div className="hero-fade" style={{ ["--d" as never]: 0 }}>
-            <Eyebrow withRule>Visit</Eyebrow>
+            <Eyebrow withRule>דברו איתנו</Eyebrow>
           </div>
           <h1 className="mt-5 type-display text-[2.75rem] leading-[1.03] md:text-7xl lg:text-8xl text-espresso">
             <SplitText text="איך מגיעים לקפה הכרם" delay={70} />

@@ -76,15 +76,6 @@ const weekdayHours = (() => {
     : `${run} · ${last.label.he} ${last.open}–${last.close}`;
 })();
 
-/** Cheapest and dearest thing on the menu, for the at-a-glance strip. */
-const priceBand = (() => {
-  const values = menuCategories
-    .flatMap((c) => c.items)
-    .map((i) => Number(i.price.replace(/[^\d.]/g, "")))
-    .filter((n) => Number.isFinite(n) && n > 0);
-  return `₪${Math.min(...values)}–₪${Math.max(...values)}`;
-})();
-
 /** The one dark beat on a long light page. Contained rather than full-bleed:
  *  it sits inside the page's container, between two category sections.
  *  Same swipe-curtain hover as the "מה חדש" category grid on the home page
@@ -172,7 +163,7 @@ export default function MenuPage() {
           >
             {[
               { term: "שעות", desc: weekdayHours },
-              { term: "טווח מחירים", desc: `${business.priceRange} · ${priceBand}` },
+              { term: "להזמנה", desc: "איסוף עצמי · ישיבה במקום" },
               { term: "סימון בתפריט", desc: "טבעוני, צמחוני, ללא גלוטן וחריף" },
             ].map((fact) => (
               <div key={fact.term} className="bg-cream-3 px-5 py-4">

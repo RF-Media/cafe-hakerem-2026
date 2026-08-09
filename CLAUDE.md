@@ -1461,6 +1461,69 @@ placeholder branch is deliberately `aria-hidden` with no `alt` (2026-08-02),
 which would otherwise leave a placeholder-only tile with no accessible name
 at all.
 
+**2026-08-09 — Home and `/catering` share one tray catalog; the home
+page's parallel `trays: string[]` list is deleted.**
+`content/home.ts`'s `homeCatering.trays` named "מגש ישיבה" and "מגש
+קומבינציה," neither of which exists in `content/catering.ts`'s real
+`options` — the home page and the actual catering page had been
+independently inconsistent since whichever pass wrote each file. Rather
+than inventing matching options for two names nobody confirmed, the home
+page's tray section (`components/sections/CateringEditorialSplit.tsx`) now
+reads `catering.options` directly; the parallel string list is gone. A
+fifth real option, `burekas-tray` ("מגש בורקס טורקי"), was added to
+`content/catering.ts` at the same time — the café asked for it by name —
+carrying a `CONFIRM BEFORE LAUNCH` comment on its `serves`/`includes`
+content (no invented `fromPrice`, per §9) rather than `[TODO]`, matching
+the 2026-08-03 "§9 exception: demo prices" precedent for content that
+needs to render to be reviewable. `content/faqs.ts`'s `cateringFAQs`
+capacity answer ("שלושה גדלים: 5–8/10–15/20–25 איש") still doesn't match
+`catering.options`' actual serves values — flagged with an inline
+comment, left unfixed; reconciling every capacity number site-wide was
+out of scope for this pass.
+
+**2026-08-09 — Catering section becomes an editorial split; the numbered
+tile grid is retired.**
+The previous "7 — Catering" section paired a 5-col text column with a
+7-col grid of four `<StaggerItem variant="tile">` cards that were just "מגש
+{name}" plus a `№ 0{i}` index — no photo, no capacity, no price, and (per
+the entry above) two of the four names weren't real. Replaced with one
+large featured-tray card (photo via `<ImageReveal><CafeImage
+variant="tray"/></ImageReveal>`, capacity chip, bullet list, price if
+present) beside a compact list of the remaining trays, each a capacity
+chip + one-line preview linking to its `/catering#<id>` anchor — deepening
+internal linking (§10) as a side effect. New capacity-range copy ("15 איש
+בחצר בית" → "120 איש באולם קטן") renders both as a stat row and in
+`homeCatering.body`'s prose, per §11 Rule 5's redundancy principle. Olive
+carries the featured card's accent (eyebrow, an 8%-opacity radial wash,
+the compact list's hover border) since §4 allows it to "carry more
+weight"; brass-ink stays confined to its sanctioned roles (capacity/price
+chips, bullet glyphs) and never becomes a fill; terracotta is not used
+anywhere in this section since it isn't the jachnun sub-brand.
+
+**2026-08-09 — Foreground, user-initiated video is not "video
+backgrounds."**
+§2/§7 forbid video backgrounds, and the 2026-05-28 entry cites "no source
+video assets available" and motion budget going to LCP instead. Both
+target ambient, autoplay, page-load background video. The new catering
+testimonial accordion (`components/sections/VideoTestimonialAccordion.tsx`)
+is the opposite shape on every axis that made background video a bad idea
+here: fixed-footprint foreground panels, muted, `preload="none"`, never
+plays until an explicit hover/focus/tap, paused via `IntersectionObserver`
+the moment the section leaves the viewport, and inert under
+`prefers-reduced-motion` (static frame + a persistent tap-to-play control
+instead of hover-triggered playback). It costs nothing on initial load —
+`preload="none"` plus deferring the whole component via `next/dynamic`
+(SSR'd, not `ssr: false`) keeps it off the §7 LCP/TBT budget entirely. The
+crossfade mechanic itself (`components/motion/CrossfadePanel.tsx`) only
+animates `transform`/`opacity` inside a fixed-size panel — no exception to
+the compositor-properties-only rule was needed, because a literal
+width-growing accordion was considered and rejected in favor of this
+mechanic during planning. Placeholder-driven until real 9:16 clips arrive:
+`content/testimonials.ts` carries an optional `videoSrc?: string`,
+mirroring `<CafeImage>`'s own `src?` pattern (2026-08-02) rather than a
+`[TODO]` sentinel — a missing clip is a deferred asset, not a content gap
+`check:todos` should block on.
+
 ---
 
 ## 15. GEO & AI Search Visibility

@@ -9,7 +9,6 @@ import { CafeImage } from "@/components/ui/CafeImage";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { FAQBlock } from "@/components/ui/FAQBlock";
 import { Section, container } from "@/components/ui/Section";
-import { HorizontalRail } from "@/components/motion/HorizontalRail";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitText } from "@/components/motion/SplitText";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
@@ -91,7 +90,7 @@ export default function CateringPage() {
         </Stagger>
       </Section>
 
-      {/* Options — a rail on desktop, a swipe carousel on a phone. */}
+      {/* Options grid */}
       <section className="py-20 md:py-28">
         <div className={container}>
           <Reveal>
@@ -99,43 +98,62 @@ export default function CateringPage() {
               סוגי מגשים
             </h2>
           </Reveal>
-        </div>
 
-        <HorizontalRail length={2} trackClassName="gap-5 px-6 md:ps-10 lg:ps-16">
-          {catering.options.map((o) => (
-            <div
-              key={o.id}
-              id={o.id}
-              className="shrink-0 snap-start scroll-mt-40 w-[80vw] sm:w-[55vw] md:w-[32vw] lg:w-[27vw]"
-            >
-              <Card padding="lg" tone="cream-3" hoverable elevation="raised" className="h-full">
-                <CafeImage
-                  variant="tray"
-                  alt={`${o.title.he} - מגש אירוח של קפה הכרם`}
-                  ratio="aspect-[5/3]"
-                  tone="brass"
-                  className="mb-5"
-                  sizes="(max-width: 768px) 80vw, 27vw"
-                />
-                <div className="type-sub text-xl text-espresso">{o.title.he}</div>
-                <div className="mt-1 text-sm text-olive">{o.serves}</div>
-                <ul className="mt-4 space-y-1.5 text-base text-espresso-soft">
-                  {o.includes.map((it, i) => (
-                    <li key={i} className="flex gap-2">
-                      <span aria-hidden className="text-brass-ink">·</span>
-                      <span>{it}</span>
-                    </li>
-                  ))}
-                </ul>
-                {o.fromPrice ? (
-                  <div className="mt-5 pt-4 border-t border-stroke text-sm font-medium text-espresso">
-                    {o.fromPrice}
-                  </div>
-                ) : null}
-              </Card>
-            </div>
-          ))}
-        </HorizontalRail>
+          <Stagger className="grid sm:grid-cols-2 gap-5" stagger={0.08}>
+            {catering.options.map((o) => (
+              <StaggerItem key={o.id} variant="tile">
+                <div id={o.id} className="scroll-mt-40 h-full">
+                  <Card
+                    padding="lg"
+                    tone="cream-3"
+                    hoverable
+                    elevation="raised"
+                    className="h-full flex flex-col relative overflow-hidden"
+                  >
+                    {o.popular ? (
+                      <span
+                        aria-hidden
+                        className="absolute -end-12 top-6 z-10 w-40 -rotate-45 bg-olive py-1
+                                   text-center type-index text-xs text-cream shadow-sm"
+                      >
+                        מומלץ!
+                      </span>
+                    ) : null}
+                    <CafeImage
+                      variant="tray"
+                      src={o.photo}
+                      alt={`${o.title.he} - מגש אירוח של קפה הכרם`}
+                      ratio="aspect-[5/3]"
+                      tone="brass"
+                      className="mb-5"
+                      sizes="(max-width: 768px) 100vw, 45vw"
+                    />
+                    <div className="type-sub text-xl text-espresso">{o.title.he}</div>
+                    <div className="mt-1 text-sm text-olive">{o.serves}</div>
+                    <ul className="mt-4 space-y-1.5 text-base text-espresso-soft">
+                      {o.includes.map((it, i) => (
+                        <li key={i} className="flex gap-2">
+                          <span aria-hidden className="text-brass-ink">·</span>
+                          <span>{it}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-auto pt-4 border-t border-stroke flex items-baseline justify-between">
+                      {o.fromPrice ? (
+                        <>
+                          <span className="text-sm text-espresso-soft">מחיר</span>
+                          <span className="type-sub text-xl text-brass-ink">{o.fromPrice}</span>
+                        </>
+                      ) : (
+                        <span className="text-sm text-espresso-soft">מחיר לפי בקשה</span>
+                      )}
+                    </div>
+                  </Card>
+                </div>
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </div>
 
         <div className={`${container} mt-12`}>
           <Stagger

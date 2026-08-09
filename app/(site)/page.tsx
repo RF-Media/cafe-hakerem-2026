@@ -24,9 +24,11 @@ import { FactualParagraph } from "@/components/sections/FactualParagraph";
 import { JachnunPromo } from "@/components/sections/JachnunPromo";
 import { PatisserieSpecial } from "@/components/sections/PatisserieSpecial";
 import { AlwaysRollingSection } from "@/components/sections/AlwaysRollingSection";
+import { CateringEditorialSplit } from "@/components/sections/CateringEditorialSplit";
 import { WhyVisitSection } from "@/components/sections/WhyVisitSection";
 import { OpenStatusBadge } from "@/components/sections/OpenStatusBadge";
 import { business } from "@/content/business";
+import { catering } from "@/content/catering";
 import { homeFAQs } from "@/content/faqs";
 import {
   homeAbout,
@@ -144,7 +146,7 @@ export default function HomePage() {
                          [text-shadow:0_1px_16px_hsl(var(--espresso-deep)/0.5)]"
               style={{ ["--d" as never]: 420 }}
             >
-              {business.tagline.he}. {homeHero.lede}
+              {homeHero.lede}
             </p>
 
             <div
@@ -345,60 +347,16 @@ export default function HomePage() {
       {/* 6 — Jachnun: chapter two, salty Saturday. */}
       <JachnunPromo />
 
-      {/* 7 — Catering */}
-      <Section tone="cream-2" className="border-y border-stroke">
-        <div className="grid grid-cols-12 gap-8 md:gap-10 items-center">
-          <div className="col-span-12 md:col-span-5">
-            <Reveal>
-              <Eyebrow withRule>{homeCatering.eyebrow}</Eyebrow>
-            </Reveal>
-            <Reveal delay={0.05}>
-              <h2 className="mt-4 type-title text-4xl md:text-5xl text-espresso">
-                {homeCatering.title}
-              </h2>
-            </Reveal>
-            <Reveal delay={0.12}>
-              <p className="mt-6 max-w-md type-lede text-base md:text-lg text-espresso-soft">
-                {homeCatering.body}
-              </p>
-            </Reveal>
-            <Reveal delay={0.18}>
-              <div className="mt-8">
-                <Button variant="primary" as="a" href="/catering" icon={<IconArrow />}>
-                  {homeCatering.cta}
-                </Button>
-              </div>
-            </Reveal>
-          </div>
-
-          <Stagger
-            as="ul"
-            className="col-span-12 md:col-span-7 grid grid-cols-2 gap-4"
-            stagger={0.09}
-          >
-            {homeCatering.trays.map((k, i) => (
-              <StaggerItem key={k} as="li" variant="tile">
-                {/* The offset lives on this inner element, not on the
-                    StaggerItem — Framer owns `transform` there and a
-                    Tailwind translate class would simply be overwritten. */}
-                <ImageReveal
-                  className={"rounded-card " + (i % 2 === 1 ? "md:mt-6" : "")}
-                  delay={i * 0.05}
-                >
-                  <div className="bg-cream-3 rounded-card border border-stroke p-6 aspect-[5/4] flex flex-col justify-between">
-                    <span className="type-index text-brass-ink">
-                      № 0{i + 1}
-                    </span>
-                    <span className="type-sub text-xl md:text-2xl text-espresso">
-                      מגש {k}
-                    </span>
-                  </div>
-                </ImageReveal>
-              </StaggerItem>
-            ))}
-          </Stagger>
-        </div>
-      </Section>
+      {/* 7 — Catering: editorial split (featured tray + compact list). */}
+      <CateringEditorialSplit
+        eyebrow={homeCatering.eyebrow}
+        title={homeCatering.title}
+        body={homeCatering.body}
+        capacityStat={homeCatering.capacityStat}
+        cta={homeCatering.cta}
+        options={catering.options}
+        featuredOptionId={homeCatering.featuredOptionId}
+      />
 
       {/* 8 — About preview */}
       <Section tone="cream">
@@ -436,6 +394,7 @@ export default function HomePage() {
             <ImageReveal className="rounded-card">
               <CafeImage
                 variant="interior"
+                src="/images/hakerem.jpg"
                 alt={homeAbout.imageAlt}
                 ratio="aspect-[4/5]"
                 tone="olive"

@@ -19,7 +19,8 @@ export type PlaceholderVariant =
   | "jachnun"
   | "founder"
   | "instagram"
-  | "map";
+  | "map"
+  | "testimonial";
 
 type Props = { className?: string };
 
@@ -178,6 +179,23 @@ function Map({ className }: Props) {
   );
 }
 
+/** Vertical (9:16) clip frame with a centered play mark — the video-
+ *  testimonial slot before a real clip is uploaded. */
+function Testimonial({ className }: Props) {
+  return (
+    <svg viewBox="0 0 400 400" className={className ?? svg} aria-hidden focusable="false">
+      <g {...stroke}>
+        <rect x="130" y="44" width="140" height="312" rx="26" />
+        <path d="M184 44h32" strokeWidth={5} opacity="0.5" />
+      </g>
+      <g {...stroke} opacity="0.7">
+        <circle cx="200" cy="204" r="48" />
+      </g>
+      <path d="M186 180l54 24-54 24z" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 const registry: Record<PlaceholderVariant, (p: Props) => JSX.Element> = {
   interior: Interior,
   cup: Cup,
@@ -187,6 +205,7 @@ const registry: Record<PlaceholderVariant, (p: Props) => JSX.Element> = {
   founder: Founder,
   instagram: Instagram,
   map: Map,
+  testimonial: Testimonial,
 };
 
 export function Placeholder({
