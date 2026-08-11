@@ -93,13 +93,13 @@ export const business = {
   //
   // 24h "HH:MM" strings. A closed day sets both open and close to null.
   hours: [
-    { day: 0, label: { he: "ראשון" },  open: "07:00", close: "19:00" },
-    { day: 1, label: { he: "שני" },    open: "07:00", close: "19:00" },
-    { day: 2, label: { he: "שלישי" },  open: "07:00", close: "19:00" },
-    { day: 3, label: { he: "רביעי" },  open: "07:00", close: "19:00" },
-    { day: 4, label: { he: "חמישי" },  open: "07:00", close: "19:00" },
+    { day: 0, label: { he: "ראשון" },  open: "07:00", close: "20:00" },
+    { day: 1, label: { he: "שני" },    open: "07:00", close: "20:00" },
+    { day: 2, label: { he: "שלישי" },  open: "07:00", close: "20:00" },
+    { day: 3, label: { he: "רביעי" },  open: "07:00", close: "20:00" },
+    { day: 4, label: { he: "חמישי" },  open: "07:00", close: "20:00" },
     { day: 5, label: { he: "שישי" },   open: "07:00", close: "15:00" },
-    { day: 6, label: { he: "שבת" },    open: null, close: null }, // jachnun pickup only
+    { day: 6, label: { he: "שבת" },    open: "08:00", close: "21:00" },
   ],
 
   /* ─── Pricing band ─────────────────────────────────────────── */

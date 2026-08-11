@@ -1524,6 +1524,30 @@ mirroring `<CafeImage>`'s own `src?` pattern (2026-08-02) rather than a
 `[TODO]` sentinel — a missing clip is a deferred asset, not a content gap
 `check:todos` should block on.
 
+**2026-08-10 — Three home/about sections hidden at the café's request; the
+about-page authorship block removal knowingly contradicts §11 Rule 4.**
+Removed from `/`: the "המומלצים" menu bento (section 4, `homeMenu` +
+`resolveHighlights()` dish tiles) and the "הסופ״ש של הכרם" patisserie
+teaser (`<PatisserieSpecial />`, formerly section 5). Both were plain
+deletions of the render call sites plus their now-dead imports
+(`Stagger`/`StaggerItem`/`homeMenu`/`highlights` in `page.tsx`); the
+underlying content (`homeMenu`, `homePatisserie` in `content/home.ts`) and
+the `PatisserieSpecial` component are untouched, so both can come back with
+a small diff. `<JachnunPromo>` (now directly below the menu bento's old
+slot) no longer needs the "chapter two" framing that made sense paired with
+a "chapter one" patisserie section above it.
+
+Removed from `/about`: the "מי עומד מאחורי הקפה" founders block (photo,
+name, role, bio per founder, plus the "operating since [year]" line) and,
+with it, `Card`/`Stagger`/`StaggerItem` as now-dead imports in that file.
+This is the one removal that is not free: §11 Rule 4 explicitly asks for
+this authorship block on About and Contact, as a GEO trust signal. Neither
+`check:geo` nor `check:todos` currently assert its presence, so both still
+pass — this is a real gap between the file and the shipped site, not a
+false alarm. Left as-is per explicit café instruction rather than silently
+restored; if Rule 4 still matters at launch, either bring the block back or
+strike the rule.
+
 ---
 
 ## 15. GEO & AI Search Visibility

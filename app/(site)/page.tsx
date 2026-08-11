@@ -17,12 +17,10 @@ import { Magnetic } from "@/components/motion/Magnetic";
 import { Parallax } from "@/components/motion/Parallax";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitText } from "@/components/motion/SplitText";
-import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { FactualParagraph } from "@/components/sections/FactualParagraph";
 import { JachnunPromo } from "@/components/sections/JachnunPromo";
-import { PatisserieSpecial } from "@/components/sections/PatisserieSpecial";
 import { AlwaysRollingSection } from "@/components/sections/AlwaysRollingSection";
 import { CateringEditorialSplit } from "@/components/sections/CateringEditorialSplit";
 import { WhyVisitSection } from "@/components/sections/WhyVisitSection";
@@ -36,13 +34,10 @@ import {
   homeCatering,
   homeFactualFocus,
   homeHero,
-  homeMenu,
   homeValues,
 } from "@/content/home";
 import { instagram, instagramSection } from "@/content/instagram";
-import { menuCategories, resolveHighlights } from "@/content/menu";
-
-const highlights = resolveHighlights();
+import { menuCategories } from "@/content/menu";
 
 // Deferred to its own chunk: it's the furthest-down section and owns its
 // own ResizeObserver (HorizontalRail) on top of several Reveal instances.
@@ -272,79 +267,7 @@ export default function HomePage() {
         caption={homeAlwaysRolling.caption}
       />
 
-      {/* 4 — Menu bento. Dishes, not categories: the board above already
-          enumerates every category, and re-listing them here (as the old
-          ticker panel and category tiles did) said the same thing three
-          times in one scroll. Prices resolve live out of content/menu.ts. */}
-      <Section spacing="lg">
-        <Stagger
-          className="grid grid-cols-6 gap-4 md:gap-5 md:auto-rows-[minmax(150px,auto)]"
-          stagger={0.06}
-        >
-          <StaggerItem
-            variant="tile"
-            className="col-span-6 md:col-span-2 md:row-span-2 flex flex-col justify-between gap-8 py-2"
-          >
-            <Eyebrow withRule>{homeMenu.eyebrow}</Eyebrow>
-            <div>
-              {/* A full register above the board's heading. Same weight —
-                  the size gap is what establishes which one leads. */}
-              <h2 className="type-title text-3xl md:text-5xl text-espresso">
-                {homeMenu.title}
-              </h2>
-              <div className="mt-6">
-                <Button variant="secondary" as="a" href="/menu" icon={<IconArrow />}>
-                  {homeMenu.cta}
-                </Button>
-              </div>
-            </div>
-          </StaggerItem>
-
-          {highlights.map((item, i) => (
-            <StaggerItem
-              key={`${item.categoryId}-${item.name}`}
-              variant="tile"
-              className="col-span-6 sm:col-span-3 md:col-span-2"
-            >
-              <Link
-                href={`/menu#${item.categoryId}`}
-                className={
-                  "group/dish flex h-full flex-col justify-between gap-6 rounded-card " +
-                  "border border-stroke p-6 md:p-7 min-h-[150px] " +
-                  "transition-[transform,box-shadow,border-color] duration-base ease-out-soft " +
-                  "hover:-translate-y-1 hover:shadow-lg hover:border-brass-ink/35 " +
-                  (i % 2 === 0 ? "bg-cream-2" : "bg-cream-3")
-                }
-              >
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="type-index text-brass-ink">{item.categoryTitle}</span>
-                  <span className="text-sm text-espresso-soft tabular-nums">{item.price}</span>
-                </div>
-
-                <div>
-                  <h3 className="type-sub text-xl md:text-2xl text-espresso">{item.name}</h3>
-                  {item.description ? (
-                    <p className="mt-2 text-sm leading-relaxed text-espresso-soft line-clamp-2">
-                      {item.description}
-                    </p>
-                  ) : null}
-                  <span
-                    aria-hidden
-                    className="mt-3 block h-px w-8 bg-brass-ink/40 transition-all
-                               duration-base ease-out-soft group-hover/dish:w-16"
-                  />
-                </div>
-              </Link>
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </Section>
-
-      {/* 5 — Patisserie special: sweet Friday, chapter one of the weekend
-          (chapter two is the Jachnun band directly below). */}
-      <PatisserieSpecial />
-
-      {/* 6 — Jachnun: chapter two, salty Saturday. */}
+      {/* 6 — Jachnun. */}
       <JachnunPromo />
 
       {/* 7 — Catering: editorial split (featured tray + compact list). */}

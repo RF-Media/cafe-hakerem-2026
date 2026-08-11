@@ -4,7 +4,6 @@ export const revalidate = 86400;
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { Card } from "@/components/ui/Card";
 import { CafeImage } from "@/components/ui/CafeImage";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { FAQBlock } from "@/components/ui/FAQBlock";
@@ -13,7 +12,6 @@ import { ImageReveal } from "@/components/motion/ImageReveal";
 import { Parallax } from "@/components/motion/Parallax";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitText } from "@/components/motion/SplitText";
-import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import type { PlaceholderVariant } from "@/components/ui/placeholders";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
@@ -118,52 +116,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/* Authorship block — GEO §11.4 */}
-      <Section tone="cream-2">
-        <Reveal>
-          <Eyebrow withRule>מי עומד מאחורי הקפה</Eyebrow>
-        </Reveal>
-        {/* One founder is the common case, so the grid tracks the count
-            instead of always splitting in two and orphaning a card. */}
-        <Stagger
-          className={
-            "mt-6 grid gap-6 " +
-            (about.founders.length > 1 ? "md:grid-cols-2" : "max-w-2xl")
-          }
-          stagger={0.1}
-        >
-          {about.founders.map((f, i) => (
-            <StaggerItem key={i} variant="tile">
-              <Card padding="lg" tone="cream-3" elevation="raised" className="h-full">
-                <div className="flex items-start gap-5">
-                  <div className="shrink-0 w-20 md:w-24">
-                    <CafeImage
-                      variant="founder"
-                      src={f.photo}
-                      alt={`${f.name} - ${f.role} בקפה הכרם`}
-                      ratio="aspect-square"
-                      tone="olive"
-                      sizes="96px"
-                      className="rounded-full"
-                    />
-                  </div>
-                  <div>
-                    <div className="type-sub text-xl md:text-2xl text-espresso">{f.name}</div>
-                    <div className="mt-1 text-sm text-olive">{f.role}</div>
-                    <p className="mt-3 text-base text-espresso-soft leading-relaxed">
-                      {f.bioShort}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </StaggerItem>
-          ))}
-        </Stagger>
-        <p className="mt-8 text-sm text-espresso-soft">
-          {business.name.he} פועל ב{business.address.city.he} משנת {about.foundedYear}.
-        </p>
-      </Section>
 
       <Section>
         <div className="mx-auto text-center max-w-2xl">
