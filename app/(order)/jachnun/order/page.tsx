@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { OrderFlow } from "@/components/order/OrderFlow";
-import { orderCopy } from "@/content/jachnun-order";
+import { CHECKOUT_ENABLED, orderCopy } from "@/content/jachnun-order";
 
 /**
  * The checkout is per-visitor and time-sensitive (pickup windows shift across
@@ -20,5 +21,6 @@ export const metadata: Metadata = {
 };
 
 export default function JachnunOrderPage() {
+  if (!CHECKOUT_ENABLED) redirect("/jachnun#order");
   return <OrderFlow />;
 }

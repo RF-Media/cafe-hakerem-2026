@@ -7,7 +7,7 @@ import { packageForUnits, priceOrder } from "@/lib/jachnun-pricing";
 import { verifyMockPaymentToken } from "@/lib/mock-payment";
 import { buildReceipt, type Receipt, type ReceiptPaymentStatus } from "@/lib/order-receipt";
 import { formatILS } from "@/lib/money";
-import type { PaymentMethod } from "@/content/jachnun-order";
+import { CHECKOUT_ENABLED, type PaymentMethod } from "@/content/jachnun-order";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -57,6 +57,11 @@ function isUniqueViolation(e: unknown, target?: string): boolean {
 }
 
 export async function POST(req: Request) {
+  // Payment is still the mock processor, whose token a client can forge — a
+  // live route would let anyone file a "paid" order. Phase 1 orders go
+  // through /api/jachnun-preorder.
+  if (!CHECKOUT_ENABLED) return err("ההזמנה באתר אינה זמינה כרגע.", 404, "bad_request");
+
   const rl = await checkRateLimit(req);
   if (!rl.ok) {
     return err("יותר מדי בקשות. נסו שוב בעוד דקה.", 429, "rate_limited", {

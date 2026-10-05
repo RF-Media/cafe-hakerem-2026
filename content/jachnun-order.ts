@@ -7,6 +7,13 @@
  * `jachnunPricing` at render time so the copy cannot drift from the total.
  */
 
+/**
+ * Phase 2. While false, /jachnun/order redirects to the one-step pre-order
+ * form on /jachnun and /api/jachnun-order answers 404. The checkout is kept
+ * intact behind this flag; flipping it is the whole switch back.
+ */
+export const CHECKOUT_ENABLED = false;
+
 export const ORDER_STEPS = ["quantity", "addons", "pickup", "details", "payment"] as const;
 export type OrderStepId = (typeof ORDER_STEPS)[number];
 

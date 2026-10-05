@@ -63,8 +63,8 @@ external font CDNs, dark mode logic.
     contact/page.tsx
     privacy/page.tsx
   /api/
-    jachnun-order/route.ts
-    jachnun-slots/route.ts
+    jachnun-preorder/route.ts   phase-1 one-step form (email only)
+    jachnun-order/route.ts      phase-2 checkout, gated off
     catering-inquiry/route.ts
   sitemap.ts
   robots.ts
@@ -440,6 +440,12 @@ holding, so the draft lives above the field. Don't pass both.
 Not general primitives. Everything under `components/order/` belongs to the
 jachnun checkout at `/jachnun/order` and imports its copy from
 `content/jachnun-order.ts`.
+
+**Phase 2 — currently off.** `CHECKOUT_ENABLED = false` in
+`content/jachnun-order.ts` redirects `/jachnun/order` to `/jachnun#order` and
+makes `/api/jachnun-order` answer 404. Live orders go through
+`<JachnunPreorderForm>` → `/api/jachnun-preorder` (see Decision Log
+2026-10-05). Flipping the flag is the whole switch back.
 
 | File | Role |
 |---|---|
@@ -1547,6 +1553,47 @@ pass — this is a real gap between the file and the shipped site, not a
 false alarm. Left as-is per explicit café instruction rather than silently
 restored; if Rule 4 still matters at launch, either bring the block back or
 strike the rule.
+
+**2026-10-05 — Phase 1 ships a one-step pre-order form; the five-step
+checkout moves to phase 2, gated rather than deleted.**
+The café wants a simple order path now and real payment later. `/jachnun`'s
+terracotta order card keeps its header (eyebrow, title, ₪35 price, bundle
+chip) but loses the ✓ checklist (instant confirmation, Apple Pay/Bit,
+cancellation) and the CTA into `/jachnun/order` — all three described the
+checkout, not what phase 1 does. Under the header, on cream (FormField's
+espresso labels don't read on terracotta), sits `<JachnunPreorderForm>`:
+package (the four fixed packages), pickup window (`getAvailableSlots()`,
+computed after mount for the same UTC-vs-Jerusalem reason as the checkout),
+name/phone/email/notes. No add-ons — they go in the notes field. Paid at
+pickup. It reuses `validateDetails()` from `components/order/state.ts` so
+both paths share one definition of a valid name/phone/email.
+
+The checkout is untouched code-wise. `CHECKOUT_ENABLED` gates both its page
+and its API — the API matters more: payment is still `lib/mock-payment.ts`,
+whose token a client can forge, so a live `/api/jachnun-order` would let
+anyone file a "paid" order that emails the café.
+
+`/api/jachnun-preorder` has **no database** — the café's Resend email *is*
+the order. This knowingly inverts §13 step 4: elsewhere the send is
+fire-and-forget because the row already exists; here the send is awaited,
+and a failure (or missing `RESEND_API_KEY` / `RESEND_FROM` /
+`CAFE_NOTIFICATION_EMAIL` in production) returns an error with the café's
+phone number rather than a reference for an order nobody received. In dev
+without Resend it logs the order and succeeds, so the form is demoable. The
+customer's email, if given, is set as `replyTo`. The pickup slot is re-checked
+server-side; a `slot_unavailable` response makes the form recompute slots
+and re-ask, which covers the Thursday 18:00 cutoff passing mid-fill.
+
+`Slot` gained `day` and `window` (the two halves of `label`) so the picker
+can show the date once over a 2×2 grid of times. Time ranges render inside
+`<bdi dir="ltr">`: the en dash between two times is a bidi neutral, and in an
+RTL run "08:00–08:30" displays as "08:30–08:00". `label` itself is
+unchanged, and the checkout still renders it bare.
+
+Copy that described online payment was corrected: the hero lede, the four
+"how it works" steps, and three jachnun FAQs (how to order, payment — the
+question is now "צריך לשלם מראש?" — and add-ons). The old card's markup is in
+git at 9b8b640 if phase 2 wants it back verbatim.
 
 ---
 

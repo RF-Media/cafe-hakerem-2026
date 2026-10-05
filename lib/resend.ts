@@ -21,7 +21,15 @@ function getClient(): Resend | null {
 export type EmailPayload = {
   subject: string;
   html: string;
+  /** Lets the café answer a customer straight from the notification. */
+  replyTo?: string;
 };
+
+export function isEmailConfigured(): boolean {
+  return Boolean(
+    process.env.RESEND_API_KEY && process.env.RESEND_FROM && process.env.CAFE_NOTIFICATION_EMAIL,
+  );
+}
 
 export async function sendNotification(payload: EmailPayload): Promise<boolean> {
   const c = getClient();
@@ -42,6 +50,7 @@ export async function sendNotification(payload: EmailPayload): Promise<boolean> 
       to,
       subject: payload.subject,
       html: payload.html,
+      replyTo: payload.replyTo,
     });
     return true;
   } catch (err) {

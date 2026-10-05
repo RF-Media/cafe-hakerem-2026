@@ -32,6 +32,13 @@ export const optionalEmailSchema = z
   .optional()
   .or(z.literal("").transform(() => undefined));
 
+const optionalNotesSchema = z
+  .string()
+  .trim()
+  .max(500, "ההערה ארוכה מדי.")
+  .optional()
+  .or(z.literal("").transform(() => undefined));
+
 /* ─── Jachnun order ────────────────────────────────────────────── */
 
 /** Ceiling on paid extras, mirroring `maxExtrasFor()` at the largest package size. */
@@ -62,12 +69,7 @@ export const jachnunOrderSchema = z.object({
   pickupSlot: z
     .string()
     .datetime({ message: "מועד איסוף לא תקין." }),
-  notes: z
-    .string()
-    .trim()
-    .max(500, "ההערה ארוכה מדי.")
-    .optional()
-    .or(z.literal("").transform(() => undefined)),
+  notes: optionalNotesSchema,
 
   /* ── Payment ──
      `totalAgorot` is what the browser displayed. The route recomputes the
@@ -84,6 +86,21 @@ export const jachnunOrderSchema = z.object({
 });
 
 export type JachnunOrderInput = z.infer<typeof jachnunOrderSchema>;
+
+/* ─── Jachnun pre-order (phase 1) ──────────────────────────────── */
+
+/* The one-step form on /jachnun: no add-ons, no payment, no client total.
+   The price in the café's email is looked up from the package server-side. */
+export const jachnunPreorderSchema = z.object({
+  name: nameSchema,
+  phone: phoneSchema,
+  email: optionalEmailSchema,
+  packageId: z.enum(PACKAGE_IDS, { errorMap: () => ({ message: "בחרו חבילה." }) }),
+  pickupSlot: z.string().datetime({ message: "מועד איסוף לא תקין." }),
+  notes: optionalNotesSchema,
+});
+
+export type JachnunPreorderInput = z.infer<typeof jachnunPreorderSchema>;
 
 /* ─── Catering inquiry ─────────────────────────────────────────── */
 

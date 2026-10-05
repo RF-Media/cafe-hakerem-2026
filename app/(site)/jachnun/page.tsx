@@ -19,6 +19,7 @@ import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FactualParagraph } from "@/components/sections/FactualParagraph";
+import { JachnunPreorderForm } from "@/components/sections/JachnunPreorderForm";
 import { formatILS } from "@/lib/money";
 import { jachnun, jachnunStartingPriceAgorot } from "@/content/jachnun";
 import { jachnunFAQs } from "@/content/faqs";
@@ -118,7 +119,7 @@ export default function JachnunPage() {
               {jachnun.pricing.bundleNote ? ` · ${jachnun.pricing.bundleNote}` : ""}
             </div>
             <div className="hero-fade mt-6" style={{ ["--d" as never]: 620 }}>
-              <Button as="a" href="/jachnun/order" variant="onDark" size="lg" icon={<IconArrow />}>
+              <Button as="a" href="#order" variant="onDark" size="lg" icon={<IconArrow />}>
                 להזמנה
               </Button>
             </div>
@@ -140,10 +141,14 @@ export default function JachnunPage() {
         </Stagger>
       </Section>
 
-      {/* Order form + what's included */}
+      {/* Pre-order. Phase 1 is this one-step form, paid at pickup; the
+          five-step checkout at /jachnun/order is phase 2 and gated off (see
+          CHECKOUT_ENABLED). The terracotta header keeps the sub-brand on the
+          one card whose job is to convert; the form itself sits on cream,
+          since FormField's espresso labels don't read on terracotta. */}
       <Section tone="cream-2">
         <div className="grid lg:grid-cols-5 gap-10">
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-6 lg:sticky lg:top-28 lg:self-start">
             <Reveal>
               <Eyebrow tone="jachnun" withRule>מה כלול</Eyebrow>
             </Reveal>
@@ -157,94 +162,54 @@ export default function JachnunPage() {
             </Stagger>
           </div>
 
-          <div className="lg:col-span-3">
-            {/* The order panel follows the reading column on desktop — the
-                left rail is short, so pinning keeps the CTA in reach through
-                the whole section. Terracotta fill (tone="jachnun") on
-                purpose: this is the one card on the page whose entire job
-                is to convert, so it gets the sub-brand's own colour instead
-                of blending into the surrounding cream-3 cards. */}
-            <div className="lg:sticky lg:top-28">
-              <Card padding="lg" tone="jachnun" elevation="floating" className="relative overflow-hidden">
+          {/* First on mobile: the hero's "להזמנה" lands here, and the form
+              shouldn't sit below a list the hero already summarised. */}
+          <div id="order" className="order-first lg:order-none lg:col-span-3 scroll-mt-24">
+            <div className="overflow-hidden rounded-card border border-stroke bg-cream-3 shadow-md">
+              <div className="relative overflow-hidden bg-jachnun px-5 py-7 sm:px-8 md:p-8 text-cream">
                 <div
                   aria-hidden
                   className="pointer-events-none absolute -top-24 -end-24 w-72 h-72 rounded-full
                              bg-[radial-gradient(circle,hsl(var(--cream)/0.12),transparent_65%)]"
                 />
                 <div className="relative">
-                  <Eyebrow tone="cream" withRule>הזמנה מראש</Eyebrow>
+                  <Eyebrow tone="cream" withRule>{jachnun.preorder.eyebrow}</Eyebrow>
                   <h2 className="mt-4 type-title text-2xl md:text-3xl text-cream">
-                    להזמין ג&apos;חנון לשבת
+                    {jachnun.preorder.title}
                   </h2>
-                  <p className="mt-3 text-base text-cream/80">
-                    בוחרים חבילה ותוספות, מזמינים באתר ואוספים חם בשבת בבוקר.
-                  </p>
-                  <p className="mt-1.5 text-sm text-cream/60">
-                    רוצים להיות בטוחים שיש? מומלץ להזמין מראש.
-                  </p>
+                  <p className="mt-3 text-base text-cream/85">{jachnun.preorder.lede}</p>
+                  <p className="mt-1.5 text-sm text-cream/70">{jachnun.preorder.reassurance}</p>
 
-                  <div className="mt-7 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <div className="mt-5 md:mt-7 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                     <span className="type-display text-4xl md:text-5xl text-cream tabular-nums">
                       {formatILS(jachnunStartingPriceAgorot)}
                     </span>
-                    <span className="text-sm text-cream/70">ליחידה</span>
+                    <span className="text-sm text-cream/70">{jachnun.preorder.perUnit}</span>
                   </div>
                   <span className="mt-2 inline-flex items-center rounded-pill bg-cream/15 px-3 py-1 text-xs text-cream">
                     {jachnun.pricing.bundleNote}
                   </span>
-
-                  <ul className="mt-7 space-y-2.5 border-t border-cream/15 pt-6 text-sm text-cream/85">
-                    <li className="flex gap-2.5">
-                      <span aria-hidden className="text-cream/50">✓</span>
-                      <span>אישור הזמנה מיידי במסך</span>
-                    </li>
-                    <li className="flex gap-2.5">
-                      <span aria-hidden className="text-cream/50">✓</span>
-                      <span>תשלום מאובטח - אשראי, Apple Pay, Google Pay או ביט</span>
-                    </li>
-                    <li className="flex gap-2.5">
-                      <span aria-hidden className="text-cream/50">✓</span>
-                      <span>ניתן לבטל עד יום חמישי, 18:00</span>
-                    </li>
-                  </ul>
-
-                  <div className="mt-8">
-                    <Button
-                      as="a"
-                      href="/jachnun/order"
-                      variant="onDark"
-                      size="xl"
-                      className="w-full"
-                      icon={<IconArrow />}
-                    >
-                      {jachnun.cta.label}
-                    </Button>
-                    <p className="mt-3 text-center text-xs text-cream/60">
-                      {jachnun.cta.supporting}
-                    </p>
-                  </div>
-
-                  {/*
-                    The checkout is a five-step client flow and cannot work
-                    without JavaScript. Rather than ship a form that silently
-                    fails, the no-JS path is the one the café has always had —
-                    the phone. CLAUDE.md §12 asks that every page stay usable
-                    without JS; usable, not identical.
-                  */}
-                  <noscript>
-                    <div className="mt-6 rounded-card border border-cream/20 bg-cream/10 px-5 py-4 text-sm text-cream/85">
-                      טופס ההזמנה דורש JavaScript. אפשר להזמין ג&apos;חנון מקפה הכרם גם בטלפון:{" "}
-                      <a
-                        href={`tel:${business.phone.tel}`}
-                        className="text-cream underline underline-offset-4 hover:text-brass"
-                      >
-                        {business.phone.display}
-                      </a>
-                      .
-                    </div>
-                  </noscript>
                 </div>
-              </Card>
+              </div>
+
+              <div className="px-4 py-7 sm:px-6 md:p-8">
+                {/* The form needs JS for its pickup windows and submit; the
+                    no-JS path is the one the café has always had — the phone
+                    (CLAUDE.md §12: usable, not identical). */}
+                <noscript>
+                  <div className="mb-6 rounded-card border border-stroke bg-cream px-5 py-4 text-sm text-espresso-soft">
+                    טופס ההזמנה דורש JavaScript. אפשר להזמין ג&apos;חנון מקפה הכרם גם בטלפון:{" "}
+                    <a
+                      href={`tel:${business.phone.tel}`}
+                      className="text-olive underline underline-offset-4 hover:text-espresso"
+                    >
+                      {business.phone.display}
+                    </a>
+                    .
+                  </div>
+                </noscript>
+                <JachnunPreorderForm />
+              </div>
             </div>
           </div>
         </div>

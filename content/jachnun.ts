@@ -133,7 +133,7 @@ export const jachnun = {
     title: "ג'חנון הכרם",
     lede:
       "בקפה הכרם אנחנו אופים ג'חנון תימני מסורתי לאיסוף בשבת בבוקר. " +
-      "ההזמנה והתשלום מתבצעים מראש באתר, האיסוף בשבת בבוקר.",
+      "מזמינים מראש באתר, אוספים ומשלמים בשבת בבוקר.",
     image: "/images/jachnun-band.jpg",
     imageAlt:
       "מגש ג'חנון תימני עם ביצה קשה, רסק עגבניות, סחוג, זיתים ומלפפונים חמוצים",
@@ -169,14 +169,52 @@ export const jachnun = {
     bundleNote: "אפשר גם בחבילה: זוג, חמישייה או עשרה - משתלם יותר ליחידה.",
   },
 
-  /* Order-flow configuration. */
-  form: {
-    // Pickup slots are generated dynamically by /lib/jachnun-cutoff.ts.
-    // The label below introduces the slot picker.
-    slotLabel: "בחר/י חלון איסוף",
-    slotHint:
-      "האיסוף מתבצע בשבת בבוקר. ההזמנות נסגרות בכל יום חמישי בשעה 18:00; " +
-      "הזמנות שיתקבלו לאחר מכן יישמרו לשבת הבאה.",
+  /* Phase-1 one-step pre-order on /jachnun (the five-step checkout at
+     /jachnun/order is phase 2 — see CHECKOUT_ENABLED). Pay at pickup. */
+  preorder: {
+    eyebrow: "הזמנה מראש",
+    title: "להזמין ג'חנון לשבת",
+    lede: "בוחרים חבילה וחלון איסוף, משאירים שם וטלפון - ואוספים חם בשבת בבוקר.",
+    reassurance: "רוצים להיות בטוחים שיש? מומלץ להזמין מראש.",
+    perUnit: "ליחידה",
+
+    packages: { legend: "כמה ג'חנון?", required: "בחרו חבילה." },
+    pickup: {
+      legend: "מתי לאסוף?",
+      where: "רחוב הכרמל 20",
+      loading: "טוען חלונות איסוף…",
+      required: "בחרו חלון איסוף.",
+      cutoffNote: "ההזמנות לשבת הקרובה נסגרות ביום חמישי ב-18:00. אחר כך - לשבת הבאה.",
+    },
+    details: {
+      legend: "הפרטים שלכם",
+      name: { label: "שם מלא", placeholder: "ישראל ישראלי" },
+      phone: { label: "טלפון נייד", placeholder: "050-1234567", hint: "לזיהוי באיסוף ולעדכונים על ההזמנה בלבד." },
+      email: { label: "אימייל (אופציונלי)", placeholder: "you@example.com" },
+      notes: {
+        label: "בקשות מיוחדות (אופציונלי)",
+        hint: "תוספות, אלרגיות, אריזה נפרדת - כל דבר שכדאי שנדע.",
+      },
+    },
+
+    total: "לתשלום באיסוף",
+    totalEmpty: "בחרו חבילה",
+    submit: "שליחת ההזמנה",
+    submitting: "שולח…",
+    payNote: "אין תשלום באתר - משלמים בקפה, באיסוף.",
+    network: "אין חיבור לרשת. ההזמנה לא נשלחה - בדקו את החיבור ונסו שוב.",
+    generic: "משהו השתבש וההזמנה לא נשלחה.",
+    callPrefix: "אפשר גם להזמין בטלפון:",
+
+    success: {
+      title: "ההזמנה התקבלה!",
+      referenceLabel: "מספר הזמנה",
+      referenceHint: "שמרו את המספר - נשתמש בו באיסוף.",
+      pickup: "איסוף",
+      package: "חבילה",
+      questions: "שאלות על ההזמנה?",
+      again: "הזמנה נוספת",
+    },
   },
 
   /* Standalone "how it works" walkthrough — its own section on the page,
@@ -188,25 +226,16 @@ export const jachnun = {
     eyebrow: "איך זה עובד",
     title: "מהזמנה ועד לשולחן, בארבעה צעדים",
     steps: [
-      { title: "בוחרים כמות ותוספות", body: "בטופס ההזמנה כאן באתר." },
+      { title: "בוחרים חבילה ושעה", body: "בטופס ההזמנה כאן באתר." },
+      { title: "משאירים שם וטלפון", body: "ההזמנה נשלחת ישירות לקפה." },
       {
-        title: "משלמים באתר",
-        body: "אשראי, Apple Pay, Google Pay, ביט או מזומן באיסוף.",
-      },
-      {
-        title: "מקבלים אישור מיידי",
-        body: "במסך - כדאי לשמור את מספר ההזמנה.",
+        title: "מקבלים מספר הזמנה",
+        body: "במסך - כדאי לשמור אותו לאיסוף.",
       },
       {
         title: "מגיעים בשבת בבוקר",
-        body: "לרחוב הכרמל 20, בחלון האיסוף שבחרתם.",
+        body: "לרחוב הכרמל 20, ומשלמים באיסוף.",
       },
     ],
-  },
-
-  /* CTA into the multi-step ordering flow at /jachnun/order. */
-  cta: {
-    label: "התחיל/י הזמנה",
-    supporting: "הזמנה מאובטחת · פחות מדקה · ביטול עד יום חמישי 18:00",
   },
 };

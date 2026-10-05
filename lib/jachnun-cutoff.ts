@@ -30,6 +30,9 @@ export type Slot = {
   iso: string;
   /** Hebrew label shown in the dropdown (Saturday date + window). */
   label: string;
+  /** The two halves of `label`, for pickers that show the date once. */
+  day: string;
+  window: string;
 };
 
 /**
@@ -129,9 +132,12 @@ export function getAvailableSlots(now: Date = new Date()): Slot[] {
   const dateLabel = `${sat.day.toString().padStart(2, "0")}/${sat.month
     .toString()
     .padStart(2, "0")}`;
+  const day = `שבת ${dateLabel}`;
   return SATURDAY_SLOT_HOURS.map(({ hour, minute, label }) => ({
     iso: jerusalemLocalToUtc(sat.year, sat.month, sat.day, hour, minute).toISOString(),
-    label: `שבת ${dateLabel} · ${label}`,
+    label: `${day} · ${label}`,
+    day,
+    window: label,
   }));
 }
 
