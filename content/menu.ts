@@ -129,7 +129,7 @@ export const menuCategories: MenuCategory[] = [
         badges: ["vegetarian", "gluten-free"],
       },
     ],
-    image: "/images/menu/salads.jpg",
+    image: "/images/salads.jpg",
     imageAlt: "סלט ירקות טרי בקערה עם מלפפון, עגבנייה, בצל סגול, זיתי קלמטה ופלח לימון",
   },
   {
