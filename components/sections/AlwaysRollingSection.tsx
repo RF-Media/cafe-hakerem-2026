@@ -24,7 +24,6 @@ type AlwaysRollingSectionProps = {
   categories: MenuCategory[];
   eyebrow: string;
   title: string;
-  subtitle: string;
   caption: string;
 };
 
@@ -32,7 +31,6 @@ export function AlwaysRollingSection({
   categories,
   eyebrow,
   title,
-  subtitle,
   caption,
 }: AlwaysRollingSectionProps) {
   return (
@@ -43,9 +41,6 @@ export function AlwaysRollingSection({
         </Reveal>
         <Reveal delay={0.05}>
           <h2 className="mt-4 type-title text-3xl md:text-4xl max-w-xl">{title}</h2>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <p className="mt-5 type-lede text-base md:text-lg text-cream/75 max-w-md">{subtitle}</p>
         </Reveal>
 
         <Stagger

@@ -54,8 +54,6 @@ export const homeMenu = {
 export const homeAlwaysRolling = {
   eyebrow: "מה אוכלים?",
   title: "מה בא לכם היום?",
-  subtitle:
-    "התפריט שלנו משתנה עם העונה וממה שטרי זה מספקים. הקטגוריות שלנו זורמות כמו קפה חם - תמיד משהו חדש להנות.",
   /** Sits under the board. Previously hardcoded inside the component. */
   caption: "התפריט מתחדש לפי העונה. לחצו על קטגוריה למעבר ישיר בתפריט המלא.",
 };

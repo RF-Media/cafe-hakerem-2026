@@ -263,7 +263,6 @@ export default function HomePage() {
         categories={menuCategories}
         eyebrow={homeAlwaysRolling.eyebrow}
         title={homeAlwaysRolling.title}
-        subtitle={homeAlwaysRolling.subtitle}
         caption={homeAlwaysRolling.caption}
       />
 
