@@ -9,7 +9,7 @@
  * Everything a customer typed goes through escapeHtml before interpolation.
  */
 import { business } from "@/content/business";
-import { emailShell, jachnunConfirmation, cateringConfirmation, orderCopy } from "@/content/emails";
+import { emailShell, jachnunConfirmation, cateringConfirmation, orderTicket } from "@/content/emails";
 import { jachnun, type JachnunPackage } from "@/content/jachnun";
 import type { Slot } from "@/lib/jachnun-cutoff";
 import { formatILS } from "@/lib/money";
@@ -41,25 +41,8 @@ function hoursRows(): string {
     .join("");
 }
 
-function brandedEmail({
-  preheader,
-  eyebrow,
-  title,
-  body,
-  notice,
-}: {
-  preheader: string;
-  eyebrow: string;
-  title: string;
-  body: string;
-  /** Already-escaped HTML shown in a banner above the card — the internal copy uses it. */
-  notice?: string;
-}): string {
+function brandedEmail({ preheader, eyebrow, title, body }: { preheader: string; eyebrow: string; title: string; body: string }): string {
   const a = business.address;
-  const noticeRow = notice
-    ? `<tr><td bgcolor="${C.pine}" style="background:${C.pine};border-radius:12px;padding:14px 20px;margin:0;text-align:right;font-size:14px;line-height:1.6;color:${C.cream};" dir="rtl">${notice}</td></tr>
-    <tr><td style="height:12px;line-height:12px;font-size:12px;">&nbsp;</td></tr>`
-    : "";
   return `<!doctype html>
 <html lang="he" dir="rtl">
 <head>
@@ -79,7 +62,6 @@ function brandedEmail({
         <img src="${siteUrl}/images/logo_dark.png" width="180" alt="${business.name.he}" style="display:block;width:180px;max-width:60%;height:auto;border:0;margin:0 auto;">
       </a>
     </td></tr>
-    ${noticeRow}
     <tr><td bgcolor="${C.card}" style="background:${C.card};border:1px solid ${C.stroke};border-radius:16px;padding:32px 28px;text-align:right;" dir="rtl">
       <div style="width:32px;height:1px;background:${C.brassInk};margin:0 0 12px;line-height:1px;font-size:1px;">&nbsp;</div>
       <p style="margin:0 0 8px;color:${C.brassInk};font-size:12px;letter-spacing:0.18em;font-weight:500;">${escapeHtml(eyebrow)}</p>
@@ -139,6 +121,16 @@ function detailRows(rows: [string, string][]): string {
 
 const multiline = (s: string) => escapeHtml(s).replace(/\n/g, "<br>");
 
+function eventDateLabel(iso: string): string {
+  return new Intl.DateTimeFormat("he-IL", {
+    timeZone: "Asia/Jerusalem",
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(iso));
+}
+
 /* ─── Jachnun ─────────────────────────────────────────────────── */
 
 export type JachnunConfirmationInput = {
@@ -151,20 +143,8 @@ export type JachnunConfirmationInput = {
   notes?: string;
 };
 
-/**
- * `copy: true` renders the same confirmation as an internal copy: an
- * order-copy banner (who it was for, what to collect) and an internal
- * subject line. The body stays identical, so the copy shows exactly what the
- * customer saw.
- */
-export type ConfirmationOptions = { copy?: boolean };
-
-export function jachnunConfirmationEmail(
-  d: JachnunConfirmationInput,
-  { copy = false }: ConfirmationOptions = {},
-): { subject: string; html: string } {
+export function jachnunConfirmationEmail(d: JachnunConfirmationInput): { subject: string; html: string } {
   const c = jachnunConfirmation;
-  const total = formatILS(d.pkg.totalAgorot);
   const a = business.address;
   const included = jachnun.whatsIncluded.slice(1).join(" · ");
 
@@ -210,18 +190,9 @@ ${detailRows(details)}
 ${p(`${c.changeNote} <a href="tel:${business.phone.tel}" style="color:${C.pine};font-weight:700;text-decoration:none;" dir="ltr">${business.phone.display}</a>`, "margin:24px 0 0;")}
 `;
 
-  const k = orderCopy;
   return {
-    subject: copy ? k.jachnunSubject(d.reference, d.name, total, d.slot.label) : c.subject(d.reference),
-    html: brandedEmail({
-      preheader: copy ? k.jachnunNotice(d.name, d.reference, total) : c.preheader(d.slot.day),
-      eyebrow: c.eyebrow,
-      title: c.title,
-      body,
-      notice: copy
-        ? `<strong>${k.banner}</strong><br>${escapeHtml(k.jachnunNotice(d.name, d.reference, total))}<br>${escapeHtml(d.email ? k.sentTo(d.email) : k.noCustomerEmail)}`
-        : undefined,
-    }),
+    subject: c.subject(d.reference),
+    html: brandedEmail({ preheader: c.preheader(d.slot.day), eyebrow: c.eyebrow, title: c.title, body }),
   };
 }
 
@@ -237,10 +208,7 @@ export type CateringConfirmationInput = {
   message: string;
 };
 
-export function cateringConfirmationEmail(
-  d: CateringConfirmationInput,
-  { copy = false }: ConfirmationOptions = {},
-): { subject: string; html: string } {
+export function cateringConfirmationEmail(d: CateringConfirmationInput): { subject: string; html: string } {
   const c = cateringConfirmation;
 
   const rows: [string, string][] = [
@@ -248,16 +216,7 @@ export function cateringConfirmationEmail(
     [c.phoneLabel, `<span dir="ltr">${escapeHtml(d.phone)}</span>`],
   ];
   if (d.email) rows.push([c.emailLabel, `<span dir="ltr">${escapeHtml(d.email)}</span>`]);
-  if (d.eventDate) {
-    const date = new Intl.DateTimeFormat("he-IL", {
-      timeZone: "Asia/Jerusalem",
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }).format(new Date(d.eventDate));
-    rows.push([c.eventDateLabel, escapeHtml(date)]);
-  }
+  if (d.eventDate) rows.push([c.eventDateLabel, escapeHtml(eventDateLabel(d.eventDate))]);
   if (d.guestCount) rows.push([c.guestsLabel, String(d.guestCount)]);
   rows.push([c.messageLabel, multiline(d.message)]);
 
@@ -276,17 +235,115 @@ ${p(c.nextBody)}
 </tr></table>
 `;
 
-  const k = orderCopy;
   return {
-    subject: copy ? k.cateringSubject(d.reference, d.name) : c.subject(d.reference),
-    html: brandedEmail({
-      preheader: copy ? k.cateringNotice(d.name, d.reference) : c.preheader,
-      eyebrow: c.eyebrow,
-      title: c.title,
-      body,
-      notice: copy
-        ? `<strong>${k.banner}</strong><br>${escapeHtml(k.cateringNotice(d.name, d.reference))}<br>${escapeHtml(d.email ? k.sentTo(d.email) : k.noCustomerEmail)}`
-        : undefined,
+    subject: c.subject(d.reference),
+    html: brandedEmail({ preheader: c.preheader, eyebrow: c.eyebrow, title: c.title, body }),
+  };
+}
+
+/* ─── Kitchen ticket ──────────────────────────────────────────── */
+
+/**
+ * The internal email: no logo, no hours, no marketing copy. A green header
+ * with the reference, then what to make, who it's for and what to collect, in
+ * type large enough to read off a phone propped up in the kitchen.
+ */
+function ticket({ header, headline, sub, rows, total, footer }: {
+  header: string;
+  headline: string;
+  sub?: string;
+  /** label + already-escaped HTML value */
+  rows: [string, string][];
+  total?: { label: string; value: string };
+  footer: string;
+}): string {
+  const rowHtml = rows
+    .map(
+      ([label, value]) => `<tr>
+  <td valign="top" style="padding:14px 0 14px 16px;border-bottom:1px solid ${C.stroke};font-size:15px;color:${C.inkSoft};white-space:nowrap;width:1%;">${label}</td>
+  <td style="padding:14px 0;border-bottom:1px solid ${C.stroke};font-size:20px;line-height:1.4;color:${C.ink};">${value}</td>
+</tr>`,
+    )
+    .join("");
+  const totalHtml = total
+    ? `<tr><td colspan="2" style="padding:20px 0 0;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr><td bgcolor="${C.deep}" style="background:${C.deep};border-radius:12px;padding:18px 20px;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
+      <td style="font-size:18px;font-weight:700;color:${C.cream};">${total.label}</td>
+      <td align="left" style="font-size:32px;font-weight:700;color:${C.cream};white-space:nowrap;">${total.value}</td>
+    </tr></table>
+  </td></tr></table>
+</td></tr>`
+    : "";
+  return `<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>${escapeHtml(header)}</title>
+</head>
+<body style="margin:0;padding:0;background:#ffffff;font-family:${FONT};color:${C.ink};">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr><td align="center" style="padding:16px;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:560px;" dir="rtl">
+    <tr><td colspan="2" bgcolor="${C.pine}" style="background:${C.pine};border-radius:12px;padding:18px 20px;text-align:right;color:${C.cream};">
+      <p style="margin:0 0 4px;font-size:15px;font-weight:500;">${escapeHtml(header)}</p>
+      <p style="margin:0;font-size:30px;font-weight:700;letter-spacing:0.04em;" dir="ltr" align="right">${escapeHtml(headline)}</p>
+      ${sub ? `<p style="margin:6px 0 0;font-size:20px;font-weight:700;">${sub}</p>` : ""}
+    </td></tr>
+    ${rowHtml}
+    ${totalHtml}
+    <tr><td colspan="2" style="padding:16px 0 0;font-size:13px;color:${C.inkSoft};">${escapeHtml(footer)}</td></tr>
+  </table>
+</td></tr>
+</table>
+</body>
+</html>`;
+}
+
+const phoneLink = (phone: string) =>
+  `<a href="tel:${escapeHtml(phone.replace(/[^\d+]/g, ""))}" style="color:${C.pine};font-weight:700;text-decoration:none;" dir="ltr">${escapeHtml(phone)}</a>`;
+
+export function jachnunOrderTicket(d: JachnunConfirmationInput): { subject: string; html: string } {
+  const t = orderTicket;
+  const total = formatILS(d.pkg.totalAgorot);
+  const rows: [string, string][] = [
+    [t.orderLabel, `<strong>${escapeHtml(d.pkg.title)}</strong> · ${t.units(d.pkg.units)}`],
+    [t.includedLabel, `<span style="font-size:16px;">${escapeHtml(jachnun.whatsIncluded.slice(1).join(" · "))}</span>`],
+  ];
+  if (d.notes) rows.push([t.notesLabel, `<strong>${multiline(d.notes)}</strong>`]);
+  rows.push([t.customerLabel, `${escapeHtml(d.name)}<br>${phoneLink(d.phone)}`]);
+
+  return {
+    subject: t.jachnunSubject(d.reference, d.name, total, d.slot.label),
+    html: ticket({
+      header: t.jachnunHeader,
+      headline: d.reference,
+      sub: `${t.pickupLabel}: ${escapeHtml(d.slot.day)} · <span dir="ltr" style="white-space:nowrap;">${escapeHtml(d.slot.window)}</span>`,
+      rows,
+      total: { label: t.totalLabel, value: total },
+      footer: d.email ? t.sentTo(d.email) : t.noCustomerEmail,
+    }),
+  };
+}
+
+export function cateringInquiryTicket(d: CateringConfirmationInput): { subject: string; html: string } {
+  const t = orderTicket;
+  const rows: [string, string][] = [];
+  if (d.eventDate) rows.push([t.eventDateLabel, escapeHtml(eventDateLabel(d.eventDate))]);
+  if (d.guestCount) rows.push([t.guestsLabel, String(d.guestCount)]);
+  rows.push([t.messageLabel, multiline(d.message)]);
+  rows.push([t.customerLabel, `${escapeHtml(d.name)}<br>${phoneLink(d.phone)}`]);
+
+  return {
+    subject: t.cateringSubject(d.reference, d.name),
+    html: ticket({
+      header: t.cateringHeader,
+      headline: d.reference,
+      sub: t.callBack,
+      rows,
+      footer: d.email ? t.sentTo(d.email) : t.noCustomerEmail,
     }),
   };
 }

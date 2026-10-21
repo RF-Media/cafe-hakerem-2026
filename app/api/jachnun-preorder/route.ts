@@ -10,7 +10,7 @@ import {
   sendCustomerEmail,
   sendNotification,
 } from "@/lib/resend";
-import { jachnunConfirmationEmail } from "@/lib/email-templates";
+import { jachnunConfirmationEmail, jachnunOrderTicket } from "@/lib/email-templates";
 import { formatILS } from "@/lib/money";
 import { jachnunPackages } from "@/content/jachnun";
 
@@ -122,7 +122,7 @@ export async function POST(req: Request) {
     sendCustomerEmail({
       to: copyTo,
       replyTo: data.email,
-      ...jachnunConfirmationEmail(confirmationInput, { copy: true }),
+      ...jachnunOrderTicket(confirmationInput),
     }).catch((e) => console.error("[jachnun-preorder] order copy failed:", e));
   }
 

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/ratelimit";
 import { cateringInquirySchema, generateReference } from "@/lib/validation";
 import { escapeHtml, orderCopyRecipients, rtlEmail, sendCustomerEmail, sendNotification } from "@/lib/resend";
-import { cateringConfirmationEmail } from "@/lib/email-templates";
+import { cateringConfirmationEmail, cateringInquiryTicket } from "@/lib/email-templates";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -95,7 +95,7 @@ export async function POST(req: Request) {
     sendCustomerEmail({
       to: copyTo,
       replyTo: data.email,
-      ...cateringConfirmationEmail({ reference, ...data }, { copy: true }),
+      ...cateringInquiryTicket({ reference, ...data }),
     }).catch((e) => console.error("[catering-inquiry] order copy failed:", e));
   }
 

@@ -56,16 +56,25 @@ export const cateringConfirmation = {
   ctaLabel: "למגשי האירוח",
 };
 
-/* Internal copy of each confirmation, sent to ORDER_COPY_EMAILS (CoffeeStream,
-   later the seller too). Same body as the customer's email, plus a banner. */
-export const orderCopy = {
-  banner: "עותק פנימי של אישור ההזמנה",
+/* Kitchen ticket: the internal email to ORDER_COPY_EMAILS (CoffeeStream now,
+   the seller later). Built to be read at a glance on a phone in the kitchen. */
+export const orderTicket = {
+  jachnunHeader: "הזמנת ג'חנון חדשה",
+  cateringHeader: "פנייה חדשה למגשי אירוח",
   jachnunSubject: (reference: string, name: string, total: string, slot: string) =>
-    `[עותק] הזמנת ג'חנון ${reference} · ${name} · ${total} לתשלום · ${slot}`,
-  jachnunNotice: (name: string, reference: string, total: string) =>
-    `הזמנה ${reference} של ${name}. לגבייה בקופה באיסוף: ${total}.`,
-  cateringSubject: (reference: string, name: string) => `[עותק] פנייה למגשי אירוח ${reference} · ${name}`,
-  cateringNotice: (name: string, reference: string) => `פנייה ${reference} של ${name}. יש לחזור ללקוח בטלפון.`,
-  sentTo: (email: string) => `אישור נשלח ללקוח בכתובת ${email}.`,
-  noCustomerEmail: "הלקוח לא השאיר אימייל, ולכן לא נשלח אליו אישור.",
+    `ג'חנון ${reference} · ${name} · ${total} · ${slot}`,
+  cateringSubject: (reference: string, name: string) => `מגשי אירוח ${reference} · ${name}`,
+  pickupLabel: "איסוף",
+  orderLabel: "בהזמנה",
+  units: (n: number) => `${n} יח׳`,
+  includedLabel: "כולל",
+  notesLabel: "הערות",
+  customerLabel: "לקוח",
+  totalLabel: "לגבייה בקופה",
+  eventDateLabel: "תאריך",
+  guestsLabel: "אורחים",
+  messageLabel: "פרטים",
+  callBack: "לחזור ללקוח בטלפון",
+  sentTo: (email: string) => `אישור נשלח ללקוח: ${email}`,
+  noCustomerEmail: "הלקוח לא השאיר אימייל, לא נשלח אישור",
 };

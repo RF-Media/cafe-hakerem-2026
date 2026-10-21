@@ -1886,3 +1886,14 @@ confirmation: fire-and-forget, never blocks the response. `replyTo` is the
 customer's email when given, so the recipient can answer the customer directly.
 This is separate from `CAFE_NOTIFICATION_EMAIL`'s plain operational
 notification, which is unchanged.
+
+**2026-10-22 — The internal copy becomes a kitchen ticket.**
+Supersedes the body of the entry above; recipients and sending rules are
+unchanged. A copy of the customer's branded email was the wrong shape for
+someone reading it in a kitchen: logo, greeting, Waze link, opening hours and
+the CoffeeStream footer all sat between them and the three facts they need.
+`jachnunOrderTicket()` / `cateringInquiryTicket()` render a separate email
+instead: the green header (reference, pickup slot or "call the customer
+back"), then large-type rows for what's in the order, notes, name and a
+tap-to-call phone, and the amount to collect in a dark bar. White background,
+no branding, no marketing copy. The customer's confirmation is untouched.
