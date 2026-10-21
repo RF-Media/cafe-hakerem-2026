@@ -770,7 +770,9 @@ All under `/app/api/`. Pattern for every route:
    inquiry is already persisted by this point; a Resend outage must
    never fail or delay a response for something that already
    succeeded. See `notifyCafe()` in `jachnun-order/route.ts` for the
-   pattern.
+   pattern. On Vercel, wrap that detached promise in `waitUntil()` from
+   `@vercel/functions`: a bare promise can be frozen the moment the
+   function returns, and the email silently never leaves.
 5. Return JSON: `{ ok: true, reference?: string }` or
    `{ ok: false, error: string }` with appropriate status code.
 6. Errors return **Hebrew** messages (these are user-facing).
@@ -1897,3 +1899,32 @@ instead: the green header (reference, pickup slot or "call the customer
 back"), then large-type rows for what's in the order, notes, name and a
 tap-to-call phone, and the amount to collect in a dark bar. White background,
 no branding, no marketing copy. The customer's confirmation is untouched.
+
+**2026-10-22 — Customer confirmation restyled for inboxes; PDF attached; `waitUntil` for every background send.**
+The customer email was rebuilt for Gmail, Apple Mail and desktop Outlook
+rather than for a browser: nested tables only, td padding instead of
+margins, a 600px MSO ghost table so Word's renderer doesn't stretch the
+fluid layout, `bgcolor` alongside `style`, an Arial override for Outlook,
+and a padded-td button. Visually it is quieter than before: a white card,
+a 112px logo, a light summary strip (reference + pickup, which stacks on
+phones), a hairline total row in pine instead of the black slab, and the
+opening hours collapsed to one line in the footer.
+
+Each confirmation now carries a PDF (`lib/confirmation-pdf.ts`), printed by
+headless Chromium exactly as CoffeeStream's receipts are
+(`puppeteer-core` + `@sparticuz/chromium`, same pinned versions). It was
+picked over `@react-pdf/renderer` because a browser is the only renderer
+that gets Hebrew bidi and mixed Hebrew/Latin/numbers right without
+workarounds. Noto Sans Hebrew is embedded, with Heebo (OFL, copied from
+CoffeeStream) as the Latin fallback: Chromium on Vercel has no system
+fonts, so without it the reference and email address would print as empty
+boxes. The PDF states it is not a tax invoice. It renders after the
+response (2–8s cold), and if it fails the email goes out without it.
+
+The real bug found on the way: every "fire-and-forget" send in both form
+routes was a bare promise. On Vercel the function can be frozen as soon as
+it returns, so confirmations, kitchen tickets and the catering
+notification could be silently dropped. All of them now run under
+`waitUntil()` from `@vercel/functions`, and both routes set
+`maxDuration = 60`. New deps: `puppeteer-core`, `@sparticuz/chromium`,
+`@vercel/functions`, approved before install.

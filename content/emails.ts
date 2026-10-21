@@ -5,8 +5,10 @@
  */
 
 export const emailShell = {
-  hoursLabel: "שעות פתיחה",
-  contactLabel: "שאלות? התקשרו אלינו",
+  /** Sunday-first, for the one-line hours summary ("א׳–ה׳ 07:00–20:00"). */
+  dayShort: ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "שבת"],
+  closed: "סגור",
+  pdfNote: "אישור ההזמנה מצורף למייל כקובץ PDF.",
   poweredBy: "מופעל על ידי",
   poweredByName: "CoffeeStream",
   poweredByUrl: "https://coffeestream.co.il",
@@ -21,7 +23,10 @@ export const jachnunConfirmation = {
   intro: "תודה שהזמנת ג'חנון מקפה הכרם. הנה כל פרטי ההזמנה, כדאי לשמור את המייל הזה עד האיסוף.",
   referenceLabel: "מספר הזמנה",
   pickupHeading: "איסוף",
-  wazeLabel: "ניווט עם Waze",
+  pickupPlaceHeading: "מקום האיסוף",
+  wazeLabel: "Waze",
+  mapsLabel: "Google Maps",
+  navigateLabel: "ניווט:",
   orderHeading: "פירוט ההזמנה",
   unitsLabel: (units: number) => (units === 1 ? "יחידה אחת" : `${units} יחידות`),
   includedLabel: "כל ג'חנון מגיע עם",
@@ -54,6 +59,30 @@ export const cateringConfirmation = {
   nextHeading: "מה עכשיו?",
   nextBody: "נעבור על הבקשה, נתקשר לתאם סוגי מגשים, כמויות ומועד איסוף, ונשלח הצעה מסודרת. בינתיים אפשר להציץ שוב במגשים שלנו.",
   ctaLabel: "למגשי האירוח",
+};
+
+/* The PDF attached to each customer confirmation (lib/confirmation-pdf.ts). */
+export const confirmationPdf = {
+  jachnunTitle: "אישור הזמנה",
+  jachnunSubtitle: "ג'חנון של שבת",
+  cateringTitle: "אישור קבלת פנייה",
+  cateringSubtitle: "מגשי אירוח",
+  referenceLabel: "מספר הזמנה",
+  inquiryReferenceLabel: "מספר פנייה",
+  issuedLabel: "תאריך",
+  pickupLabel: "מועד איסוף",
+  pickupPlaceLabel: "מקום איסוף",
+  itemCol: "פריט",
+  qtyCol: "כמות",
+  amountCol: "סכום",
+  included: "כלול",
+  totalLabel: "לתשלום בקופה באיסוף",
+  paymentNote: "לא בוצע חיוב. התשלום מתבצע בקופה בעת איסוף ההזמנה.",
+  customerHeading: "פרטי המזמין",
+  inquiryHeading: "פרטי הפנייה",
+  nextNote: "קפה הכרם יחזור אליך בטלפון לתיאום הפרטים ולהצעת מחיר.",
+  notInvoice: "מסמך זה הוא אישור הזמנה ואינו מהווה חשבונית מס.",
+  filename: (reference: string) => `cafe-hakerem-${reference}.pdf`,
 };
 
 /* Kitchen ticket: the internal email to ORDER_COPY_EMAILS (CoffeeStream now,

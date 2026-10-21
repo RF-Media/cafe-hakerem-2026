@@ -1,8 +1,21 @@
+const PDF_FILES = [
+  "./node_modules/@sparticuz/chromium/bin/**",
+  "./lib/pdf-assets/**",
+  "./public/images/logo_dark.png",
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
     optimizePackageImports: ["framer-motion"],
+    // Confirmation PDFs: Chromium can't be bundled, and its binary, the
+    // embedded font and the logo have to ship with the two form routes.
+    serverComponentsExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
+    outputFileTracingIncludes: {
+      "/api/jachnun-preorder": PDF_FILES,
+      "/api/catering-inquiry": PDF_FILES,
+    },
   },
   images: {
     formats: ["image/avif", "image/webp"],

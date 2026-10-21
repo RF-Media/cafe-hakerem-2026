@@ -71,7 +71,9 @@ export async function sendNotification(payload: EmailPayload): Promise<boolean> 
  * fail the request: the order or inquiry has already succeeded by the time it
  * runs, and a missing confirmation is a nuisance, not a lost order.
  */
-export async function sendCustomerEmail(payload: EmailPayload & { to: string | string[] }): Promise<boolean> {
+export async function sendCustomerEmail(
+  payload: EmailPayload & { to: string | string[]; attachments?: { filename: string; content: Buffer }[] },
+): Promise<boolean> {
   const c = getClient();
   const from = process.env.RESEND_FROM;
 
@@ -89,6 +91,7 @@ export async function sendCustomerEmail(payload: EmailPayload & { to: string | s
       subject: payload.subject,
       html: payload.html,
       replyTo: payload.replyTo ?? business.email.public,
+      attachments: payload.attachments,
     });
     if (error) {
       console.error("[resend] customer send failed:", error);

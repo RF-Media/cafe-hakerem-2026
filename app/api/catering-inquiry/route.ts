@@ -3,10 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/ratelimit";
 import { cateringInquirySchema, generateReference } from "@/lib/validation";
 import { escapeHtml, orderCopyRecipients, rtlEmail, sendCustomerEmail, sendNotification } from "@/lib/resend";
+import { waitUntil } from "@vercel/functions";
 import { cateringConfirmationEmail, cateringInquiryTicket } from "@/lib/email-templates";
+import { cateringConfirmationHtml, pdfAttachment } from "@/lib/confirmation-pdf";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// The customer's PDF is rendered by Chromium after the response, under waitUntil.
+export const maxDuration = 60;
 
 function err(message: string, status: number, headers?: Record<string, string>) {
   return NextResponse.json({ ok: false, error: message }, { status, headers });
@@ -79,24 +83,31 @@ export async function POST(req: Request) {
       </table>
     `,
   );
-  sendNotification({
-    subject: `פנייה חדשה למגשי אירוח - ${reference}`,
-    html,
-    replyTo: data.email,
-  }).catch((e) => console.error("[catering-inquiry] notify failed:", e));
+  // waitUntil, not bare promises: on Vercel a function can be frozen the
+  // moment it returns, and the inquiry is already saved, so these must finish.
+  waitUntil(
+    sendNotification({ subject: `פנייה חדשה למגשי אירוח - ${reference}`, html, replyTo: data.email }).catch((e) =>
+      console.error("[catering-inquiry] notify failed:", e),
+    ),
+  );
 
+  const confirmationInput = { reference, ...data };
   if (data.email) {
-    sendCustomerEmail({ to: data.email, ...cateringConfirmationEmail({ reference, ...data }) }).catch((e) =>
-      console.error("[catering-inquiry] confirmation failed:", e),
+    const to = data.email;
+    waitUntil(
+      (async () => {
+        const attachments = await pdfAttachment(reference, cateringConfirmationHtml(confirmationInput));
+        await sendCustomerEmail({ to, attachments, ...cateringConfirmationEmail(confirmationInput) });
+      })().catch((e) => console.error("[catering-inquiry] confirmation failed:", e)),
     );
   }
   const copyTo = orderCopyRecipients();
   if (copyTo.length) {
-    sendCustomerEmail({
-      to: copyTo,
-      replyTo: data.email,
-      ...cateringInquiryTicket({ reference, ...data }),
-    }).catch((e) => console.error("[catering-inquiry] order copy failed:", e));
+    waitUntil(
+      sendCustomerEmail({ to: copyTo, replyTo: data.email, ...cateringInquiryTicket(confirmationInput) }).catch((e) =>
+        console.error("[catering-inquiry] order ticket failed:", e),
+      ),
+    );
   }
 
   return NextResponse.json({ ok: true, reference });

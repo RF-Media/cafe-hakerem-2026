@@ -10,12 +10,16 @@ import {
   sendCustomerEmail,
   sendNotification,
 } from "@/lib/resend";
+import { waitUntil } from "@vercel/functions";
 import { jachnunConfirmationEmail, jachnunOrderTicket } from "@/lib/email-templates";
+import { jachnunConfirmationHtml, pdfAttachment } from "@/lib/confirmation-pdf";
 import { formatILS } from "@/lib/money";
 import { jachnunPackages } from "@/content/jachnun";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// The customer's PDF is rendered by Chromium after the response, under waitUntil.
+export const maxDuration = 60;
 
 /**
  * Phase-1 jachnun pre-order: the one-step form on /jachnun. Pay at pickup,
@@ -110,20 +114,25 @@ export async function POST(req: Request) {
   if (!sent) return err(SEND_FAILED, 502, "send_failed");
 
   // Only after the café has the order — a confirmation for an order nobody
-  // received is worse than none. Not awaited: it can't fail the response.
+  // received is worse than none. waitUntil, not a bare promise: on Vercel a
+  // function can be frozen the moment it returns, and these must still finish.
   const confirmationInput = { reference, slot, pkg, ...data };
   if (data.email) {
-    sendCustomerEmail({ to: data.email, ...jachnunConfirmationEmail(confirmationInput) }).catch((e) =>
-      console.error("[jachnun-preorder] confirmation failed:", e),
+    const to = data.email;
+    waitUntil(
+      (async () => {
+        const attachments = await pdfAttachment(reference, jachnunConfirmationHtml(confirmationInput));
+        await sendCustomerEmail({ to, attachments, ...jachnunConfirmationEmail(confirmationInput) });
+      })().catch((e) => console.error("[jachnun-preorder] confirmation failed:", e)),
     );
   }
   const copyTo = orderCopyRecipients();
   if (copyTo.length) {
-    sendCustomerEmail({
-      to: copyTo,
-      replyTo: data.email,
-      ...jachnunOrderTicket(confirmationInput),
-    }).catch((e) => console.error("[jachnun-preorder] order copy failed:", e));
+    waitUntil(
+      sendCustomerEmail({ to: copyTo, replyTo: data.email, ...jachnunOrderTicket(confirmationInput) }).catch((e) =>
+        console.error("[jachnun-preorder] order ticket failed:", e),
+      ),
+    );
   }
 
   return NextResponse.json({ ok: true, reference });
