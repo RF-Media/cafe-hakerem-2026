@@ -51,7 +51,14 @@ export const revealVariants = (direction: Direction, distance: number) => ({
   },
 });
 
-export const staggerContainer = (stagger: number, delay: number) => ({
+/** Accessibility panel: slides in from the physical left edge it is
+ *  anchored to, so the offset is physical rather than RTL-relative. */
+export const sidePanelVariants = {
+  hidden: { opacity: 0, x: -12, transition: { duration: DUR.fast, ease: EASE_OUT_SOFT } },
+  visible: { opacity: 1, x: 0, transition: { duration: DUR.fast, ease: EASE_OUT_SOFT } },
+};
+
+export const staggerContainer =(stagger: number, delay: number) => ({
   hidden: {},
   visible: {
     transition: { staggerChildren: stagger, delayChildren: delay },

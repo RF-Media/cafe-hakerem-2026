@@ -134,9 +134,9 @@ export const jachnun = {
     lede:
       "בקפה הכרם אנחנו אופים ג'חנון תימני מסורתי לאיסוף בשבת בבוקר. " +
       "מזמינים מראש באתר, אוספים ומשלמים בשבת בבוקר.",
-    image: "/images/jachnun-band.jpg",
+    image: "/images/jachnun-plate_shared.jpg",
     imageAlt:
-      "מגש ג'חנון תימני עם ביצה קשה, רסק עגבניות, סחוג, זיתים ומלפפונים חמוצים",
+      "ג'חנון תימני על צלחת לצד רסק עגבניות, סחוג וביצה קשה",
   },
 
   /* "Why ours" — 3 short reasons. Each ≤ 12 words. */

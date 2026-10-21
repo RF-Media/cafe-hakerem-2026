@@ -85,9 +85,9 @@ const weekdayHours = (() => {
 function MenuInterlude() {
   return (
     <Reveal>
-      <aside className="group/cta relative mt-16 md:mt-20 overflow-hidden rounded-card text-cream px-6 py-10 md:px-10 md:py-12 focus-within:outline-none">
+      <div className="group/cta relative mt-16 md:mt-20 overflow-hidden rounded-card text-cream px-6 py-10 md:px-10 md:py-12 focus-within:outline-none">
         <Image
-          src="/images/jachnun-band.jpg"
+          src="/images/burekas-spread_shared.jpg"
           alt="מגש בורקס תורכי, ביצים קשות, זיתים וסחוג, כפי שמוגשים בקפה הכרם"
           fill
           sizes="(max-width: 768px) 100vw, 1024px"
@@ -123,7 +123,7 @@ function MenuInterlude() {
             </Button>
           </div>
         </div>
-      </aside>
+      </div>
     </Reveal>
   );
 }

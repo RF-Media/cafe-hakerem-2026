@@ -243,6 +243,53 @@
   }
 }
 
+/* ---------------------------------------------------------------------
+   Accessibility widget modes, toggled on <html> by
+   components/layout/AccessibilityWidget.tsx.
+   --------------------------------------------------------------------- */
+html.a11y-text-1 { font-size: 112.5%; }
+html.a11y-text-2 { font-size: 125%; }
+
+/* High contrast re-keys the tokens instead of filtering the page: the
+   secondary inks collapse onto full espresso, the accents darken, and the
+   translucent cream/espresso text utilities become opaque. */
+html.a11y-contrast {
+  --espresso-soft: 22 17% 12%;
+  --stroke:        24 10% 38%;
+  --olive:         152 30% 15%;
+  --olive-soft:    152 22% 24%;
+  --jachnun:       14 70% 32%;
+  --brass-ink:     36 55% 24%;
+}
+html.a11y-contrast [class*="text-cream/"] { color: hsl(var(--cream)) !important; }
+html.a11y-contrast [class*="text-espresso/"] { color: hsl(var(--espresso)) !important; }
+html.a11y-contrast [class*="text-brass/"] { color: hsl(var(--brass)) !important; }
+html.a11y-contrast [class*="text-brass-ink/"] { color: hsl(var(--brass-ink)) !important; }
+
+html.a11y-links a {
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+  font-weight: 700 !important;
+}
+
+/* Same kill switch as prefers-reduced-motion above. */
+html.a11y-motion,
+html.a11y-motion *,
+html.a11y-motion *::before,
+html.a11y-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  animation-delay: 0ms !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+html.a11y-motion .scroll-cue::after { display: none; }
+
+html.a11y-font,
+html.a11y-font * {
+  font-family: Arial, "Helvetica Neue", sans-serif !important;
+}
+
 /* ─────────────────────────────────────────────────────────────
    Print — the order confirmation doubles as the receipt.
 

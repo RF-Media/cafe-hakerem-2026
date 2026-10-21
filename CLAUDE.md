@@ -616,6 +616,11 @@ change ships.
   - Instagram grid: `aspect-square`
 - Subtle grain overlay allowed on hero only:
   `opacity-[0.04]`, no higher.
+- File names: `<subject>_<page>.<ext>`, lowercase English, subject words
+  joined by hyphens: `coffee-beans_home.jpg`, `sweet-tray_catering.jpg`.
+  `<page>` is the route the image appears on; an image used on more than
+  one page is `_shared`. Logos are `logo_<variant>.png`. Everything sits
+  flat in `/public/images`, with no subfolders.
 
 ---
 
@@ -1594,6 +1599,132 @@ Copy that described online payment was corrected: the hero lede, the four
 "how it works" steps, and three jachnun FAQs (how to order, payment — the
 question is now "צריך לשלם מראש?" — and add-ons). The old card's markup is in
 git at 9b8b640 if phase 2 wants it back verbatim.
+
+**2026-10-05 — Home hero headline one step below `hero-headline`; Visit card
+gets the cream lockup back.**
+At `lg:text-8xl` the home `<h1>` ran to four lines and crowded the Visit
+card. The home hero alone now uses `text-[2.5rem] md:text-6xl lg:text-7xl`;
+every inner page keeps the §5 `hero-headline` scale. The Visit column is
+`lg:self-end`, so the card sits level with the CTAs instead of mid-headline,
+and `logo2.png` (the cream mark, already reserved for dark grounds) sits
+above it.
+
+**2026-10-20 — Copywriter's pass applied to home and `/about`.**
+The café's copywriting doc replaces the copy on every home section (hero
+lede, three values, jachnun band and steps, catering body, about preview,
+Instagram lede, FAQs) plus the tray descriptions in `content/catering.ts`,
+which `/catering` shares. Images and the doc's two design notes (lighten the
+Visit card, browner jachnun band) are deferred to the images phase.
+
+Where the doc and this file disagree, this file won, minimally: five FAQ
+answers that opened with "אנחנו" got `קפה הכרם` inserted (§15), phone numbers
+were normalised to `053-557-4194` (§11 Rule 5), and the `/about` `<h1>` keeps
+`גני תקווה` (§10) instead of the doc's "איך הכל התחיל". The doc's expanded
+story has headed sections, so `about.paragraphs` became `about.story:
+{ heading, paragraphs }[]`, rendered as `type-sub` `<h2>`s. It also replaces
+the 2026-08-03 placeholder story, whose "ערביקה בקלייה בינונית" contradicted
+the café's own arabica + robusta copy. The home jachnun band's `reassurance`
+line was dropped: the doc omits it and its new body already says "מזמינים
+מראש". Still open: a Wolt link and a Waze link for two FAQ answers (which
+render as plain text today), and the "תפריט ילדים ייעודי" claim, which the
+doc keeps although the menu has no kids' section.
+
+**2026-10-20 — Café photography in; image file names standardised.**
+The originals came from the café's `final-images-web` Drive folder. The six
+photos placed in the copywriting doc went where the doc put them: coffee
+beans, croissant and outdoor seating on the three home value cards; the
+storefront on the home story section (anchored `object-top` so the 4:5 crop
+keeps the sign); the sandwich and pastry boxes on the sandwich and sweet
+trays. Four files the café had already named (`salads_home`,
+`sandwitches_home`, `coffee_prod_home`, `משקאות_`) became category tiles.
+
+Every image now follows the §8 naming rule, and every reference was updated.
+`jachnun-band.jpg` and `menu/burekas.jpg` were byte-identical, so they are
+one file, `burekas-spread_shared.jpg`. That photo shows burekas, yet it was
+also the jachnun band and `/jachnun` hero under jachnun alt text; both now
+use a real jachnun plate from the folder (`jachnun-plate_shared.jpg`), with
+the café's approval over the doc's "keep the image". The burekas photo stays
+on the burekas tile and the menu-page banner, whose alt already said
+burekas. The files the new photos replaced were deleted. Still without
+a photo: the specials, pastries, cakes, juices and soft-drinks tiles, and
+the breakfast tray.
+
+**2026-10-21 — `deviceSizes` back up to 2560; portrait screens get their own hero.**
+Supersedes the 2026-05-28 "device list trimmed" entry. Capping `deviceSizes`
+at 1200 confused CSS width with pixel width: a full-bleed hero on a 1440px
+retina laptop needs ~2880 device pixels, so heroes were stretched 2.4×.
+`deviceSizes` now ends `1200, 1920, 2560`. Phones are unaffected (a 390px
+screen at 3× already tops out at the 1200 candidate); the cost is desktop
+retina bytes. The home hero's original is only 1672px wide, so desktop
+stays a little soft until the café supplies a larger file.
+
+Phones had a worse problem: the hero box is portrait (~390×1038) and
+`object-cover` blew a thin slice of the landscape counter shot up ~4.7×.
+The home hero is now a `<picture>` built with `getImageProps`:
+`(orientation: portrait)` gets `takeaway-cup_home.jpg`, everything else the
+counter shot. `getImageProps` emits no preload link, but the `<img>` is in
+the SSR HTML with `fetchpriority="high"` and Lighthouse measured a 7ms load
+delay, so none is needed. The photo was chosen on weight as well as fit: the
+first pick (the yard, at `sizes="150vw"`) took mobile LCP to 4.4–5.0s, since
+foliage compresses badly; the cup is 11KB at the served size.
+
+Measured on the production build after the change (Lighthouse CLI):
+`/` mobile LCP 3.1s, performance 93; desktop 0.8s / 99. `/jachnun` mobile
+2.9s / 95; desktop 0.7s / 100. Accessibility 100, SEO 100 on both. Mobile
+LCP is over the 2.5s budget, at the 2026-08-04 baseline, with an 11KB LCP
+image and observed load phases under 100ms. That is the throttling model,
+per §7's protocol. Two `text-cream/40` captions on dark bands (the category
+grid, the Instagram count) failed AA at 3.58:1 and moved to `/70`.
+
+**2026-10-21 — Accessibility widget ported from CoffeeStream; `/accessibility` statement page.**
+Same tab-on-the-left-edge + six-toggle panel as CoffeeStream's
+`AccessibilityWidget` (text size ×2, high contrast, link highlight, stop
+animations, readable font, reset), re-skinned to this palette and mounted in
+the root layout right after the skip link, so it is the second Tab stop on
+every route. Each toggle is a class on `<html>` (`lib/a11y-prefs.ts`, CSS in
+`globals.css`); copy is in `content/accessibility.ts`. Three deliberate
+differences from the original:
+
+1. **High contrast re-keys tokens rather than `filter: contrast(1.4)`.** The
+   filter mostly punched up photos; overriding `--espresso-soft`, `--stroke`,
+   `--olive`, `--jachnun`, `--brass-ink` and forcing the translucent
+   `text-cream/…`, `text-brass/…` utilities opaque actually raises the ratios.
+2. **Prefs are applied by an inline boot script before first paint.** Applying
+   them after hydration would re-flow the page at a new text size, which means a
+   CLS hit on every visit for exactly the people who set one. `<html>` carries
+   `suppressHydrationWarning` for that reason.
+3. **"Stop animations" goes through the §7 kill switch.** `lib/use-reduced-motion.ts`
+   is true for the OS preference *or* `html.a11y-motion`, and Parallax,
+   PinnedScene, Magnetic and Counter read it instead of Framer's hook.
+   `MotionProvider` switches to `reducedMotion="always"`, and the widget also
+   sets `MotionGlobalConfig.skipAnimations`, because Framer only reads
+   `reducedMotion` at mount and only for positional keys. Without the flag,
+   reveals already on the page would keep playing after the toggle.
+
+The widget sits at `z-[45]`: above MobileBar and the checkout bars (z-40),
+under the Nav header (z-50), so the focus-trapped mobile sheet covers it.
+
+The statement mirrors CoffeeStream's structure and only claims what the site
+does. **Open before launch:** תקנה 35 asks for a named accessibility
+coordinator and the café's physical arrangements. Neither was supplied, so
+contact routes to the café's phone/email and the physical section is absent.
+
+The axe-core pass over all eight pages (default and high-contrast modes) found
+three existing AA failures, now fixed: `text-jachnun/70` numerals in
+`JachnunPromo` (2.79:1), `text-cream/80` on the jachnun band and in
+`<Eyebrow tone="cream">` (3.82:1), and `text-brass/70` category numerals
+(4.1:1, now `/90`). The `/menu` CTA card was a nested `<aside>` landmark and
+is now a `<div>`. The `/menu` ghost numerals (`text-brass-ink/25`) still
+show up in axe, but they are `aria-hidden` decoration, which 1.4.3 exempts.
+
+Then a ui-ux-pro-max review plus a 21st.dev search. The registry had no
+accessibility-widget pattern, and its shadcn toggle grids don't fit this
+stack. Two of their ideas were adopted without installing anything, and the
+review's checklist drove the rest: a check mark on active tiles (state isn't
+colour-only), a 2-step level bar on text size, a polite live region announcing
+reset, `cursor-pointer` on every control, and a `brass/40` hairline so the dark
+tab reads against the dark hero and footer. `update()` reads a ref rather than
+render state, so two taps before a re-render both land.
 
 ---
 

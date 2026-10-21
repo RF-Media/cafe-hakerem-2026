@@ -25,9 +25,9 @@ const cardStyle: {
   imageTone: "olive" | "brass";
   src?: string;
 }[] = [
-  { imageVariant: "cup", imageTone: "olive", src: "/images/barista.jpg" },
-  { imageVariant: "pastry", imageTone: "brass", src: "/images/bread.jpg" },
-  { imageVariant: "map", imageTone: "olive", src: "/images/yard.jpg" },
+  { imageVariant: "cup", imageTone: "olive", src: "/images/coffee-beans_home.jpg" },
+  { imageVariant: "pastry", imageTone: "brass", src: "/images/croissant_home.jpg" },
+  { imageVariant: "map", imageTone: "olive", src: "/images/outdoor-seating_home.jpg" },
 ];
 
 export function WhyVisitSection({ eyebrow, title, items }: WhyVisitSectionProps) {

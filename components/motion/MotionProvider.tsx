@@ -8,16 +8,18 @@
  * given how many pages now animate. `strict` makes any stray `motion.*`
  * import throw at build time rather than silently re-inflating the bundle.
  *
- * `reducedMotion="user"` is the global kill switch: with the OS preference
- * set, Framer holds every animated value at its target instead of playing
- * the transition.
+ * `reducedMotion` is the global kill switch: with the OS preference set, or
+ * "עצירת אנימציות" on in the accessibility widget, Framer holds every
+ * animated value at its target instead of playing the transition.
  */
 import { LazyMotion, MotionConfig, domAnimation } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 export function MotionProvider({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion();
   return (
     <LazyMotion features={domAnimation} strict>
-      <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      <MotionConfig reducedMotion={reduced ? "always" : "user"}>{children}</MotionConfig>
     </LazyMotion>
   );
 }

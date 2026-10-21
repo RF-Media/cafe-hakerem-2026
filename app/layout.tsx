@@ -3,8 +3,10 @@ import { Noto_Sans_Hebrew } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { MotionProvider } from "@/components/motion/MotionProvider";
+import { AccessibilityWidget } from "@/components/layout/AccessibilityWidget";
 import { business } from "@/content/business";
 import { CREAM_HEX } from "@/lib/theme";
+import { A11Y_BOOT_SCRIPT } from "@/lib/a11y-prefs";
 import "./globals.css";
 
 // Single unified family across the site (CLAUDE.md §5). Bound to all
@@ -102,6 +104,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       dir="rtl"
       className={fontVars}
       style={fontStyle}
+      // The a11y boot script below adds classes to <html> before hydration.
+      suppressHydrationWarning
     >
       {/*
         No `overflow-x: hidden` here on purpose: setting it on <body> turns
@@ -115,6 +119,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         pay button cannot share the bottom of a phone screen with MobileBar.
       */}
       <body className="font-body bg-cream text-espresso min-h-screen flex flex-col">
+        <script dangerouslySetInnerHTML={{ __html: A11Y_BOOT_SCRIPT }} />
         {/*
           Framer Motion writes its `initial` state as an inline style into
           the SSR HTML, so without JS every below-fold section would stay at
@@ -129,7 +134,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </noscript>
         <a href="#main" className="skip-link">דלגו לתוכן</a>
         <JsonLd data={globalSchema()} />
-        <MotionProvider>{children}</MotionProvider>
+        <MotionProvider>
+          <AccessibilityWidget />
+          {children}
+        </MotionProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>

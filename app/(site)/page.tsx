@@ -2,7 +2,7 @@ export const dynamic = "force-static";
 export const revalidate = 86400;
 
 import type { Metadata } from "next";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import nextDynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
@@ -61,6 +61,15 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
+  const heroImage = { alt: homeHero.imageAlt, fill: true, priority: true, quality: 85 };
+  const { props: heroLandscape } = getImageProps({
+    ...heroImage,
+    src: homeHero.image,
+    sizes: "100vw",
+    className: "object-cover object-[center_68%]",
+  });
+  const { props: heroPortrait } = getImageProps({ ...heroImage, src: homeHero.imageMobile, sizes: "100vw" });
+
   return (
     <>
       <BreadcrumbSchema trail={[]} />
@@ -71,16 +80,12 @@ export default function HomePage() {
           waits on the JS bundle. Everything below the fold uses Framer. */}
       <section className="relative isolate flex min-h-[70svh] md:min-h-[78svh] items-center overflow-hidden bg-espresso-deep">
         {/* The storefront photograph, full-bleed. `fill` rather than a ratio
-            box: the frame here is the viewport, not the file's own 16:9. */}
-        <Image
-          src={homeHero.image}
-          alt={homeHero.imageAlt}
-          fill
-          priority
-          quality={85}
-          sizes="100vw"
-          className="object-cover object-[center_68%]"
-        />
+            box: the frame here is the viewport, not the file's own 16:9.
+            Portrait screens swap in a portrait photo (see `homeHero`). */}
+        <picture>
+          <source media="(orientation: portrait)" srcSet={heroPortrait.srcSet} sizes={heroPortrait.sizes} />
+          <img {...heroLandscape} />
+        </picture>
 
         {/* Scrim. The photo is bright and warm — cream wall along the top,
             a lit interior through the middle — so cream text can't sit on it
@@ -130,7 +135,7 @@ export default function HomePage() {
                 a re-crop or a swapped photo shouldn't be able to break the
                 h1's legibility. */}
             <h1
-              className="mt-5 type-display text-[2.75rem] leading-[1.03] md:text-7xl lg:text-8xl text-cream
+              className="mt-5 type-display text-[2.5rem] leading-[1.03] md:text-6xl lg:text-7xl text-cream
                          [text-shadow:0_2px_28px_hsl(var(--espresso-deep)/0.55)]"
             >
               <SplitText text={homeHero.headline} delay={80} />
@@ -161,15 +166,18 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* The visit card, standing alone now that the wordmark lives in
-              the nav.
+          {/* The visit card, seated at the bottom of the row (`lg:self-end`)
+              so it lines up with the CTAs rather than floating mid-headline.
+              The cream lockup sits inside the card now, above the VISIT row
+              — the card's top padding is pushed out (`pt-10`) to give the
+              mark room without it crowding the eyebrow underneath.
 
               No explicit `order` here: mobile stacking follows DOM order,
               and the headline column above is already first in the JSX —
               headline, lede and both CTAs render before the Visit card on
               every viewport. The `<h1>` never moves regardless (CLAUDE.md
               §7, hard rule 1). */}
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-5 lg:self-end">
             <Parallax speed={0.12}>
               <div
                 className="hero-fade flex flex-col items-center lg:items-stretch"
@@ -184,8 +192,19 @@ export default function HomePage() {
                     padding="lg"
                     tone="espresso"
                     elevation="floating"
-                    className="ring-1 ring-cream/10"
+                    className="ring-1 ring-cream/10 pt-12"
                   >
+                    <Image
+                      src="/images/logo_cream.png"
+                      alt={business.name.he}
+                      width={1251}
+                      height={574}
+                      sizes="200px"
+                      className="mx-auto h-16 md:h-20 w-auto"
+                    />
+
+                    <div className="mt-7 mb-7 h-px bg-cream/15" />
+
                     <div className="flex items-center justify-between gap-3">
                       <Eyebrow tone="brass">{homeHero.visitEyebrow}</Eyebrow>
                       <OpenStatusBadge />
@@ -316,9 +335,10 @@ export default function HomePage() {
             <ImageReveal className="rounded-card">
               <CafeImage
                 variant="interior"
-                src="/images/hakerem.jpg"
+                src="/images/storefront_home.jpg"
                 alt={homeAbout.imageAlt}
                 ratio="aspect-[4/5]"
+                className="[&_img]:object-top"
                 tone="olive"
                 sizes="(max-width: 768px) 100vw, 45vw"
               />
@@ -340,7 +360,7 @@ export default function HomePage() {
 
       {/* 10 — FAQ + factual paragraph */}
       <Section tone="cream">
-        <FAQBlock items={homeFAQs} />
+        <FAQBlock items={homeFAQs} heading="שאלות נפוצות על הקפה" />
         <FAQSchema items={homeFAQs} />
         <FactualParagraph focus={homeFactualFocus} />
       </Section>

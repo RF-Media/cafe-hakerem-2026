@@ -86,12 +86,17 @@ export default function AboutPage() {
       {/* Story, set against a parallax gallery column. */}
       <section className={`${container} py-10 md:py-16`}>
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
-          <div className="lg:col-span-7 space-y-6">
-            {about.paragraphs.map((p, i) => (
-              <Reveal key={i} delay={i * 0.06}>
-                <p className="text-base md:text-lg leading-relaxed text-espresso-soft max-w-prose-he">
-                  {p}
-                </p>
+          <div className="lg:col-span-7 space-y-12">
+            {about.story.map((block, i) => (
+              <Reveal key={block.heading} delay={i * 0.06}>
+                <h2 className="type-sub text-xl md:text-2xl text-espresso">{block.heading}</h2>
+                <div className="mt-4 space-y-4">
+                  {block.paragraphs.map((p) => (
+                    <p key={p} className="text-base md:text-lg leading-relaxed text-espresso-soft max-w-prose-he">
+                      {p}
+                    </p>
+                  ))}
+                </div>
               </Reveal>
             ))}
           </div>

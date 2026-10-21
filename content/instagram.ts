@@ -81,6 +81,6 @@ export const instagramCategories = [
 export const instagramSection = {
   eyebrow: "מהפיד שלנו",
   title: "רגעים אחרונים מקפה הכרם",
-  body: "מה שיוצא מהמטבח, מי שיושב בחוץ, מה אופים השבוע.",
+  body: "קצת מהאווירה, מהקפה ומהרגעים שביניהם.",
   ctaLabel: "עקבו אחרינו",
 };

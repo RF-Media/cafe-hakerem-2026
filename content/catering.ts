@@ -48,18 +48,17 @@ export const catering = {
     {
       id: "burekas-tray",
       title: { he: "מגש בורקס טורקי" },
-      // CONFIRM BEFORE LAUNCH: serves count and filling list are plausible
-      // placeholders, not sourced from the café's own sheet — same
-      // treatment as the 2026-08-03 "§9 exception: demo prices" entry.
-      // No fromPrice for the same reason (§9 forbids inventing prices;
-      // the field is optional and the UI already renders without it).
+      // CONFIRM BEFORE LAUNCH: serves count is a plausible placeholder, not
+      // sourced from the café's own sheet — same treatment as the 2026-08-03
+      // "§9 exception: demo prices" entry. `includes` is the café's own
+      // copy (2026-10-20 copywriting doc). No fromPrice (§9 forbids
+      // inventing prices; the field is optional and the UI renders without it).
       serves: "10–15 איש",
       includes: [
-        "מבחר בורקס טורקי במילוי גבינה, תפוחי אדמה ותרד",
-        "רוטב עגבניות ביתי לצד",
-        "זעתר ושמן זית לגימור",
+        "מבחר בורקסים טורקיים במילוי גבינה, תפוחי אדמה או תרד",
+        "לצד ביצים, זיתים ורוטב הבית שלנו",
       ],
-      photo: "/images/host-burekas.jpg",
+      photo: "/images/burekas-tray_catering.jpg",
       popular: true,
     },
     {
@@ -84,18 +83,17 @@ export const catering = {
         "ירקות חתוכים ומלפפונים חמוצים",
       ],
       fromPrice: "מ-₪420",
-      photo: "/images/sandwitches_guests.jpg",
+      photo: "/images/sandwich-tray_catering.jpg",
     },
     {
       id: "sweet-tray",
       title: { he: "מגש מתוק" },
       serves: "10–12 איש",
       includes: [
-        "עוגיות ורוגלך של הבית",
-        "פרוסות עוגת גבינה ובראוני",
-        "פירות יבשים ואגוזים",
+        "מאפים מתוקים, עוגיות וכל מה שכיף להגיש ליד הקפה",
       ],
       fromPrice: "מ-₪280",
+      photo: "/images/sweet-tray_catering.jpg",
     },
   ] as CateringOption[],
 

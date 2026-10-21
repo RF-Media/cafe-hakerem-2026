@@ -93,7 +93,7 @@ export function AlwaysRollingSection({
 
                 <div className="relative flex flex-col items-center justify-center gap-2 text-center h-full p-5">
                   <span
-                    className={`type-index text-brass/70 transition-colors duration-fast
+                    className={`type-index text-brass/90 transition-colors duration-fast
                                group-hover/card:text-brass
                                ${cat.image ? "[text-shadow:0_1px_6px_rgba(0,0,0,0.7)]" : ""}`}
                   >
@@ -124,7 +124,7 @@ export function AlwaysRollingSection({
         </Stagger>
 
         <Reveal delay={0.15}>
-          <p className="mt-6 md:mt-8 text-xs md:text-sm text-cream/40">{caption}</p>
+          <p className="mt-6 md:mt-8 text-xs md:text-sm text-cream/70">{caption}</p>
         </Reveal>
       </div>
     </section>

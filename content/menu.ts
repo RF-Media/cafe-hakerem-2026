@@ -44,7 +44,7 @@ export const menuCategories: MenuCategory[] = [
     items: [
       { name: "בורקס תורכי בעבודת יד", description: "4 יחידות בורקס תורכי בעבודת יד", price: "₪46" },
     ],
-    image: "/images/menu/burekas.jpg",
+    image: "/images/burekas-spread_shared.jpg",
     imageAlt: "מגש בורקסים תורכיים טריים מהתנור של קפה הכרם, מוזהבים ומפוזרים במלח גס",
   },
   {
@@ -108,8 +108,8 @@ export const menuCategories: MenuCategory[] = [
         badges: ["vegetarian"],
       },
     ],
-    image: "/images/menu/sandwiches.jpg",
-    imageAlt: "כריך וטוסט טריים מוגשים על צלחת בקפה הכרם",
+    image: "/images/sandwiches_home.jpg",
+    imageAlt: "באגט דגנים במילוי טונה, חסה ועגבנייה טרייה מקפה הכרם",
   },
   {
     id: "salads",
@@ -129,8 +129,8 @@ export const menuCategories: MenuCategory[] = [
         badges: ["vegetarian", "gluten-free"],
       },
     ],
-    image: "/images/salads.jpg",
-    imageAlt: "סלט ירקות טרי בקערה עם מלפפון, עגבנייה, בצל סגול, זיתי קלמטה ופלח לימון",
+    image: "/images/salads_home.jpg",
+    imageAlt: "סלט עגבניות שרי וגבינה לבנה עם רוטב בלסמי בקערה לבנה בקפה הכרם",
   },
   {
     id: "specials",
@@ -199,6 +199,8 @@ export const menuCategories: MenuCategory[] = [
       { name: "קפה קר", description: "חלב, קוביות קרח ואספרסו. ניתן לבקש חיזוק אספרסו בהערות", price: "₪22", badges: ["vegetarian"] },
       { name: "אמריקנו קר", description: "מים, קוביות קרח ואספרסו כפול", price: "₪20", badges: ["vegan", "gluten-free"] },
     ],
+    image: "/images/drinks_home.jpg",
+    imageAlt: "חליטת תה קר עם נענע ולימון בכוסות זכוכית על מגש בקפה הכרם",
   },
   {
     id: "juices",
@@ -233,6 +235,8 @@ export const menuCategories: MenuCategory[] = [
     items: [
       { name: "אבקת מאצ'ה MIX&MATCHA", description: "30 גרם", price: "₪139" },
     ],
+    image: "/images/coffee-products_home.jpg",
+    imageAlt: "כוסות הקפה הממותגות של קפה הכרם וכוסות זכוכית מוערמות ליד מכונת הקפה",
   },
 ];
 

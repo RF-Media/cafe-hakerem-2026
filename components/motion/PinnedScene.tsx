@@ -15,7 +15,8 @@
  * children render as an ordinary block with progress frozen at 0.
  */
 import { useRef } from "react";
-import { useReducedMotion, useScroll, type MotionValue } from "framer-motion";
+import { useScroll, type MotionValue } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { useIsDesktop } from "./use-media-query";
 import { useConstantProgress } from "./use-constant-progress";
 

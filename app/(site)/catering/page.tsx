@@ -65,7 +65,8 @@ export default function CateringPage() {
           <div className="lg:col-span-5 hero-fade" style={{ ["--d" as never]: 520 }}>
             <CafeImage
               variant="tray"
-              alt="מגש אירוח של קפה הכרם - כריכים, מאפים וסלטים"
+              src="/images/burekas-tray_catering.jpg"
+              alt="מגש אירוח של קפה הכרם - בורקס טורקי, חומוס, סלסת עגבניות וזיתים"
               ratio="aspect-[5/3]"
               tone="olive"
               priority

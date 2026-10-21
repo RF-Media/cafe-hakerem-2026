@@ -53,7 +53,7 @@ export function Footer() {
               works natively — no tinting, no second asset. Quiet on purpose:
               the hero already made the loud statement. */}
           <Image
-            src="/images/logo2.png"
+            src="/images/logo_cream.png"
             alt={business.name.he}
             width={1251}
             height={574}
@@ -111,9 +111,14 @@ export function Footer() {
             <span>© {new Date().getFullYear()} {business.name.he}. כל הזכויות שמורות.</span>
             <span dir="ltr">Powered by CoffeeStream ♡</span>
           </div>
-          <Link href="/privacy" className="hover:text-brass transition-colors">
-            פרטיות
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/accessibility" className="hover:text-brass transition-colors">
+              הצהרת נגישות
+            </Link>
+            <Link href="/privacy" className="hover:text-brass transition-colors">
+              פרטיות
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

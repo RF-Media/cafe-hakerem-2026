@@ -164,7 +164,7 @@ export function InstagramGallery({
         ))}
       </Stagger>
 
-      <p className="mt-6 md:mt-8 text-xs md:text-sm text-cream/40">
+      <p className="mt-6 md:mt-8 text-xs md:text-sm text-cream/70">
         {items.length} רגעים אחרונים מהדלפק, מהמטבח ומהשולחנות בחוץ.
       </p>
     </Section>

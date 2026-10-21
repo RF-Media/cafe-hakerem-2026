@@ -40,12 +40,9 @@ export function JachnunPromo() {
             </h2>
           </Reveal>
           <Reveal delay={0.12}>
-            <p className="mt-5 type-lede text-base md:text-lg text-cream/80 max-w-lg">
+            <p className="mt-5 type-lede text-base md:text-lg text-cream max-w-lg">
               {homeJachnun.body}
             </p>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <p className="mt-2 text-sm text-cream/60 max-w-lg">{homeJachnun.reassurance}</p>
           </Reveal>
 
           {/* Deadline and CTA share one card on purpose — the clock a
@@ -79,8 +76,8 @@ export function JachnunPromo() {
           <ImageReveal className="rounded-card">
             <CafeImage
               variant="jachnun"
-              src="/images/jachnun-band.jpg"
-              alt="מגש ג'חנון תימני עם ביצה קשה, רסק עגבניות, סחוג, זיתים ומלפפונים חמוצים - כפי שמוגש בשבת בקפה הכרם"
+              src="/images/jachnun-plate_shared.jpg"
+              alt="ג'חנון תימני על צלחת לצד רסק עגבניות, סחוג וביצה קשה - כפי שמוגש בשבת בקפה הכרם"
               tone="jachnun"
               ratio="aspect-[4/3]"
               sizes="(max-width: 1024px) 100vw, 45vw"
@@ -93,7 +90,7 @@ export function JachnunPromo() {
         {homeJachnun.steps.map((step) => (
           <StaggerItem key={step.n} variant="tile">
             <Card tone="cream" padding="lg" className="h-full">
-              <span className="type-index text-jachnun/70">
+              <span className="type-index text-jachnun">
                 {step.n}
               </span>
               <h3 className="mt-3 type-sub text-lg md:text-xl text-espresso">{step.title}</h3>

@@ -10,7 +10,8 @@
  * a half-counted intermediate.
  */
 import { useEffect, useRef, useState } from "react";
-import { useInView, useReducedMotion } from "framer-motion";
+import { useInView } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 export function Counter({
   value,
@@ -43,7 +44,7 @@ export function Counter({
     return () => cancelAnimationFrame(frame);
   }, [inView, reduced, value, duration]);
 
-  const animating = display !== null && display !== value;
+  const animating = !reduced && display !== null && display !== value;
 
   return (
     <span ref={ref} className={className}>

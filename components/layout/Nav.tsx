@@ -227,7 +227,7 @@ export function Nav() {
           }
         >
           {/* Espresso-ink lockup — the bar is always a cream ground, so this
-              is the dark variant of the mark. The cream variant (`logo2.png`)
+              is the dark variant of the mark. The cream variant (`logo_cream.png`)
               stays reserved for dark grounds: the hero visit card's backdrop
               and the footer. */}
           <Link
@@ -235,7 +235,7 @@ export function Nav() {
             className="shrink-0 flex items-center transition-opacity duration-fast hover:opacity-80"
           >
             <Image
-              src="/images/logo.png"
+              src="/images/logo_dark.png"
               alt={business.name.he}
               width={1251}
               height={574}

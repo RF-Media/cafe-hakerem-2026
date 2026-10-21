@@ -9,7 +9,8 @@
  * and the handlers would only cost work on every tap.
  */
 import { useRef } from "react";
-import { m, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+import { m, useMotionValue, useSpring } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { MAGNET } from "@/lib/motion";
 import { useHasFinePointer } from "./use-media-query";
 

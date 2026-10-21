@@ -18,7 +18,7 @@ const tones = {
   jachnun: { text: "text-jachnun", rule: "bg-jachnun/40" },
   brass: { text: "text-brass", rule: "bg-brass/50" },
   "brass-ink": { text: "text-brass-ink", rule: "bg-brass-ink/45" },
-  cream: { text: "text-cream/80", rule: "bg-cream/40" },
+  cream: { text: "text-cream", rule: "bg-cream/40" },
 } as const;
 
 export function Eyebrow({

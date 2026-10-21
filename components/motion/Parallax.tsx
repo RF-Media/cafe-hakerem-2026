@@ -8,7 +8,8 @@
  * as jitter, not depth.
  */
 import { useRef } from "react";
-import { m, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { PARALLAX_RANGE } from "@/lib/motion";
 import { useIsDesktop } from "./use-media-query";
 
