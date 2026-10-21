@@ -340,6 +340,7 @@ export function JachnunPreorderForm() {
             autoComplete="email"
             inputMode="email"
             placeholder={copy.details.email.placeholder}
+            hint={copy.details.email.hint}
             maxLength={120}
             value={details.email}
             onChange={(v) => change("email", v)}

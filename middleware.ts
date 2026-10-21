@@ -27,5 +27,7 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  // images/logo_ stays public: confirmation emails load the logo from here,
+  // and a mail client can't answer a Basic Auth prompt.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|images/logo_).*)"],
 };

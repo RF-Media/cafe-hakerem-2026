@@ -59,7 +59,7 @@ export function CateringInquiryForm() {
         <FormField label="שם מלא" name="name" type="text" required autoComplete="name" />
         <FormField label="טלפון" name="phone" type="tel" required autoComplete="tel" inputMode="tel" />
       </div>
-      <FormField label="אימייל (אופציונלי)" name="email" type="email" autoComplete="email" />
+      <FormField label="אימייל (אופציונלי)" name="email" type="email" autoComplete="email" hint="נשלח אליך אישור שהפנייה התקבלה." />
       <div className="grid md:grid-cols-2 gap-5">
         <FormField label="תאריך אירוע (אופציונלי)" name="eventDate" type="date" />
         <FormField label="מספר אורחים משוער (אופציונלי)" name="guestCount" type="number" min={1} max={1000} inputMode="numeric" />

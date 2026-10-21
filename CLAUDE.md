@@ -793,6 +793,13 @@ HTML email with `dir="rtl"` and Hebrew content. Send to
 `process.env.CAFE_NOTIFICATION_EMAIL`. From address: a verified
 Resend sender (set up at deploy time).
 
+**Customer confirmations** (`lib/email-templates.ts`, copy in
+`content/emails.ts`) go out through `sendCustomerEmail()` only when the
+customer gave an email, only after the order/inquiry has succeeded, and
+are **never awaited** — a failed confirmation must not fail a request
+that already worked. Everything the customer typed passes through
+`escapeHtml()`, in both the café notification and the confirmation.
+
 ### Rate limiting
 v1: in-memory per-IP, 5 requests/min per endpoint. **Not
 production-grade at scale.** Upgrade to Upstash Ratelimit before
@@ -1833,3 +1840,34 @@ If yes: GEO is working. If no: audit the page that should rank.
   add it to the Decision Log with reasoning, then implement.
 - If you ship something that contradicts this file, either fix
   the code or update this file — never let them drift.
+
+**2026-10-21 — Customer confirmation emails, sent through CoffeeStream's Resend account.**
+Both live forms (`/jachnun` pre-order, `/catering` inquiry) now email the
+customer a branded Hebrew confirmation when they leave an address. The
+jachnun one is the full order breakdown — reference, pickup window and
+address, package line, included items, and the total marked **לתשלום בקופה
+באיסוף** with an explicit "nothing was charged" line, since phase 1 takes no
+payment. The catering one recaps the inquiry and says what happens next.
+Both carry the café logo up top and a small "מופעל על ידי CoffeeStream"
+credit in the footer. The gated phase-2 checkout is not wired.
+
+Sending reuses CoffeeStream's paid Resend account with a café-only,
+sending-restricted API key, from a per-client subdomain (`hakerem.coffeestream.co.il`, EU region) so the café's
+reputation stays separate. `*.vercel.app` cannot be a Resend sender (nobody
+controls its DNS); moving to a cafehakerem subdomain later is a change to
+`RESEND_FROM` only. Known side effect: Resend webhooks are account-wide, so
+CoffeeStream's `/api/webhooks/resend` receives the café's events too. A hard
+bounce or complaint lands in CoffeeStream's suppression list by address. No
+row and no campaign tag means no retry, so this is harmless and was left as is.
+
+Templates are inline-styled tables, not React Email: two emails don't
+justify a dependency. `middleware.ts` now exempts `images/logo_` from the
+pre-launch basic-auth gate, since a mail client can't answer the prompt.
+
+Fixed on the way: `sendNotification()` treated every send as successful
+because resend@4 reports API rejections in `error` rather than throwing. The
+pre-order route, whose email *is* the order, could therefore tell a customer
+"ordered" for an email Resend had refused. The catering café notification
+also interpolated customer input unescaped and is now escaped. `/api/catering-inquiry`
+gained the same doubled no-DB guard as `/api/jachnun-order` (dev only), so it
+can be tested before Neon is set.

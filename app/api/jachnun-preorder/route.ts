@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/ratelimit";
 import { getAvailableSlots } from "@/lib/jachnun-cutoff";
 import { generateReference, jachnunPreorderSchema } from "@/lib/validation";
-import { escapeHtml, isEmailConfigured, rtlEmail, sendNotification } from "@/lib/resend";
+import { escapeHtml, isEmailConfigured, rtlEmail, sendCustomerEmail, sendNotification } from "@/lib/resend";
+import { jachnunConfirmationEmail } from "@/lib/email-templates";
 import { formatILS } from "@/lib/money";
 import { jachnunPackages } from "@/content/jachnun";
 
@@ -100,6 +101,15 @@ export async function POST(req: Request) {
 
   const sent = await sendNotification({ subject, html, replyTo: data.email });
   if (!sent) return err(SEND_FAILED, 502, "send_failed");
+
+  // Only after the café has the order — a confirmation for an order nobody
+  // received is worse than none. Not awaited: it can't fail the response.
+  if (data.email) {
+    const confirmation = jachnunConfirmationEmail({ reference, slot, pkg, ...data, email: data.email });
+    sendCustomerEmail({ to: data.email, ...confirmation }).catch((e) =>
+      console.error("[jachnun-preorder] confirmation failed:", e),
+    );
+  }
 
   return NextResponse.json({ ok: true, reference });
 }

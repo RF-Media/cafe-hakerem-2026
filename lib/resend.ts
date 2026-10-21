@@ -7,6 +7,7 @@
  * source of truth.
  */
 import { Resend } from "resend";
+import { business } from "@/content/business";
 
 let client: Resend | null = null;
 
@@ -45,16 +46,57 @@ export async function sendNotification(payload: EmailPayload): Promise<boolean> 
   }
 
   try {
-    await c.emails.send({
+    // resend@4 reports API rejections (unverified domain, bad key) in
+    // `error` rather than throwing, so a bare await would report success.
+    const { error } = await c.emails.send({
       from,
       to,
       subject: payload.subject,
       html: payload.html,
       replyTo: payload.replyTo,
     });
+    if (error) {
+      console.error("[resend] send failed:", error);
+      return false;
+    }
     return true;
   } catch (err) {
     console.error("[resend] send failed:", err);
+    return false;
+  }
+}
+
+/**
+ * A confirmation to the customer. Callers never await this in a way that can
+ * fail the request: the order or inquiry has already succeeded by the time it
+ * runs, and a missing confirmation is a nuisance, not a lost order.
+ */
+export async function sendCustomerEmail(payload: EmailPayload & { to: string }): Promise<boolean> {
+  const c = getClient();
+  const from = process.env.RESEND_FROM;
+
+  if (!c || !from) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[resend] skipping customer email — missing API key or from.");
+    }
+    return false;
+  }
+
+  try {
+    const { error } = await c.emails.send({
+      from,
+      to: payload.to,
+      subject: payload.subject,
+      html: payload.html,
+      replyTo: payload.replyTo ?? business.email.public,
+    });
+    if (error) {
+      console.error("[resend] customer send failed:", error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[resend] customer send failed:", err);
     return false;
   }
 }

@@ -190,7 +190,7 @@ export const jachnun = {
       legend: "הפרטים שלכם",
       name: { label: "שם מלא", placeholder: "ישראל ישראלי" },
       phone: { label: "טלפון נייד", placeholder: "050-1234567", hint: "לזיהוי באיסוף ולעדכונים על ההזמנה בלבד." },
-      email: { label: "אימייל (אופציונלי)", placeholder: "you@example.com" },
+      email: { label: "אימייל (אופציונלי)", placeholder: "you@example.com", hint: "נשלח אליך אישור הזמנה עם כל הפרטים." },
       notes: {
         label: "בקשות מיוחדות (אופציונלי)",
         hint: "תוספות, אלרגיות, אריזה נפרדת - כל דבר שכדאי שנדע.",
