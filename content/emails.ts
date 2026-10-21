@@ -47,10 +47,25 @@ export const cateringConfirmation = {
   recapHeading: "מה שלחת לנו",
   nameLabel: "שם",
   phoneLabel: "טלפון",
+  emailLabel: "אימייל",
   eventDateLabel: "תאריך האירוע",
   guestsLabel: "מספר אורחים משוער",
   messageLabel: "על האירוע",
   nextHeading: "מה עכשיו?",
   nextBody: "נעבור על הבקשה, נתקשר לתאם סוגי מגשים, כמויות ומועד איסוף, ונשלח הצעה מסודרת. בינתיים אפשר להציץ שוב במגשים שלנו.",
   ctaLabel: "למגשי האירוח",
+};
+
+/* Internal copy of each confirmation, sent to ORDER_COPY_EMAILS (CoffeeStream,
+   later the seller too). Same body as the customer's email, plus a banner. */
+export const orderCopy = {
+  banner: "עותק פנימי של אישור ההזמנה",
+  jachnunSubject: (reference: string, name: string, total: string, slot: string) =>
+    `[עותק] הזמנת ג'חנון ${reference} · ${name} · ${total} לתשלום · ${slot}`,
+  jachnunNotice: (name: string, reference: string, total: string) =>
+    `הזמנה ${reference} של ${name}. לגבייה בקופה באיסוף: ${total}.`,
+  cateringSubject: (reference: string, name: string) => `[עותק] פנייה למגשי אירוח ${reference} · ${name}`,
+  cateringNotice: (name: string, reference: string) => `פנייה ${reference} של ${name}. יש לחזור ללקוח בטלפון.`,
+  sentTo: (email: string) => `אישור נשלח ללקוח בכתובת ${email}.`,
+  noCustomerEmail: "הלקוח לא השאיר אימייל, ולכן לא נשלח אליו אישור.",
 };

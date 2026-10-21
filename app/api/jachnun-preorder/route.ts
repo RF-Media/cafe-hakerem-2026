@@ -2,7 +2,14 @@ import { NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/ratelimit";
 import { getAvailableSlots } from "@/lib/jachnun-cutoff";
 import { generateReference, jachnunPreorderSchema } from "@/lib/validation";
-import { escapeHtml, isEmailConfigured, rtlEmail, sendCustomerEmail, sendNotification } from "@/lib/resend";
+import {
+  escapeHtml,
+  isEmailConfigured,
+  orderCopyRecipients,
+  rtlEmail,
+  sendCustomerEmail,
+  sendNotification,
+} from "@/lib/resend";
 import { jachnunConfirmationEmail } from "@/lib/email-templates";
 import { formatILS } from "@/lib/money";
 import { jachnunPackages } from "@/content/jachnun";
@@ -104,11 +111,19 @@ export async function POST(req: Request) {
 
   // Only after the café has the order — a confirmation for an order nobody
   // received is worse than none. Not awaited: it can't fail the response.
+  const confirmationInput = { reference, slot, pkg, ...data };
   if (data.email) {
-    const confirmation = jachnunConfirmationEmail({ reference, slot, pkg, ...data, email: data.email });
-    sendCustomerEmail({ to: data.email, ...confirmation }).catch((e) =>
+    sendCustomerEmail({ to: data.email, ...jachnunConfirmationEmail(confirmationInput) }).catch((e) =>
       console.error("[jachnun-preorder] confirmation failed:", e),
     );
+  }
+  const copyTo = orderCopyRecipients();
+  if (copyTo.length) {
+    sendCustomerEmail({
+      to: copyTo,
+      replyTo: data.email,
+      ...jachnunConfirmationEmail(confirmationInput, { copy: true }),
+    }).catch((e) => console.error("[jachnun-preorder] order copy failed:", e));
   }
 
   return NextResponse.json({ ok: true, reference });

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/ratelimit";
 import { cateringInquirySchema, generateReference } from "@/lib/validation";
-import { escapeHtml, rtlEmail, sendCustomerEmail, sendNotification } from "@/lib/resend";
+import { escapeHtml, orderCopyRecipients, rtlEmail, sendCustomerEmail, sendNotification } from "@/lib/resend";
 import { cateringConfirmationEmail } from "@/lib/email-templates";
 
 export const runtime = "nodejs";
@@ -86,10 +86,17 @@ export async function POST(req: Request) {
   }).catch((e) => console.error("[catering-inquiry] notify failed:", e));
 
   if (data.email) {
-    const confirmation = cateringConfirmationEmail({ reference, ...data });
-    sendCustomerEmail({ to: data.email, ...confirmation }).catch((e) =>
+    sendCustomerEmail({ to: data.email, ...cateringConfirmationEmail({ reference, ...data }) }).catch((e) =>
       console.error("[catering-inquiry] confirmation failed:", e),
     );
+  }
+  const copyTo = orderCopyRecipients();
+  if (copyTo.length) {
+    sendCustomerEmail({
+      to: copyTo,
+      replyTo: data.email,
+      ...cateringConfirmationEmail({ reference, ...data }, { copy: true }),
+    }).catch((e) => console.error("[catering-inquiry] order copy failed:", e));
   }
 
   return NextResponse.json({ ok: true, reference });

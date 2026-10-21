@@ -9,7 +9,7 @@
  * Everything a customer typed goes through escapeHtml before interpolation.
  */
 import { business } from "@/content/business";
-import { emailShell, jachnunConfirmation, cateringConfirmation } from "@/content/emails";
+import { emailShell, jachnunConfirmation, cateringConfirmation, orderCopy } from "@/content/emails";
 import { jachnun, type JachnunPackage } from "@/content/jachnun";
 import type { Slot } from "@/lib/jachnun-cutoff";
 import { formatILS } from "@/lib/money";
@@ -41,8 +41,25 @@ function hoursRows(): string {
     .join("");
 }
 
-function brandedEmail({ preheader, eyebrow, title, body }: { preheader: string; eyebrow: string; title: string; body: string }): string {
+function brandedEmail({
+  preheader,
+  eyebrow,
+  title,
+  body,
+  notice,
+}: {
+  preheader: string;
+  eyebrow: string;
+  title: string;
+  body: string;
+  /** Already-escaped HTML shown in a banner above the card — the internal copy uses it. */
+  notice?: string;
+}): string {
   const a = business.address;
+  const noticeRow = notice
+    ? `<tr><td bgcolor="${C.pine}" style="background:${C.pine};border-radius:12px;padding:14px 20px;margin:0;text-align:right;font-size:14px;line-height:1.6;color:${C.cream};" dir="rtl">${notice}</td></tr>
+    <tr><td style="height:12px;line-height:12px;font-size:12px;">&nbsp;</td></tr>`
+    : "";
   return `<!doctype html>
 <html lang="he" dir="rtl">
 <head>
@@ -62,6 +79,7 @@ function brandedEmail({ preheader, eyebrow, title, body }: { preheader: string; 
         <img src="${siteUrl}/images/logo_dark.png" width="180" alt="${business.name.he}" style="display:block;width:180px;max-width:60%;height:auto;border:0;margin:0 auto;">
       </a>
     </td></tr>
+    ${noticeRow}
     <tr><td bgcolor="${C.card}" style="background:${C.card};border:1px solid ${C.stroke};border-radius:16px;padding:32px 28px;text-align:right;" dir="rtl">
       <div style="width:32px;height:1px;background:${C.brassInk};margin:0 0 12px;line-height:1px;font-size:1px;">&nbsp;</div>
       <p style="margin:0 0 8px;color:${C.brassInk};font-size:12px;letter-spacing:0.18em;font-weight:500;">${escapeHtml(eyebrow)}</p>
@@ -129,12 +147,24 @@ export type JachnunConfirmationInput = {
   pkg: JachnunPackage;
   name: string;
   phone: string;
-  email: string;
+  email?: string;
   notes?: string;
 };
 
-export function jachnunConfirmationEmail(d: JachnunConfirmationInput): { subject: string; html: string } {
+/**
+ * `copy: true` renders the same confirmation as an internal copy: an
+ * order-copy banner (who it was for, what to collect) and an internal
+ * subject line. The body stays identical, so the copy shows exactly what the
+ * customer saw.
+ */
+export type ConfirmationOptions = { copy?: boolean };
+
+export function jachnunConfirmationEmail(
+  d: JachnunConfirmationInput,
+  { copy = false }: ConfirmationOptions = {},
+): { subject: string; html: string } {
   const c = jachnunConfirmation;
+  const total = formatILS(d.pkg.totalAgorot);
   const a = business.address;
   const included = jachnun.whatsIncluded.slice(1).join(" · ");
 
@@ -163,8 +193,8 @@ export function jachnunConfirmationEmail(d: JachnunConfirmationInput): { subject
   const details: [string, string][] = [
     [c.nameLabel, escapeHtml(d.name)],
     [c.phoneLabel, `<span dir="ltr">${escapeHtml(d.phone)}</span>`],
-    [c.emailLabel, `<span dir="ltr">${escapeHtml(d.email)}</span>`],
   ];
+  if (d.email) details.push([c.emailLabel, `<span dir="ltr">${escapeHtml(d.email)}</span>`]);
   if (d.notes) details.push([c.notesLabel, multiline(d.notes)]);
 
   const body = `
@@ -180,9 +210,18 @@ ${detailRows(details)}
 ${p(`${c.changeNote} <a href="tel:${business.phone.tel}" style="color:${C.pine};font-weight:700;text-decoration:none;" dir="ltr">${business.phone.display}</a>`, "margin:24px 0 0;")}
 `;
 
+  const k = orderCopy;
   return {
-    subject: c.subject(d.reference),
-    html: brandedEmail({ preheader: c.preheader(d.slot.day), eyebrow: c.eyebrow, title: c.title, body }),
+    subject: copy ? k.jachnunSubject(d.reference, d.name, total, d.slot.label) : c.subject(d.reference),
+    html: brandedEmail({
+      preheader: copy ? k.jachnunNotice(d.name, d.reference, total) : c.preheader(d.slot.day),
+      eyebrow: c.eyebrow,
+      title: c.title,
+      body,
+      notice: copy
+        ? `<strong>${k.banner}</strong><br>${escapeHtml(k.jachnunNotice(d.name, d.reference, total))}<br>${escapeHtml(d.email ? k.sentTo(d.email) : k.noCustomerEmail)}`
+        : undefined,
+    }),
   };
 }
 
@@ -192,18 +231,23 @@ export type CateringConfirmationInput = {
   reference: string;
   name: string;
   phone: string;
+  email?: string;
   eventDate?: string;
   guestCount?: number;
   message: string;
 };
 
-export function cateringConfirmationEmail(d: CateringConfirmationInput): { subject: string; html: string } {
+export function cateringConfirmationEmail(
+  d: CateringConfirmationInput,
+  { copy = false }: ConfirmationOptions = {},
+): { subject: string; html: string } {
   const c = cateringConfirmation;
 
   const rows: [string, string][] = [
     [c.nameLabel, escapeHtml(d.name)],
     [c.phoneLabel, `<span dir="ltr">${escapeHtml(d.phone)}</span>`],
   ];
+  if (d.email) rows.push([c.emailLabel, `<span dir="ltr">${escapeHtml(d.email)}</span>`]);
   if (d.eventDate) {
     const date = new Intl.DateTimeFormat("he-IL", {
       timeZone: "Asia/Jerusalem",
@@ -232,8 +276,17 @@ ${p(c.nextBody)}
 </tr></table>
 `;
 
+  const k = orderCopy;
   return {
-    subject: c.subject(d.reference),
-    html: brandedEmail({ preheader: c.preheader, eyebrow: c.eyebrow, title: c.title, body }),
+    subject: copy ? k.cateringSubject(d.reference, d.name) : c.subject(d.reference),
+    html: brandedEmail({
+      preheader: copy ? k.cateringNotice(d.name, d.reference) : c.preheader,
+      eyebrow: c.eyebrow,
+      title: c.title,
+      body,
+      notice: copy
+        ? `<strong>${k.banner}</strong><br>${escapeHtml(k.cateringNotice(d.name, d.reference))}<br>${escapeHtml(d.email ? k.sentTo(d.email) : k.noCustomerEmail)}`
+        : undefined,
+    }),
   };
 }

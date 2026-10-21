@@ -1871,3 +1871,18 @@ pre-order route, whose email *is* the order, could therefore tell a customer
 also interpolated customer input unescaped and is now escaped. `/api/catering-inquiry`
 gained the same doubled no-DB guard as `/api/jachnun-order` (dev only), so it
 can be tested before Neon is set.
+
+**2026-10-22 — Internal copy of every confirmation (`ORDER_COPY_EMAILS`).**
+Every jachnun pre-order and catering inquiry now also sends the branded
+confirmation, unchanged, to the addresses in `ORDER_COPY_EMAILS`
+(comma-separated). Above the card is a pine banner saying it's an internal
+copy, who it was for, the amount to collect at the till, and whether the
+customer was emailed. The subject carries the reference, name, total and
+pickup slot so the inbox list reads as an order log. It goes out even when
+the customer left no email, since its job is the record, not the courtesy.
+For now the only recipient is `info@coffeestream.co.il`; the seller is added
+by editing the env var, no code change. Same §13 rule as the customer
+confirmation: fire-and-forget, never blocks the response. `replyTo` is the
+customer's email when given, so the recipient can answer the customer directly.
+This is separate from `CAFE_NOTIFICATION_EMAIL`'s plain operational
+notification, which is unchanged.

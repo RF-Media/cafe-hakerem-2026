@@ -71,7 +71,7 @@ export async function sendNotification(payload: EmailPayload): Promise<boolean> 
  * fail the request: the order or inquiry has already succeeded by the time it
  * runs, and a missing confirmation is a nuisance, not a lost order.
  */
-export async function sendCustomerEmail(payload: EmailPayload & { to: string }): Promise<boolean> {
+export async function sendCustomerEmail(payload: EmailPayload & { to: string | string[] }): Promise<boolean> {
   const c = getClient();
   const from = process.env.RESEND_FROM;
 
@@ -99,6 +99,18 @@ export async function sendCustomerEmail(payload: EmailPayload & { to: string }):
     console.error("[resend] customer send failed:", err);
     return false;
   }
+}
+
+/**
+ * Who gets the internal copy of every confirmation (CoffeeStream now, the
+ * seller later). Comma-separated in ORDER_COPY_EMAILS, so adding someone is an
+ * env change, not a deploy of new code.
+ */
+export function orderCopyRecipients(): string[] {
+  return (process.env.ORDER_COPY_EMAILS ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 /**
