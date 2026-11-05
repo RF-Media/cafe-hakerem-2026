@@ -28,7 +28,6 @@ export type CateringEditorialSplitProps = {
   eyebrow: string;
   title: string;
   body: string;
-  capacityStat: { lowValue: string; lowLabel: string; highValue: string; highLabel: string };
   cta: string;
   options: CateringOption[];
   featuredOptionId: string;
@@ -38,7 +37,6 @@ export function CateringEditorialSplit({
   eyebrow,
   title,
   body,
-  capacityStat,
   cta,
   options,
   featuredOptionId,
@@ -59,31 +57,6 @@ export function CateringEditorialSplit({
           </Button>
         }
       />
-
-      {/* Capacity range — redundant with `body`'s prose on purpose (§11
-          Rule 5: same fact across formats). Numerals in `.type-sub`, not
-          `.type-index` — these are values, not a label register, and not
-          `.type-display`, which §5 reserves for the page's one <h1>. */}
-      <Reveal>
-        <div
-          className="mb-6 md:mb-8 flex flex-wrap items-center gap-x-6 gap-y-3
-                     rounded-card border border-stroke bg-cream-3 px-5 py-3 md:px-6 md:py-4"
-        >
-          <div className="flex items-baseline gap-2">
-            <span className="type-sub text-3xl md:text-4xl text-espresso">
-              {capacityStat.lowValue}
-            </span>
-            <span className="text-sm text-espresso-soft">{capacityStat.lowLabel}</span>
-          </div>
-          <span aria-hidden className="h-6 w-px bg-stroke" />
-          <div className="flex items-baseline gap-2">
-            <span className="type-sub text-3xl md:text-4xl text-espresso">
-              {capacityStat.highValue}
-            </span>
-            <span className="text-sm text-espresso-soft">{capacityStat.highLabel}</span>
-          </div>
-        </div>
-      </Reveal>
 
       <div className="grid md:grid-cols-12 gap-6 md:gap-8 items-start">
         {/* Featured tray — first in DOM, which in this RTL document lands

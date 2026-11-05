@@ -25,7 +25,7 @@ export const cateringTestimonials: CateringTestimonial[] = [
   {
     id: "backyard-15",
     eventType: "חצר בית · 15 איש",
-    caption: "יום הולדת קטן וחם, עם מגש בוקר וקפה טוב.",
+    caption: "יום הולדת קטן וחם, עם מגש בורקס וקפה טוב.",
     posterAlt: "שולחן ערוך בחצר בית עם מגש אירוח של קפה הכרם, יום הולדת משפחתי",
   },
   {

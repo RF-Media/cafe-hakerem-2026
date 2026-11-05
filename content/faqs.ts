@@ -54,12 +54,9 @@ export const homeFAQs: FAQ[] = [
   },
   {
     q: "האם התפריט של קפה הכרם כשר?",
-    // Deliberately does not assert a certification. Kashrut status is a
-    // claim the café has to stand behind with a certifying body named;
-    // stating the menu composition is factual and still answers the
-    // question people are actually asking. Replace with the real
-    // certification (or an explicit "איננו כשר") once confirmed.
-    a: "התפריט של קפה הכרם הוא חלבי וצמחוני, ללא בשר. לבירור מצב הכשרות המעודכן ותעודת ההשגחה ניתן להתקשר לקפה הכרם בטלפון 053-557-4194.",
+    // Wording confirmed by the café: kosher ingredients, no certificate
+    // because the café opens on Shabbat. Keep the three kashrut answers in step.
+    a: "המטבח של קפה הכרם הוא מטבח חלבי ללא בשר, וכל המוצרים וחומרי הגלם בו כשרים. עם זאת, לקפה הכרם אין תעודת כשרות, מאחר שבית הקפה פתוח גם בשבת.",
   },
   {
     q: "האם יש מקומות ישיבה בחוץ?",
@@ -67,7 +64,7 @@ export const homeFAQs: FAQ[] = [
   },
   {
     q: "האם קפה הכרם מתאים למשפחות עם ילדים?",
-    a: "קפה הכרם הוא בית קפה שכונתי בגני תקווה שמקבל משפחות בברכה. יש תפריט ילדים ייעודי, כיסאות הגבהה ומקום לעגלות.",
+    a: "בקפה הכרם תוכלו למצוא מגוון מנות שמתאימות לכל המשפחה, כולל כדורי שוקולד, טוסטים ועוד. בנוסף, צמוד אלינו ישנו גן שעשועים כיפי בשביל הילדים שלכם.",
   },
 ];
 
@@ -128,9 +125,8 @@ export const jachnunFAQs: FAQ[] = [
   },
   {
     q: "האם הג'חנון של קפה הכרם כשר?",
-    // Same treatment as the home-page kashrut question — the menu fact is
-    // stated, the certification is not invented.
-    a: "הג'חנון של קפה הכרם נאפה במטבח החלבי של בית הקפה בגני תקווה, ללא בשר. לבירור מצב הכשרות ותעודת ההשגחה ניתן להתקשר לקפה הכרם בטלפון 053-557-4194.",
+    // Same wording as the home-page kashrut answer.
+    a: "הג'חנון של קפה הכרם נאפה במטבח החלבי של בית הקפה בגני תקווה, ללא בשר ומחומרי גלם כשרים. לקפה הכרם אין תעודת כשרות, מאחר שבית הקפה פתוח גם בשבת.",
   },
   {
     q: "האם אפשר להזמין ג'חנון לאמצע השבוע?",
@@ -159,8 +155,8 @@ export const cateringFAQs: FAQ[] = [
   },
   {
     q: "האם יש מגשי אירוח כשרים?",
-    // Same treatment as the other two kashrut answers.
-    a: "כל מגשי האירוח של קפה הכרם מוכנים במטבח החלבי של בית הקפה בגני תקווה, ללא בשר. לבירור מצב הכשרות ותעודת ההשגחה ניתן להתקשר לקפה הכרם בטלפון 053-557-4194.",
+    // Same wording as the other two kashrut answers.
+    a: "כל מגשי האירוח של קפה הכרם מוכנים במטבח החלבי של בית הקפה בגני תקווה, ללא בשר ומחומרי גלם כשרים. לקפה הכרם אין תעודת כשרות, מאחר שבית הקפה פתוח גם בשבת.",
   },
 ];
 

@@ -1928,3 +1928,11 @@ notification could be silently dropped. All of them now run under
 `waitUntil()` from `@vercel/functions`, and both routes set
 `maxDuration = 60`. New deps: `puppeteer-core`, `@sparticuz/chromium`,
 `@vercel/functions`, approved before install.
+
+**2026-11-03 — Kashrut answers state the café's confirmed position.**
+Replaces the 2026-08-03 "call to ask" kashrut wording. The café confirmed it:
+a dairy kitchen with no meat, all products and raw ingredients kosher, and no
+kashrut certificate because the café is open on Shabbat. The home/about,
+`/jachnun` and `/catering` answers in `content/faqs.ts` now say exactly that.
+The café's draft said "מטבח הכרם", which became "המטבח של קפה הכרם" under §11
+Rule 3.

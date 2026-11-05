@@ -293,7 +293,6 @@ export default function HomePage() {
         eyebrow={homeCatering.eyebrow}
         title={homeCatering.title}
         body={homeCatering.body}
-        capacityStat={homeCatering.capacityStat}
         cta={homeCatering.cta}
         options={catering.options}
         featuredOptionId={homeCatering.featuredOptionId}
