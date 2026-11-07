@@ -5,10 +5,9 @@
  * hours, social handles. If you find yourself wanting to put
  * marketing copy or design choices here, you're in the wrong file.
  *
- * Two blocks carry a VERIFY comment — geo coordinates and social
- * handles. Both were filled to a plausible value rather than left as
- * placeholders, but neither was read off the café's own records, and
- * both have real-world consequences if wrong. Confirm before launch.
+ * The social handles carry a VERIFY comment: they were filled to a
+ * plausible value rather than left as placeholders, and they have
+ * real-world consequences if wrong. Confirm before launch.
  *
  * If a fact changes (new hours, new phone), change it HERE and
  * nowhere else. Every component imports from this file.
@@ -73,17 +72,14 @@ export const business = {
   },
 
   /* ─── Geo coordinates ──────────────────────────────────────── */
-  // Used for: schema.org geo property, Google Maps embed, Waze link.
+  // Used for: schema.org geo property and the drawn map on /map, which is
+  // centred on this pin (re-run scripts/build-map.ts if it moves).
   //
-  // VERIFY BEFORE LAUNCH. These are approximate coordinates for
-  // הכרמל 20, גבעת סביון, גני תקווה — close enough to place the map on
-  // the right street, but not read off the café's own pin. A wrong
-  // lat/lng here routes Waze to a neighbour's driveway, so confirm it:
-  // open Google Maps, right-click the café's pin, copy the pair that
-  // appears at the top, and replace BOTH numbers.
+  // Read off the café's Google listing on 2026-11-07. The earlier value was an
+  // estimate about 650m off, in a different part of the neighbourhood.
   geo: {
-    latitude: 32.0619,
-    longitude: 34.8742,
+    latitude: 32.0589483,
+    longitude: 34.8801555,
   },
 
   /* ─── Hours ────────────────────────────────────────────────── */
@@ -113,18 +109,37 @@ export const business = {
   /* ─── Social handles ───────────────────────────────────────── */
   // Used for schema sameAs and footer/contact links. Full URLs.
   //
-  // VERIFY BEFORE LAUNCH. These follow the café's name but were not read
-  // off the café's own profiles. An unconfirmed handle can point at an
-  // unrelated account — and `sameAs` in the JSON-LD is the strongest
-  // identity signal the site emits, so a wrong one actively misidentifies
-  // the business. Confirm each, and delete any profile that doesn't exist
-  // rather than leaving a guess in place.
+  // Instagram is confirmed: it is the handle on the café's CoffeeStream shop,
+  // so it is the only profile `sameAs` claims. FACEBOOK IS STILL UNVERIFIED:
+  // confirm it before adding it there.
+  //
+  // Waze and Google Maps search by name and address, which resolves straight to
+  // the café's listing. The Google link used to be g.page/cafehakerem, which
+  // only landed on a Google search for that word.
   socials: {
     instagram: "https://www.instagram.com/cafehakerem/",
-    facebook:  "https://facebook.com/cafehakerem",
-    google:    "https://g.page/cafehakerem",
-    waze:      "https://waze.com/ul?ll=32.0619,34.8742&navigate=yes",
-    googleMaps:"https://maps.google.com/?q=32.0619,34.8742",
+    facebook:  "https://www.facebook.com/cafehakerem",
+    google:    "https://www.google.com/maps/search/?api=1&query=%D7%A7%D7%A4%D7%94%20%D7%94%D7%9B%D7%A8%D7%9D%20%D7%94%D7%9B%D7%A8%D7%9E%D7%9C%2020%20%D7%92%D7%A0%D7%99%20%D7%AA%D7%A7%D7%95%D7%95%D7%94",
+    waze:      "https://waze.com/ul?q=%D7%A7%D7%A4%D7%94%20%D7%94%D7%9B%D7%A8%D7%9D%20%D7%92%D7%A0%D7%99%20%D7%AA%D7%A7%D7%95%D7%95%D7%94&navigate=yes",
+    googleMaps:"https://www.google.com/maps/search/?api=1&query=%D7%A7%D7%A4%D7%94%20%D7%94%D7%9B%D7%A8%D7%9D%20%D7%94%D7%9B%D7%A8%D7%9E%D7%9C%2020%20%D7%92%D7%A0%D7%99%20%D7%AA%D7%A7%D7%95%D7%95%D7%94",
+  },
+
+  /* ─── Map embed ────────────────────────────────────────────── */
+  // Searches the name and address, so Google shows its own listing.
+  mapEmbed:
+    "https://www.google.com/maps?q=%D7%A7%D7%A4%D7%94%20%D7%94%D7%9B%D7%A8%D7%9D%20%D7%94%D7%9B%D7%A8%D7%9E%D7%9C%2020%20%D7%92%D7%A0%D7%99%20%D7%AA%D7%A7%D7%95%D7%95%D7%94&hl=he&z=16&output=embed",
+
+  /* ─── CoffeeStream (the loyalty club) ──────────────────────── */
+  // Slug and values read off the public shop page. "hakerem" is a 404 there;
+  // "cafehakerem" is the live one.
+  coffeestream: {
+    businessSlug: "cafehakerem",
+    shopBaseUrl: "https://app.coffeestream.co.il",
+    privacyUrl: "https://app.coffeestream.co.il/privacy",
+    termsUrl: "https://app.coffeestream.co.il/terms-of-service",
+    punchesRequired: 10,
+    reward: { he: "קפה חינם" },
+    startingPunches: 1,
   },
 
   /* ─── Site URL ─────────────────────────────────────────────── */
@@ -135,3 +150,9 @@ export const business = {
 };
 
 export type Business = typeof business;
+
+/** Direct link to the café's card on CoffeeStream, tagged with where the click
+ *  came from. Every link into the club goes through this. */
+export const clubJoinUrl = (placement: string): string =>
+  `${business.coffeestream.shopBaseUrl}/s/${business.coffeestream.businessSlug}` +
+  `?utm_source=cafehakerem-site&utm_medium=website&utm_campaign=${placement}`;

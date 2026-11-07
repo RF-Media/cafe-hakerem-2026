@@ -21,22 +21,23 @@ export type FAQBlockProps = {
 export function FAQBlock({ items, heading = "שאלות נפוצות", id = "faq-heading" }: FAQBlockProps) {
   return (
     <section aria-labelledby={id} className="max-w-3xl mx-auto">
-      <h2 id={id} className="type-title text-3xl md:text-4xl text-espresso mb-8">
+      <h2 id={id} className="type-title text-3xl md:text-5xl text-espresso mb-8 md:mb-10">
         {heading}
       </h2>
       <ul className="space-y-3">
         {items.map((item, i) => (
           <li key={i}>
             <details
+              open={i === 0}
               className={
-                "group rounded-card border border-stroke bg-cream-2 px-5 md:px-6 py-4 " +
+                "faq group rounded-card border border-espresso/15 bg-cream-3 px-5 md:px-6 py-4 " +
                 "transition-[background-color,box-shadow,border-color] duration-base ease-out-soft " +
-                "hover:border-brass-ink/35 open:bg-cream-3 open:shadow-sm"
+                "hover:border-espresso/40 open:border-espresso/40 open:shadow-md"
               }
             >
               <summary
                 className={
-                  "flex items-center justify-between gap-4 list-none cursor-pointer " +
+                  "flex items-center justify-between gap-4 list-none cursor-pointer rounded-input " +
                   "min-h-[44px] type-sub text-lg md:text-xl text-espresso " +
                   "[&::-webkit-details-marker]:hidden"
                 }
@@ -45,15 +46,16 @@ export function FAQBlock({ items, heading = "שאלות נפוצות", id = "faq
                 <span
                   aria-hidden
                   className={
-                    "shrink-0 grid place-items-center w-7 h-7 rounded-full " +
-                    "border border-brass-ink/35 text-brass-ink text-lg leading-none " +
-                    "transition-transform duration-base ease-out-soft group-open:rotate-45"
+                    "shrink-0 grid place-items-center w-8 h-8 rounded-full " +
+                    "bg-espresso text-cream text-lg leading-none " +
+                    "transition-[transform,background-color] duration-base ease-out-soft " +
+                    "group-hover:bg-olive group-open:rotate-45 group-open:bg-olive"
                   }
                 >
                   +
                 </span>
               </summary>
-              <div className="mt-3 text-base leading-relaxed text-espresso-soft">
+              <div className="mt-3 pb-1 text-base md:text-lg leading-relaxed text-espresso-soft">
                 {item.a}
               </div>
             </details>

@@ -2,11 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { Noto_Sans_Hebrew } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { MotionProvider } from "@/components/motion/MotionProvider";
 import { AccessibilityWidget } from "@/components/layout/AccessibilityWidget";
 import { business } from "@/content/business";
 import { CREAM_HEX } from "@/lib/theme";
 import { A11Y_BOOT_SCRIPT } from "@/lib/a11y-prefs";
+import { MOTION_RUNTIME } from "@/lib/motion-runtime";
 import "./globals.css";
 
 // Single unified family across the site (CLAUDE.md §5). Bound to all
@@ -14,8 +14,11 @@ import "./globals.css";
 // `font-latin` utilities resolve to the same family — typographic
 // hierarchy comes from weight + size, not from family contrast.
 const noto = Noto_Sans_Hebrew({
-  subsets: ["hebrew", "latin"],
-  weight: ["300", "400", "500", "700", "900"],
+  // Only Hebrew is preloaded. Latin still loads when a page needs it, through
+  // its unicode-range, but stays out of the critical first requests.
+  subsets: ["hebrew"],
+  // No `weight`: the variable file covers 300-900 in one download, where the
+  // five static weights this listed were five separate files per subset.
   display: "swap",
 });
 
@@ -39,10 +42,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "he_IL",
     siteName: "קפה הכרם",
-    url: business.siteUrl,
+    images: [{ url: "/images/og_home.jpg", width: 1200, height: 630, alt: "קפה הכרם, גני תקווה" }],
   },
+  twitter: { card: "summary_large_image", images: ["/images/og_home.jpg"] },
   robots: { index: true, follow: true },
-  alternates: { canonical: business.siteUrl },
+  // No `alternates.canonical` here. Set at this level it was inherited by every
+  // page, telling search engines the whole site was a duplicate of the home
+  // page. Each page sets its own through lib/seo.ts.
 };
 
 export const viewport: Viewport = {
@@ -63,37 +69,72 @@ function globalSchema() {
       closes: h.close,
     }));
 
-  const sameAs = Object.values(business.socials).filter(
-    (v): v is string => typeof v === "string" && v.startsWith("http"),
-  );
-
+  const url = business.siteUrl;
   return {
     "@context": "https://schema.org",
-    "@type": "CafeOrCoffeeShop",
-    "@id": `${business.siteUrl}/#cafe`,
-    name: business.name.he,
-    alternateName: business.name.en,
-    url: business.siteUrl,
-    telephone: business.phone.tel,
-    priceRange: business.priceRange,
-    servesCuisine: business.servesCuisine,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: business.address.street.he,
-      addressLocality: business.address.city.he,
-      addressRegion: business.address.neighborhood.he,
-      addressCountry: business.address.country.en,
-    },
-    geo:
-      business.geo.latitude && business.geo.longitude
-        ? {
-            "@type": "GeoCoordinates",
-            latitude: business.geo.latitude,
-            longitude: business.geo.longitude,
-          }
-        : undefined,
-    openingHoursSpecification: opens.length ? opens : undefined,
-    sameAs: sameAs.length ? sameAs : undefined,
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${url}/#website`,
+        url,
+        name: business.name.he,
+        alternateName: business.name.en,
+        inLanguage: "he",
+        publisher: { "@id": `${url}/#cafe` },
+      },
+      {
+        "@type": "CafeOrCoffeeShop",
+        "@id": `${url}/#cafe`,
+        name: business.name.he,
+        alternateName: business.name.en,
+        description: business.tagline.he,
+        url,
+        telephone: business.phone.tel,
+        email: business.email.public,
+        logo: `${url}/images/logo_dark.png`,
+        image: [
+          `${url}/images/storefront_shared.jpg`,
+          `${url}/images/barista_shared.jpg`,
+          `${url}/images/yard_shared.jpg`,
+        ],
+        priceRange: business.priceRange,
+        servesCuisine: business.servesCuisine,
+        currenciesAccepted: "ILS",
+        hasMenu: `${url}/menu`,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: business.address.street.he,
+          addressLocality: business.address.city.he,
+          postalCode: business.address.postalCode,
+          addressCountry: business.address.country.en,
+        },
+        containedInPlace: { "@type": "Place", name: business.address.neighborhood.he },
+        areaServed: { "@type": "Place", name: `${business.address.city.he} והסביבה` },
+        amenityFeature: [
+          { "@type": "LocationFeatureSpecification", name: "ישיבה בחוץ", value: true },
+        ],
+        geo:
+          business.geo.latitude && business.geo.longitude
+            ? {
+                "@type": "GeoCoordinates",
+                latitude: business.geo.latitude,
+                longitude: business.geo.longitude,
+              }
+            : undefined,
+        hasMap: `${url}/map`,
+        openingHoursSpecification: opens.length ? opens : undefined,
+        // Only the profile confirmed against the café's CoffeeStream shop. Map
+        // links are not identity claims, and Facebook is still unverified.
+        sameAs: [business.socials.instagram],
+        hasMemberProgram: {
+          "@type": "MemberProgram",
+          "@id": `${url}/#club`,
+          name: "מועדון הלקוחות של קפה הכרם",
+          url: `${url}/coffee-club`,
+          description: `כרטיסיית ניקובים דיגיטלית בחינם: ניקוב ראשון במתנה, ו${business.coffeestream.reward.he} בניקוב העשירי.`,
+        },
+      },
+    ],
   };
 }
 
@@ -121,23 +162,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="font-body bg-cream text-espresso min-h-screen flex flex-col">
         <script dangerouslySetInnerHTML={{ __html: A11Y_BOOT_SCRIPT }} />
         {/*
-          Framer Motion writes its `initial` state as an inline style into
-          the SSR HTML, so without JS every below-fold section would stay at
-          `opacity: 0` — the page would render as a hero and nothing else.
-          Each motion wrapper carries a `data-motion` attribute purely so
-          this rule can find it and hand the content back. Scoped to that
-          attribute rather than `*`, so genuinely hidden UI (hover chips,
-          the closed nav sheet) stays hidden.
+          Reveals start hidden in CSS, so without JS every below-fold section
+          would stay at `opacity: 0`. This hands the content back. Scoped to
+          the reveal attributes rather than `*`, so genuinely hidden UI (hover
+          chips, the closed nav sheet) stays hidden.
         */}
         <noscript>
-          <style>{`[data-motion]{opacity:1!important;transform:none!important;clip-path:none!important}`}</style>
+          <style>{`[data-motion],[data-rv],[data-rv-item],[data-rv-word],[data-rv-inner],[data-stamp]{opacity:1!important;transform:none!important;clip-path:none!important}`}</style>
         </noscript>
         <a href="#main" className="skip-link">דלגו לתוכן</a>
         <JsonLd data={globalSchema()} />
-        <MotionProvider>
-          <AccessibilityWidget />
-          {children}
-        </MotionProvider>
+        <AccessibilityWidget />
+        {children}
+        {/* After the content, so everything it observes is already parsed. */}
+        <script dangerouslySetInnerHTML={{ __html: MOTION_RUNTIME }} />
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>

@@ -15,22 +15,25 @@ export function Ticker({
   items,
   className,
   itemClassName,
+  separator,
   duration = 40,
 }: {
   items: string[];
   className?: string;
   itemClassName?: string;
+  separator?: React.ReactNode;
   /** Seconds for one full pass. Longer = calmer. */
   duration?: number;
 }) {
   const row = (hidden: boolean) => (
     <ul
-      className="flex shrink-0 items-center gap-3 pe-3"
+      className="flex shrink-0 items-center gap-6 pe-6"
       aria-hidden={hidden || undefined}
     >
       {items.map((item, i) => (
-        <li key={`${item}-${i}`} className={itemClassName}>
+        <li key={`${item}-${i}`} className={`flex items-center gap-6 ${itemClassName ?? ""}`}>
           {item}
+          {separator}
         </li>
       ))}
     </ul>

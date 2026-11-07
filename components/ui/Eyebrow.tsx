@@ -7,7 +7,7 @@ export type EyebrowProps = {
    *  `brass` is the metal on DARK grounds. On a light ground it lands at
    *  ~2.2:1 and is unreadable, so light grounds take `brass-ink` instead —
    *  same colour family, 6.4:1. */
-  tone?: "olive" | "jachnun" | "brass" | "brass-ink" | "cream";
+  tone?: "olive" | "jachnun" | "brass" | "brass-ink" | "cream" | "ink";
   withRule?: boolean;
   children: ReactNode;
   className?: string;
@@ -19,6 +19,7 @@ const tones = {
   brass: { text: "text-brass", rule: "bg-brass/50" },
   "brass-ink": { text: "text-brass-ink", rule: "bg-brass-ink/45" },
   cream: { text: "text-cream", rule: "bg-cream/40" },
+  ink: { text: "text-cs-ink", rule: "bg-cs-ink/50" },
 } as const;
 
 export function Eyebrow({

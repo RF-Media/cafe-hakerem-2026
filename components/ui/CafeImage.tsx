@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { imageTone } from "@/lib/image-meta";
 import { Placeholder, type PlaceholderVariant } from "./placeholders";
 
 /**
@@ -28,6 +29,8 @@ export type CafeImageProps = {
   sizes?: string;
   /** Ink colour for the placeholder line art. */
   tone?: "olive" | "espresso" | "jachnun" | "brass" | "cream";
+  /** `object-position`, for a crop the default centre gets wrong. */
+  position?: string;
 };
 
 const toneClasses: Record<NonNullable<CafeImageProps["tone"]>, string> = {
@@ -47,20 +50,22 @@ export function CafeImage({
   ratio = "aspect-[4/3]",
   sizes = "(max-width: 768px) 100vw, 50vw",
   tone = "olive",
+  position,
 }: CafeImageProps) {
   const frame = `relative overflow-hidden rounded-card ${ratio} ${className}`;
 
   if (src) {
     return (
-      <div className={frame}>
+      <div className={frame} style={{ backgroundColor: imageTone(src) }}>
         <Image
           src={src}
           alt={alt}
           fill
           sizes={sizes}
           priority={priority}
-          quality={priority ? 85 : 75}
+          quality={priority ? 80 : 75}
           className="object-cover"
+          style={position ? { objectPosition: position } : undefined}
         />
       </div>
     );

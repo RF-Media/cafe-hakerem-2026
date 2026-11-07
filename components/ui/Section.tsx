@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
  * existed, which is how gutters drift out of alignment between pages.
  */
 
-export type SectionTone = "cream" | "cream-2" | "cream-3" | "espresso" | "jachnun";
+export type SectionTone = "cream" | "cream-2" | "cream-3" | "espresso" | "jachnun" | "pine" | "sage" | "amber";
 
 export type SectionProps = {
   children: ReactNode;
@@ -28,6 +28,9 @@ const toneClasses = {
   "cream-3": "bg-cream-3 text-espresso",
   espresso: "bg-espresso-deep text-cream",
   jachnun: "bg-jachnun text-cream",
+  pine: "bg-olive text-cream",
+  sage: "bg-sage text-espresso",
+  amber: "cs-panel",
 } as const;
 
 const spacingClasses = {
@@ -46,6 +49,9 @@ const papered: Record<SectionTone, boolean> = {
   "cream-3": true,
   espresso: false,
   jachnun: false,
+  pine: false,
+  sage: true,
+  amber: false,
 };
 
 export const container = "mx-auto max-w-container px-6 md:px-10 lg:px-16";

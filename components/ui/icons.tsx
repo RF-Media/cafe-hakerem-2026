@@ -120,3 +120,84 @@ export function IconCup({ className }: IconProps) {
     </svg>
   );
 }
+
+/** A round punch mark, for the loyalty club. */
+export function IconStamp({ className }: IconProps) {
+  return (
+    <svg {...base} className={className ?? size}>
+      <circle cx="12" cy="12" r="8.5" strokeDasharray="2.6 2.4" />
+      <path d="M8.2 10.4h7v3.1a3 3 0 0 1-3 3h-1a3 3 0 0 1-3-3v-3.1zM15.2 11.2c1.5 0 1.5 2.6 0 2.6" />
+    </svg>
+  );
+}
+
+export function IconCheck({ className }: IconProps) {
+  return (
+    <svg {...base} className={className ?? size}>
+      <path d="M5 12.5l4.5 4.5L19 7.5" />
+    </svg>
+  );
+}
+
+export function IconGift({ className }: IconProps) {
+  return (
+    <svg {...base} className={className ?? size}>
+      <path d="M4 11h16v9H4zM3 7.5h18V11H3zM12 7.5V20M12 7.5S10.5 3.5 8 3.5 5.5 7.5 12 7.5zM12 7.5s1.5-4 4-4 2.5 4-4 4z" />
+    </svg>
+  );
+}
+
+export function IconCookie({ className }: IconProps) {
+  return (
+    <svg {...base} className={className ?? size}>
+      <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5" />
+      <path d="M8.5 8.5v.01M16 15.5v.01M12 12v.01M11 17v.01M7 14v.01" />
+    </svg>
+  );
+}
+
+export function IconCake({ className }: IconProps) {
+  return (
+    <svg {...base} className={className ?? size}>
+      <path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8" />
+      <path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1" />
+      <path d="M2 21h20M7 8v3M12 8v3M17 8v3M7 4h.01M12 4h.01M17 4h.01" />
+    </svg>
+  );
+}
+
+export function IconQr({ className }: IconProps) {
+  return (
+    <svg {...base} className={className ?? size}>
+      <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2.5v2.5H14zM20 14v2.5M14 20h2.5M20 20h0M18 17.5V20" />
+    </svg>
+  );
+}
+
+export function IconPhoneCard({ className }: IconProps) {
+  return (
+    <svg {...base} className={className ?? size}>
+      <rect x="7" y="2.5" width="10" height="19" rx="2.2" />
+      <path d="M11 18.5h2" />
+    </svg>
+  );
+}
+
+export function IconSpark({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden className={className ?? size}>
+      <path d="M12 0c1 6.5 5.5 11 12 12-6.5 1-11 5.5-12 12-1-6.5-5.5-11-12-12C6.5 11 11 6.5 12 0z" />
+    </svg>
+  );
+}
+
+/** The "universal access" figure-in-a-circle, not the wheelchair pictogram. */
+export function IconUniversalAccess({ className }: IconProps) {
+  return (
+    <svg {...base} className={className ?? size}>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="7.3" r="1.3" fill="currentColor" stroke="none" />
+      <path d="M7 10.2h10M12 10.2v5.3M12 15.5l-3 4.3M12 15.5l3 4.3" />
+    </svg>
+  );
+}

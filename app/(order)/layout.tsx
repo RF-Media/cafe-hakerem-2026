@@ -1,3 +1,5 @@
+import { MotionProvider } from "@/components/motion/MotionProvider";
+
 /**
  * Checkout shell.
  *
@@ -10,8 +12,10 @@
  */
 export default function OrderLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main id="main" className="flex-1 bg-cream">
-      {children}
-    </main>
+    <MotionProvider>
+      <main id="main" className="flex-1 bg-cream">
+        {children}
+      </main>
+    </MotionProvider>
   );
 }

@@ -1,11 +1,9 @@
-"use client";
-
 /**
- * Container / child orchestration. `Stagger` sets the rhythm, `StaggerItem`
- * inherits it — children need no delay props of their own.
+ * Container / child orchestration. `Stagger` is the observed element and sets
+ * the rhythm; each `StaggerItem` gets its position from `Stagger`, so children
+ * need no delay props of their own. CSS-only, like `Reveal`.
  */
-import { m } from "framer-motion";
-import { VIEWPORT, staggerContainer, staggerItem, tileItem } from "@/lib/motion";
+import { Children, cloneElement, isValidElement } from "react";
 
 type Tag = "div" | "ul" | "ol" | "section" | "dl";
 
@@ -14,7 +12,7 @@ export function Stagger({
   stagger = 0.09,
   delay = 0,
   className,
-  as = "div",
+  as: Component = "div",
 }: {
   children: React.ReactNode;
   stagger?: number;
@@ -22,17 +20,23 @@ export function Stagger({
   className?: string;
   as?: Tag;
 }) {
-  const Component = m[as];
+  // Position is capped in CSS, so a long list never waits on its last row.
+  const items = Children.toArray(children).map((child, index) =>
+    isValidElement(child) ? cloneElement(child as React.ReactElement<{ index?: number }>, { index }) : child,
+  );
   return (
     <Component
-      data-motion="stagger"
+      data-rv-group=""
       className={className}
-      variants={staggerContainer(stagger, delay)}
-      initial="hidden"
-      whileInView="visible"
-      viewport={VIEWPORT}
+      suppressHydrationWarning
+      style={
+        {
+          "--rs": `${Math.round(Math.min(stagger, 0.1) * 1000)}ms`,
+          "--rd": `${Math.round(delay * 1000)}ms`,
+        } as React.CSSProperties
+      }
     >
-      {children}
+      {items}
     </Component>
   );
 }
@@ -42,19 +46,27 @@ type ItemTag = "div" | "li" | "article" | "span" | "dt" | "dd";
 export function StaggerItem({
   children,
   className,
-  as = "div",
+  as: Component = "div",
   variant = "slide",
+  index = 0,
+  id,
 }: {
   children: React.ReactNode;
   className?: string;
   as?: ItemTag;
   /** `slide` fades up; `tile` also scales 0.96 → 1, for cards. */
   variant?: "slide" | "tile";
+  /** Injected by `Stagger`. */
+  index?: number;
+  id?: string;
 }) {
-  const Component = m[as];
-  const variants = variant === "tile" ? tileItem : staggerItem;
   return (
-    <Component data-motion="stagger-item" className={className} variants={variants}>
+    <Component
+      id={id}
+      data-rv-item={variant}
+      className={className}
+      style={{ "--i": index } as React.CSSProperties}
+    >
       {children}
     </Component>
   );

@@ -1,8 +1,9 @@
 # קפה הכרם — Website
 
 A Next.js 14+ App Router site for קפה הכרם, a boutique neighborhood
-café in גני תקווה. Hebrew, RTL, light/warm. Six public pages plus
-a jachnun pre-order backend and a catering inquiry backend.
+café in גני תקווה. Hebrew, RTL. Seven public pages plus a jachnun
+pre-order backend, a catering inquiry backend, and a ramp into the
+loyalty club on CoffeeStream.
 
 **The canonical specification lives in [`CLAUDE.md`](./CLAUDE.md).**
 That document wins all ties — read it before changing anything

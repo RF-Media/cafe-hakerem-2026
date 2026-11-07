@@ -1,20 +1,18 @@
 export const dynamic = "force-static";
 export const revalidate = 86400;
 
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { FAQBlock } from "@/components/ui/FAQBlock";
+import { FAQSchema } from "@/components/seo/FAQSchema";
 import { Reveal } from "@/components/motion/Reveal";
 import { a11yStatement as s } from "@/content/accessibility";
 import { business } from "@/content/business";
+import { accessibilityFAQs } from "@/content/faqs";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "הצהרת נגישות | קפה הכרם — בית קפה בגני תקווה",
-  description:
-    "הצהרת הנגישות של אתר קפה הכרם בגני תקווה: אמצעי הנגישות באתר, תפריט הנגישות, ניווט במקלדת, סייגים ופרטי התקשרות לפניות ולבקשות בנושא נגישות באתר.",
-  alternates: { canonical: `${business.siteUrl}/accessibility` },
-};
+export const metadata = pageMetadata("accessibility");
 
 const h2 = "type-title text-2xl text-espresso";
 const body = "text-espresso-soft leading-relaxed";
@@ -72,6 +70,11 @@ export default function AccessibilityPage() {
           </ul>
           <p className={body}>{s.contact.after}</p>
         </Reveal>
+
+        <div className="pt-6">
+          <FAQBlock items={accessibilityFAQs} heading="שאלות על הנגישות" />
+          <FAQSchema items={accessibilityFAQs} />
+        </div>
       </article>
     </>
   );

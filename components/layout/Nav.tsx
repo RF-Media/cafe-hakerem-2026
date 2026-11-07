@@ -3,14 +3,13 @@
 /**
  * Full-width sticky nav bar.
  *
- * Scroll state is scroll-linked rather than a binary toggle: the bar's
- * opacity, blur and shadow deepen continuously as you leave the hero, so
- * the chrome settles instead of snapping. Two of the six items — Menu and
- * Catering — open a hover/focus mega-menu preview via `<NavDropdown>`; the
- * trigger itself is always a real link, so the panel is a preview layered
- * on top of normal navigation, never a replacement for it. Jachnun stays a
- * plain link — it's a single product, not a set of sub-pages, so a preview
- * panel had nothing useful to show.
+ * On the home page it starts transparent over the hero photograph and settles
+ * into the cream bar as you scroll; every other page starts settled. Two items,
+ * Menu and Catering, open a hover/focus mega-menu preview via `<NavDropdown>`;
+ * the trigger itself is always a real link, so the panel is a preview layered
+ * on top of normal navigation, never a replacement for it. The club gets its
+ * own amber pill, because it is the one thing here that leaves for another
+ * product and earns a return visit.
  *
  * The mobile sheet is a real dialog — focus trap, Escape, scroll lock and
  * close-on-navigate. A `role="dialog"` without those is worse than no role
@@ -22,11 +21,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useMotionValueEvent, useScroll } from "framer-motion";
 import { business } from "@/content/business";
 import { menuCategories } from "@/content/menu";
 import { catering } from "@/content/catering";
-import { IconArrow, IconChevron, IconClose, IconInstagram, IconMenu, IconPhone } from "@/components/ui/icons";
+import { IconArrow, IconChevron, IconClose, IconInstagram, IconMenu, IconPhone, IconStamp } from "@/components/ui/icons";
 import { ScrollProgress } from "@/components/motion/ScrollProgress";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -37,8 +35,7 @@ type NavItem =
   | { type: "dropdown"; id: string; href: string; label: string };
 
 const navItems: NavItem[] = [
-  { type: "link", href: "/", label: "בית" },
-  { type: "dropdown", id: "menu", href: "/menu", label: "תפריט הכרם" },
+  { type: "dropdown", id: "menu", href: "/menu", label: "תפריט" },
   { type: "link", href: "/jachnun", label: "ג'חנון" },
   { type: "dropdown", id: "catering", href: "/catering", label: "מגשי אירוח" },
   { type: "link", href: "/about", label: "עלינו" },
@@ -47,7 +44,7 @@ const navItems: NavItem[] = [
 
 // Panel content, derived once from the same /content exports the pages
 // themselves render — never duplicated copy.
-const menuRows = menuCategories.map((c) => ({ href: `/menu#${c.id}`, label: c.title.he }));
+const menuRows = menuCategories.map((c) => ({ href: `/menu#${c.id}`, label: c.title.he, image: c.image }));
 const cateringRows = catering.options.map((o) => ({
   href: `/catering#${o.id}`,
   label: o.title.he,
@@ -56,14 +53,19 @@ const cateringRows = catering.options.map((o) => ({
 }));
 function MenuPanel() {
   return (
-    <Card tone="cream-3" elevation="floating" padding="md" className="w-[300px]">
-      <ul className="space-y-0.5">
+    <Card tone="cream-3" elevation="floating" padding="md" className="w-[460px]">
+      <ul className="grid grid-cols-2 gap-1">
         {menuRows.map((row) => (
           <li key={row.href}>
             <Link
               href={row.href}
-              className="block rounded-sm px-2.5 py-2 text-sm text-espresso-soft hover:text-espresso hover:bg-cream-2 transition-colors"
+              className="group flex items-center gap-3 rounded-input p-1.5 text-sm text-espresso-soft hover:text-espresso hover:bg-cream-2 transition-colors"
             >
+              {row.image ? (
+                <span className="zoom-frame relative block h-10 w-10 shrink-0 rounded-input bg-cream-2">
+                  <Image src={row.image} alt="" fill sizes="40px" quality={60} className="object-cover" />
+                </span>
+              ) : null}
               {row.label}
             </Link>
           </li>
@@ -132,8 +134,22 @@ export function Nav() {
   const sheetRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const { scrollY } = useScroll();
-  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 8));
+  useEffect(() => {
+    let frame = 0;
+    const read = () => {
+      frame = 0;
+      setScrolled(window.scrollY > 8);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(read);
+    };
+    read();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
 
   const close = useCallback(() => setOpen(false), []);
 
@@ -204,44 +220,52 @@ export function Nav() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  // Only the home hero runs under the bar. Opening a panel or the mobile sheet
+  // also settles it, so its dark type has a light ground to sit on.
+  const overHero = pathname === "/" && !scrolled && !open && openMenu === null;
+
   return (
-    <header className="sticky top-0 z-50">
+    <header className="sticky top-0 z-50 h-[var(--nav-h)]">
       <nav
         aria-label="ניווט ראשי"
         className={
-          "relative w-full border-b transition-[background-color,box-shadow,border-color,padding,backdrop-filter] " +
+          "relative w-full h-full border-b transition-[background-color,box-shadow,border-color] " +
           "duration-[250ms] ease-out-soft " +
-          (scrolled
-            ? "bg-cream/95 backdrop-blur-lg border-stroke/70 shadow-sm"
-            // cream/55 was tuned against cream pages; the home hero is now a
-            // dark photograph, and at 55% the espresso wordmark on it fell
-            // under AA. 85% still reads as glass on the light pages.
-            : "bg-cream/85 backdrop-blur-sm border-stroke/40 shadow-none")
+          (overHero
+            ? "bg-transparent border-transparent shadow-none"
+            : scrolled
+              ? "bg-cream border-stroke/70 shadow-sm"
+              : "bg-cream border-stroke/40 shadow-none")
         }
       >
         <div
-          className={
-            "relative mx-auto max-w-container px-4 md:px-10 lg:px-16 flex items-center justify-between gap-4 " +
-            "transition-[padding] duration-[250ms] ease-out-soft " +
-            (scrolled ? "py-2.5" : "py-3.5")
-          }
+          className="relative h-full mx-auto max-w-container px-4 md:px-10 lg:px-16 flex items-center justify-between gap-4"
         >
-          {/* Espresso-ink lockup — the bar is always a cream ground, so this
-              is the dark variant of the mark. The cream variant (`logo_cream.png`)
-              stays reserved for dark grounds: the hero visit card's backdrop
-              and the footer. */}
+          {/* Both lockups are always present and cross-fade: cream while the
+              bar is over the hero photograph, espresso once it has a light
+              ground. The cream one is decorative, so only one alt is read. */}
           <Link
             href="/"
-            className="shrink-0 flex items-center transition-opacity duration-fast hover:opacity-80"
+            aria-label={`${business.name.he} - דף הבית`}
+            className="relative shrink-0 flex items-center transition-opacity duration-fast hover:opacity-80"
           >
             <Image
               src="/images/logo_dark.png"
-              alt={business.name.he}
+              alt=""
+              width={1200}
+              height={532}
+              loading="eager"
+              sizes="150px"
+              className={"h-9 md:h-10 w-auto transition-opacity duration-base " + (overHero ? "opacity-0" : "opacity-100")}
+            />
+            <Image
+              src="/images/logo_cream.png"
+              alt=""
               width={1251}
               height={574}
-              priority
+              loading="eager"
               sizes="150px"
-              className="h-8 md:h-9 w-auto"
+              className={"absolute inset-0 h-9 md:h-10 w-auto transition-opacity duration-base " + (overHero ? "opacity-100" : "opacity-0")}
             />
           </Link>
 
@@ -258,6 +282,7 @@ export function Nav() {
                     active={isActive(item.href)}
                     open={openMenu === item.id}
                     onOpenChange={(v) => setMenuOpen(item.id, v)}
+                    overHero={overHero}
                   >
                     <Panel />
                   </NavDropdown>
@@ -271,17 +296,24 @@ export function Nav() {
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={
-                      "relative block px-3 py-1.5 text-sm font-medium transition-colors " +
+                      "group/nav relative block px-3 py-1.5 text-sm font-medium transition-colors " +
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-sm " +
-                      (active ? "text-espresso" : "text-espresso-soft hover:text-espresso")
+                      (overHero
+                        ? "text-cream hover:text-brass"
+                        : active
+                          ? "text-espresso"
+                          : "text-espresso-soft hover:text-espresso")
                     }
                   >
-                    {active ? (
-                      <span
-                        aria-hidden
-                        className="absolute inset-x-3 -bottom-px h-[2px] bg-brass-ink"
-                      />
-                    ) : null}
+                    <span
+                      aria-hidden
+                      className={
+                        "absolute inset-x-3 -bottom-px h-[2px] origin-right transition-transform duration-base ease-out-soft " +
+                        "group-hover/nav:scale-x-100 " +
+                        (overHero ? "bg-brass " : "bg-brass-ink ") +
+                        (active ? "scale-x-100" : "scale-x-0")
+                      }
+                    />
                     <span className="relative">{item.label}</span>
                   </Link>
                 </li>
@@ -289,29 +321,51 @@ export function Nav() {
             })}
           </ul>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-2 lg:gap-3">
             <a
               href={`tel:${business.phone.tel}`}
-              className="inline-flex items-center gap-2 text-sm font-medium text-olive hover:text-espresso transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-sm"
+              aria-label={`התקשרו אל ${business.name.he}: ${business.phone.display}`}
+              className={
+                "hidden xl:inline-flex items-center gap-2 text-sm font-medium tabular-nums transition-colors rounded-sm " +
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-cream " +
+                (overHero ? "text-cream hover:text-brass" : "text-olive hover:text-espresso")
+              }
             >
               <IconPhone className="w-4 h-4" />
-              התקשרו עכשיו
+              {business.phone.display}
             </a>
             <a
               href={business.socials.instagram}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="אינסטגרם"
-              className="inline-flex items-center justify-center w-8 h-8 rounded-full text-olive hover:text-espresso hover:bg-cream-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+              className={
+                "inline-flex items-center justify-center w-9 h-9 rounded-full transition-colors " +
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-cream " +
+                (overHero ? "text-cream hover:bg-cream/15" : "text-olive hover:text-espresso hover:bg-cream-2")
+              }
             >
               <IconInstagram className="w-4 h-4" />
             </a>
+            <Link
+              href="/coffee-club"
+              aria-current={isActive("/coffee-club") ? "page" : undefined}
+              className="group/club inline-flex min-h-[40px] items-center gap-2 rounded-pill bg-amber px-4 text-sm font-medium text-cs-ink
+                         transition-[transform,background-color] duration-fast ease-out-soft hover:-translate-y-px hover:bg-amber-soft active:translate-y-0
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+            >
+              <IconStamp className="w-4 h-4 transition-transform duration-base ease-out-soft group-hover/club:-rotate-12" />
+              המועדון
+            </Link>
           </div>
 
           <button
             ref={triggerRef}
             type="button"
-            className="md:hidden grid place-items-center w-11 h-11 -me-2 rounded-full text-espresso hover:bg-cream-2 transition-colors"
+            className={
+              "md:hidden grid place-items-center w-11 h-11 -me-2 rounded-full transition-colors " +
+              (overHero ? "text-cream hover:bg-cream/15" : "text-espresso hover:bg-cream-2")
+            }
             aria-label={open ? "סגור תפריט" : "פתח תפריט"}
             aria-expanded={open}
             aria-controls="mobile-nav"
@@ -336,7 +390,7 @@ export function Nav() {
           aria-label="תפריט ניווט"
           className="md:hidden fixed inset-0 top-0 z-40 bg-cream flex flex-col"
         >
-          <div className="h-[76px] shrink-0" />
+          <div className="h-[var(--nav-h)] shrink-0" />
           <nav aria-label="ניווט נייד" className="flex-1 overflow-y-auto px-6 pb-10">
             <ul className="flex flex-col">
               {navItems.map((item, i) => {
@@ -419,11 +473,24 @@ export function Nav() {
               })}
             </ul>
 
+            <Link
+              href="/coffee-club"
+              onClick={close}
+              className="hero-fade mt-8 flex items-center justify-between gap-3 rounded-card bg-amber px-5 py-4 text-cs-ink"
+              style={{ ["--d" as never]: 300 }}
+            >
+              <span className="flex items-center gap-3 type-sub text-lg">
+                <IconStamp className="w-5 h-5" />
+                מועדון הלקוחות
+              </span>
+              <IconArrow className="w-5 h-5" />
+            </Link>
+
             <a
               href={`tel:${business.phone.tel}`}
               onClick={close}
-              className="hero-fade mt-8 inline-flex items-center gap-3 text-lg font-medium text-olive"
-              style={{ ["--d" as never]: 320 }}
+              className="hero-fade mt-6 inline-flex items-center gap-3 text-lg font-medium text-olive"
+              style={{ ["--d" as never]: 340 }}
             >
               <IconPhone />
               {business.phone.display}

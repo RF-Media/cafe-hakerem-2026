@@ -73,6 +73,9 @@ async function checkFAQs() {
       { name: "jachnun", data: faqs.jachnunFAQs },
       { name: "catering", data: faqs.cateringFAQs },
       { name: "contact", data: faqs.contactFAQs },
+      { name: "map", data: faqs.mapFAQs },
+      { name: "about", data: faqs.aboutFAQs },
+      { name: "club", data: faqs.clubFAQs },
     ];
 
     for (const page of allPages) {
@@ -125,46 +128,9 @@ const pages = globSync("app/(site)/*/page.tsx").concat([
 for (const pageFile of pages) {
   const content = readFileSync(pageFile, "utf8");
 
-  // Check for metadata title
+  // Titles and descriptions live in content/seo.ts; see checkSeoCopy() below.
   if (!content.includes("export const metadata")) {
-    issues.push({
-      file: pageFile,
-      line: 0,
-      severity: "error",
-      message: "Missing Metadata export",
-    });
-  }
-
-  // Check title length (SEO: <70 chars)
-  const titleMatch = content.match(/title:\s*"([^"]*)"/);
-  if (titleMatch && titleMatch[1].length > 70) {
-    issues.push({
-      file: pageFile,
-      line: 0,
-      severity: "warn",
-      message: `Title too long (${titleMatch[1].length}ch, target <70): "${titleMatch[1]}"`,
-    });
-  }
-
-  // Check description exists and length (SEO: 140-160 chars)
-  const descMatch = content.match(/description:\s*"([^"]*)"/);
-  if (!descMatch) {
-    issues.push({
-      file: pageFile,
-      line: 0,
-      severity: "error",
-      message: "Missing description in metadata",
-    });
-  } else if (
-    descMatch[1].length < 120 ||
-    descMatch[1].length > 170
-  ) {
-    issues.push({
-      file: pageFile,
-      line: 0,
-      severity: "warn",
-      message: `Description length ${descMatch[1].length}ch (target 140-160): "${descMatch[1]}"`,
-    });
+    issues.push({ file: pageFile, line: 0, severity: "error", message: "Missing Metadata export" });
   }
 
   // Check for BreadcrumbSchema import (except home)
@@ -186,7 +152,9 @@ for (const pageFile of pages) {
   if (!pageFile.includes("/(site)/page.tsx")) {
     if (
       !content.includes("import { Breadcrumb }") &&
-      !content.includes("from \"@/components/ui/Breadcrumb\"")
+      !content.includes("from \"@/components/ui/Breadcrumb\"") &&
+      // PageHero renders the breadcrumb inside the hero.
+      !content.includes("from \"@/components/sections/PageHero\"")
     ) {
       issues.push({
         file: pageFile,
@@ -202,7 +170,21 @@ for (const pageFile of pages) {
 /* Output                                                          */
 /* ─────────────────────────────────────────────────────────────── */
 
+async function checkSeoCopy() {
+  // @ts-ignore: tsx resolves the extension at runtime
+  const { pages: seo } = await import("../content/seo.ts");
+  for (const [key, page] of Object.entries(seo) as [string, { title: string; description: string }][]) {
+    if (page.title.length > 70) {
+      issues.push({ file: "content/seo.ts", line: 0, severity: "warn", message: `[${key}] title ${page.title.length}ch (target <70)` });
+    }
+    if (page.description.length < 140 || page.description.length > 160) {
+      issues.push({ file: "content/seo.ts", line: 0, severity: "warn", message: `[${key}] description ${page.description.length}ch (target 140-160)` });
+    }
+  }
+}
+
 async function main() {
+  await checkSeoCopy();
   await checkFAQs();
 
   if (issues.length === 0) {

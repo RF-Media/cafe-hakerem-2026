@@ -130,13 +130,14 @@ export type AddonKey = keyof typeof jachnunPricing.addons;
 export const jachnun = {
   hero: {
     eyebrow: "ג'חנון של שבת",
+    kicker: "ג'חנון של שבת להזמנה, קפה הכרם גני תקווה",
     title: "ג'חנון הכרם",
     lede:
       "בקפה הכרם אנחנו אופים ג'חנון תימני מסורתי לאיסוף בשבת בבוקר. " +
       "מזמינים מראש באתר, אוספים ומשלמים בשבת בבוקר.",
-    image: "/images/jachnun-plate_shared.jpg",
+    image: "/images/jachnun-closeup_shared.jpg",
     imageAlt:
-      "ג'חנון תימני על צלחת לצד רסק עגבניות, סחוג וביצה קשה",
+      "ג'חנון תימני מגולגל לצד רסק עגבניות טרי, ביצה קשה וסחוג ירוק של קפה הכרם",
   },
 
   /* "Why ours" — 3 short reasons. Each ≤ 12 words. */
@@ -144,16 +145,25 @@ export const jachnun = {
     {
       title: "בצק שנערך ביד",
       body: "לשים ומגלגלים ביום חמישי, יחידה אחר יחידה, בלי מכונה.",
+      image: "/images/jachnun-plate_jachnun.jpg",
+      imageAlt: "ג'חנון מגולגל על צלחת לבנה ליד רסק עגבניות וזעתר, במבט מלמעלה",
     },
     {
       title: "נאפה לילה שלם",
       body: "נכנס לתנור בליל שבת ואופה לאט עד הבוקר.",
+      image: "/images/jachnun-tray_shared.jpg",
+      imageAlt: "מגש ג'חנון על נייר חום, עם רסק עגבניות, סחוג וביצים קשות",
     },
     {
       title: "מגיע עם הכל",
       body: "ביצה קשה, רסק עגבניות וסחוג של הבית בכל הזמנה.",
+      image: "/images/jachnun-closeup_shared.jpg",
+      imageAlt: "קרוב על רסק עגבניות טרי, ביצה קשה וג'חנון מגולגל",
     },
   ],
+
+  /* Under the "what's included" list on /jachnun. */
+  crossSell: "וגם בורקס תורכי בעבודת יד, בתפריט",
 
   /* What's included in a single jachnun order. */
   whatsIncluded: [

@@ -39,6 +39,11 @@ function partsInJerusalem(instant: Date): { hour: number; minute: number; weekda
   };
 }
 
+/** 0 = Sunday. */
+export function todayInJerusalem(now: Date = new Date()): number {
+  return partsInJerusalem(now).weekday;
+}
+
 function toMinutes(hhmm: string): number {
   const [h, m] = hhmm.split(":").map(Number);
   return h * 60 + m;

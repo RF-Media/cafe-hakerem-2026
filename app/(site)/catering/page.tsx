@@ -1,31 +1,29 @@
 export const dynamic = "force-static";
 export const revalidate = 86400;
 
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
+import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { CafeImage } from "@/components/ui/CafeImage";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { FAQBlock } from "@/components/ui/FAQBlock";
-import { Section, container } from "@/components/ui/Section";
+import { IconArrow } from "@/components/ui/icons";
+import { Section } from "@/components/ui/Section";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/motion/Reveal";
-import { SplitText } from "@/components/motion/SplitText";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FactualParagraph } from "@/components/sections/FactualParagraph";
 import { CateringInquiryForm } from "@/components/sections/CateringInquiryForm";
+import { PageHero } from "@/components/sections/PageHero";
 import { catering } from "@/content/catering";
 import { cateringFAQs } from "@/content/faqs";
 import { business } from "@/content/business";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "מגשי אירוח להזמנה | קפה הכרם - גני תקווה",
-  description:
-    "מגשי אירוח של קפה הכרם - מגשי בורקס, כריכים ומתוקים לישיבות עבודה, אירועים משפחתיים וברית באזור גני תקווה. הזמנה דרך טופס הפנייה.",
-};
+export const metadata = pageMetadata("catering");
 
 function serviceSchema() {
   return {
@@ -33,8 +31,18 @@ function serviceSchema() {
     "@type": "Service",
     serviceType: "Catering",
     name: "מגשי אירוח - קפה הכרם",
+    url: `${business.siteUrl}/catering`,
+    image: `${business.siteUrl}${catering.hero.image}`,
     provider: { "@id": `${business.siteUrl}/#cafe` },
     areaServed: { "@type": "Place", name: `${business.address.city.he} והסביבה` },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "מגשי אירוח",
+      itemListElement: catering.options.map((o) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Product", name: o.title.he, description: o.includes.join(", ") },
+      })),
+    },
   };
 }
 
@@ -44,147 +52,121 @@ export default function CateringPage() {
       <BreadcrumbSchema trail={[{ name: "מגשי אירוח", href: "/catering" }]} />
       <JsonLd data={serviceSchema()} />
 
-      <Breadcrumb items={[{ name: "מגשי אירוח" }]} />
-
-      <section className="relative flex items-center min-h-[70svh] md:min-h-[78svh]">
-        <div className={`${container} w-full grid lg:grid-cols-12 gap-10 items-center`}>
-          <div className="lg:col-span-7">
-            <div className="hero-fade" style={{ ["--d" as never]: 0 }}>
-              <Eyebrow withRule>{catering.hero.eyebrow}</Eyebrow>
-            </div>
-            <h1 className="mt-5 type-display text-[2.75rem] leading-[1.03] md:text-7xl lg:text-8xl text-espresso">
-              <SplitText text={catering.hero.title} delay={70} />
-            </h1>
-            <p
-              className="hero-fade mt-6 max-w-prose-he type-lede text-base md:text-xl text-espresso-soft"
-              style={{ ["--d" as never]: 380 }}
-            >
-              {catering.hero.lede}
-            </p>
-          </div>
-          <div className="lg:col-span-5 hero-fade" style={{ ["--d" as never]: 520 }}>
-            <CafeImage
-              variant="tray"
-              src="/images/burekas-tray_catering.jpg"
-              alt="מגש אירוח של קפה הכרם - בורקס טורקי, חומוס, סלסת עגבניות וזיתים"
-              ratio="aspect-[5/3]"
-              tone="olive"
-              priority
-              sizes="(max-width: 1024px) 100vw, 40vw"
-            />
-          </div>
-        </div>
-      </section>
+      <PageHero
+        tone="sage"
+        crumbs={[{ name: "מגשי אירוח" }]}
+        kicker={catering.hero.kicker}
+        title={catering.hero.title}
+        lede={catering.hero.lede}
+        image={catering.hero.image}
+        imageAlt={catering.hero.imageAlt}
+        imagePosition="50% 70%"
+      >
+        <Button as="a" href="#inquiry" variant="primary" size="lg" icon={<IconArrow />}>
+          {catering.hero.cta}
+        </Button>
+      </PageHero>
 
       {/* Promises */}
-      <Section tone="cream-2" spacing="sm">
-        <Stagger className="grid md:grid-cols-3 gap-5 md:gap-6" stagger={0.09}>
+      <section className="bg-olive text-cream">
+        <Stagger className="mx-auto grid max-w-container gap-8 px-6 py-12 md:grid-cols-3 md:px-10 lg:px-16" stagger={0.09}>
           {catering.promises.map((p, i) => (
-            <StaggerItem key={i} variant="tile">
-              <Card padding="lg" tone="cream-3" className="h-full">
-                <span aria-hidden className="block h-px w-8 bg-brass-ink/45" />
-                <div className="mt-4 type-sub text-xl text-espresso">{p.title}</div>
-                <p className="mt-2 text-base text-espresso-soft leading-relaxed">{p.body}</p>
-              </Card>
+            <StaggerItem key={p.title} className="border-t-2 border-brass/60 pt-4">
+              <span aria-hidden className="type-statement text-3xl text-brass tabular-nums">{i + 1}</span>
+              <h2 className="mt-2 type-sub text-xl">{p.title}</h2>
+              <p className="mt-2 text-base leading-relaxed text-cream/85">{p.body}</p>
+            </StaggerItem>
+          ))}
+        </Stagger>
+      </section>
+
+      {/* Occasions */}
+      <Section tone="cream">
+        <SectionHeading eyebrow={catering.occasions.eyebrow} title={catering.occasions.title} />
+        <Stagger className="grid gap-8 md:grid-cols-3 md:gap-6" stagger={0.08}>
+          {catering.occasions.items.map((o) => (
+            <StaggerItem key={o.title} variant="tile">
+              <article className="group">
+                <div className="zoom-frame rounded-card">
+                  <CafeImage variant="tray" src={o.image} alt={o.alt} ratio="aspect-[4/3]" sizes="(max-width: 768px) 100vw, 33vw" />
+                </div>
+                <h3 className="mt-5 type-sub text-2xl text-espresso">{o.title}</h3>
+                <p className="mt-2 text-base leading-relaxed text-espresso-soft md:text-lg">{o.body}</p>
+              </article>
             </StaggerItem>
           ))}
         </Stagger>
       </Section>
 
-      {/* Options grid */}
-      <section className="py-20 md:py-28">
-        <div className={container}>
-          <Reveal>
-            <h2 className="type-title text-3xl md:text-4xl text-espresso mb-10">
-              סוגי מגשים
-            </h2>
-          </Reveal>
-
-          <Stagger className="grid sm:grid-cols-2 gap-5" stagger={0.08}>
-            {catering.options.map((o) => (
-              <StaggerItem key={o.id} variant="tile">
-                <div id={o.id} className="scroll-mt-40 h-full">
-                  <Card
-                    padding="lg"
-                    tone="cream-3"
-                    hoverable
-                    elevation="raised"
-                    className="h-full flex flex-col relative overflow-hidden"
-                  >
-                    {o.popular ? (
-                      <span
-                        aria-hidden
-                        className="absolute -end-12 top-6 z-10 w-40 -rotate-45 bg-olive py-1
-                                   text-center type-index text-xs text-cream shadow-sm"
-                      >
-                        מומלץ!
-                      </span>
-                    ) : null}
-                    <CafeImage
-                      variant="tray"
-                      src={o.photo}
-                      alt={`${o.title.he} - מגש אירוח של קפה הכרם`}
-                      ratio="aspect-[5/3]"
-                      tone="brass"
-                      className="mb-5"
-                      sizes="(max-width: 768px) 100vw, 45vw"
-                    />
-                    <div className="type-sub text-xl text-espresso">{o.title.he}</div>
-                    <div className="mt-1 text-sm text-olive">{o.serves}</div>
-                    <ul className="mt-4 space-y-1.5 text-base text-espresso-soft">
-                      {o.includes.map((it, i) => (
-                        <li key={i} className="flex gap-2">
-                          <span aria-hidden className="text-brass-ink">·</span>
-                          <span>{it}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-auto pt-4 border-t border-stroke flex items-baseline justify-between">
-                      {o.fromPrice ? (
-                        <>
-                          <span className="text-sm text-espresso-soft">מחיר</span>
-                          <span className="type-sub text-xl text-brass-ink">{o.fromPrice}</span>
-                        </>
-                      ) : (
-                        <span className="text-sm text-espresso-soft">מחיר לפי בקשה</span>
-                      )}
-                    </div>
-                  </Card>
+      {/* Options */}
+      <Section tone="sage">
+        <SectionHeading eyebrow="המגשים" title="סוגי מגשים" />
+        <Stagger className="grid gap-6 md:grid-cols-3" stagger={0.08}>
+          {catering.options.map((o) => (
+            <StaggerItem key={o.id} id={o.id} variant="tile" className="scroll-mt-28">
+              <article className="group flex h-full flex-col overflow-hidden rounded-card bg-cream-3 shadow-sm transition-[transform,box-shadow] duration-base ease-out-soft hover:-translate-y-1 hover:shadow-lg">
+                <div className="zoom-frame relative">
+                  <CafeImage
+                    variant="tray"
+                    src={o.photo}
+                    alt={`${o.title.he} - מגש אירוח של קפה הכרם`}
+                    ratio="aspect-video"
+                    className="!rounded-none"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                  {o.popular ? (
+                    <span className="absolute end-3 top-3 rounded-pill bg-olive px-3 py-1.5 text-sm font-medium text-cream">מומלץ</span>
+                  ) : null}
                 </div>
-              </StaggerItem>
-            ))}
-          </Stagger>
-        </div>
+                <div className="flex flex-1 flex-col p-6">
+                  <h3 className="type-sub text-2xl text-espresso">{o.title.he}</h3>
+                  <p className="mt-1 text-base font-medium text-olive">{o.serves}</p>
+                  <ul className="mt-4 flex-1 space-y-1.5 text-base text-espresso-soft">
+                    {o.includes.map((it) => (
+                      <li key={it} className="flex gap-2">
+                        <span aria-hidden className="text-brass-ink">·</span>
+                        <span>{it}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-5 flex items-baseline justify-between border-t border-stroke pt-4">
+                    {o.fromPrice ? (
+                      <span className="type-sub text-xl text-brass-ink">{o.fromPrice}</span>
+                    ) : (
+                      <span className="text-base text-espresso-soft">מחיר לפי בקשה</span>
+                    )}
+                    <a href="#inquiry" className="link-draw text-sm font-medium text-olive">לפנייה</a>
+                  </div>
+                </div>
+              </article>
+            </StaggerItem>
+          ))}
+        </Stagger>
 
-        <div className={`${container} mt-12`}>
-          <Stagger
-            as="dl"
-            className="grid md:grid-cols-2 gap-x-8 gap-y-5 text-sm text-espresso-soft max-w-3xl"
-            stagger={0.07}
-          >
-            {[
-              { t: "זמן הזמנה מוקדם", d: catering.fineprint.leadTime },
-              { t: "תשלום", d: catering.fineprint.payment },
-              { t: "ביטולים", d: catering.fineprint.cancellation },
-              { t: "סכום מינימום", d: catering.fineprint.minimumOrder },
-            ].map((row) => (
-              <StaggerItem key={row.t} className="border-t border-stroke pt-3">
-                <dt className="font-medium text-espresso">{row.t}</dt>
-                <dd className="mt-1">{row.d}</dd>
-              </StaggerItem>
-            ))}
-          </Stagger>
-        </div>
-      </section>
+        <Stagger as="dl" className="mt-12 grid max-w-4xl gap-x-8 gap-y-5 text-base text-espresso md:grid-cols-2" stagger={0.07}>
+          {[
+            { t: "זמן הזמנה מוקדם", d: catering.fineprint.leadTime },
+            { t: "תשלום", d: catering.fineprint.payment },
+            { t: "ביטולים", d: catering.fineprint.cancellation },
+            { t: "סכום מינימום", d: catering.fineprint.minimumOrder },
+          ].map((row) => (
+            <StaggerItem key={row.t} className="border-t border-espresso/25 pt-3">
+              <dt className="font-medium">{row.t}</dt>
+              <dd className="mt-1">{row.d}</dd>
+            </StaggerItem>
+          ))}
+        </Stagger>
+      </Section>
 
       {/* Inquiry form.
           The narrow column is its own nested element: putting `max-w-3xl`
           alongside the container's `max-w-container` left two competing
           max-widths on one node, decided only by CSS source order. */}
-      <Section tone="cream-2">
+      <Section id="inquiry" tone="cream-2" className="scroll-mt-16">
         <div className="max-w-3xl">
           <Reveal>
-            <h2 className="type-title text-3xl md:text-4xl text-espresso">בואו נדבר</h2>
+            <Eyebrow tone="olive" withRule>טופס פנייה</Eyebrow>
+            <h2 className="mt-4 type-statement text-4xl md:text-6xl text-espresso">בואו נדבר</h2>
           </Reveal>
           <Reveal delay={0.08}>
             <p className="mt-3 type-lede text-base md:text-lg text-espresso-soft">
@@ -202,7 +184,7 @@ export default function CateringPage() {
       </Section>
 
       <Section>
-        <FAQBlock items={cateringFAQs} />
+        <FAQBlock items={cateringFAQs} heading="שאלות על מגשי האירוח" />
         <FAQSchema items={cateringFAQs} />
         <FactualParagraph focus="קפה הכרם מספק מגשי אירוח לאירועים פרטיים ועסקיים באזור גני תקווה, באיסוף מהמקום או במשלוח." />
         <div className="mt-10 text-center text-sm text-espresso-soft">

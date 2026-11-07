@@ -20,10 +20,22 @@
   --espresso-deep: 20 24% 7%;
 
   /* Accents */
-  --olive:         152 22% 21%;
-  --olive-soft:    152 15% 38%;
-  --jachnun:       14 62% 42%;
-  --jachnun-soft:  14 48% 58%;
+  --olive:         156 38% 17%;
+  --olive-soft:    152 22% 34%;
+  --jachnun:       14 74% 37%;
+  --jachnun-soft:  14 60% 56%;
+
+  /* Colour worlds (2026-11-05). Each topic owns a ground, so a visitor can tell
+     where they are from colour alone: pine for the café, terracotta for
+     jachnun, sage (the fluted tile on the café's counter) for hosting, amber
+     (CoffeeStream's own) for the club. Espresso and porcelain carry the rest. */
+  --sage:          128 20% 87%;
+  --sage-deep:     130 14% 42%;
+  --amber:         37 92% 72%;
+  --amber-soft:    39 86% 84%;
+  --amber-wash:    39 100% 93%;
+  --cs-ink:        60 2% 17%;
+  --cs-cream:      38 100% 97%;
 
   /* Two brasses, and the split is not decorative. `--brass` at 56% lightness
      is a metal for DARK grounds (7.1:1 on --espresso-deep). On porcelain it
@@ -53,6 +65,11 @@
   --dur-fast: 180ms;
   --dur-base: 320ms;
   --dur-slow: 700ms;
+
+  /* The offset height of the sticky bar, for anything that has to clear it. */
+  --nav-h: 68px;
+  /* The /menu category rail, stuck directly under the bar. */
+  --menu-rail-h: 69px;
 }
 
 @layer base {
@@ -61,6 +78,17 @@
     background-color: hsl(var(--cream));
     color: hsl(var(--espresso));
     -webkit-font-smoothing: antialiased;
+    /* Anchor jumps land below the sticky bar, not behind it. */
+    scroll-padding-top: calc(var(--nav-h) + 16px);
+    /* FAQ answers animate open where supported; elsewhere they just open. */
+    interpolate-size: allow-keywords;
+  }
+
+  /* Smooth for a jump within a page, never for arriving at one: unset, a deep
+     link like /menu#cakes flies down from the hero for over a second. The
+     motion runtime sets this after `load`. */
+  html[data-smooth] {
+    scroll-behavior: smooth;
   }
 
   body {
@@ -147,6 +175,14 @@
     letter-spacing: -0.02em;
     line-height: 1.12;
   }
+  /* The big voice for a full colour band. Same weight as .type-title, so the
+     <h1> keeps 900 to itself, but tighter and set far larger. */
+  .type-statement {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.04;
+  }
   .type-sub {
     font-family: var(--font-display), system-ui, sans-serif;
     font-weight: 500;
@@ -162,8 +198,9 @@
     font-weight: 400;
     font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.24em;
-    line-height: 1;
+    /* Hebrew carries far less tracking than Latin caps before it falls apart. */
+    letter-spacing: 0.12em;
+    line-height: 1.3;
     font-variant-numeric: tabular-nums;
   }
 
@@ -182,6 +219,113 @@
     height: 100%;
     background: linear-gradient(to bottom, hsl(var(--brass) / 0.7), transparent);
     animation: cue-slide 2.2s var(--ease-in-out) infinite;
+  }
+
+  /* Link underline that draws from the reading edge. */
+  .link-draw {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 100% 100%;
+    background-size: 0 1px;
+    background-repeat: no-repeat;
+    padding-bottom: 2px;
+    transition: background-size var(--dur-base) var(--ease-out-soft);
+  }
+  .link-draw:hover,
+  .link-draw:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* A photo that eases in on hover. The frame clips, the image scales, and
+     nothing around it moves. */
+  .zoom-frame {
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .zoom-frame img {
+    transition: transform 900ms var(--ease-out-soft), filter var(--dur-slow) var(--ease-out-soft);
+  }
+  @media (hover: hover) {
+    .group:hover .zoom-frame img,
+    .zoom-frame:hover img,
+    a:focus-visible .zoom-frame img {
+      transform: scale(1.06);
+    }
+  }
+
+  /* Pointer-following glow for dark or coloured cards. Position comes from
+     lib/motion-runtime.ts; without it the glow simply stays off. */
+  [data-spot] {
+    position: relative;
+    isolation: isolate;
+  }
+  [data-spot]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: 0;
+    background: radial-gradient(320px circle at var(--sx, 50%) var(--sy, 50%), hsl(var(--brass) / 0.22), transparent 70%);
+    transition: opacity var(--dur-base) var(--ease-out-soft);
+  }
+  @media (hover: hover) {
+    [data-spot]:hover::after {
+      opacity: 1;
+    }
+  }
+
+  /* CoffeeStream's sign-in panel: an amber radial with a dotted surround that
+     fades out behind whatever sits in the middle. Used only for the club. */
+  .cs-panel {
+    position: relative;
+    isolation: isolate;
+    background: radial-gradient(ellipse 70% 60% at 50% 42%, hsl(var(--amber-wash)) 0%, hsl(var(--amber-soft)) 55%, hsl(var(--amber)) 100%);
+    color: hsl(var(--cs-ink));
+  }
+  .cs-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.22;
+    background-image: radial-gradient(hsl(var(--cs-ink)) 1px, transparent 1px);
+    background-size: 20px 20px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 45%, transparent 40%, black 100%);
+    mask-image: radial-gradient(ellipse 75% 65% at 50% 45%, transparent 40%, black 100%);
+  }
+
+  /* The sticker look from CoffeeStream's login illustration: ink outline and a
+     hard offset shadow. It presses in on hover, the way a sticker would. */
+  .sticker {
+    border: 3px solid hsl(var(--cs-ink));
+    box-shadow: -5px 5px 0 hsl(var(--cs-ink));
+    transition: transform var(--dur-fast) var(--ease-out-soft), box-shadow var(--dur-fast) var(--ease-out-soft);
+  }
+  a.sticker:hover,
+  button.sticker:hover {
+    transform: translate3d(-2px, 2px, 0);
+    box-shadow: -3px 3px 0 hsl(var(--cs-ink));
+  }
+  a.sticker:active,
+  button.sticker:active {
+    transform: translate3d(-5px, 5px, 0);
+    box-shadow: 0 0 0 hsl(var(--cs-ink));
+  }
+
+  /* Hero photo settles over 8 seconds. Starts from the SSR HTML with no JS. */
+  .hero-settle {
+    animation: hero-settle 8s var(--ease-out-soft) both;
+  }
+
+  /* Native <details>: the answer eases open where the browser allows it. */
+  details.faq::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size var(--dur-base) var(--ease-out-soft), content-visibility var(--dur-base) allow-discrete;
+  }
+  details.faq[open]::details-content {
+    block-size: auto;
   }
 }
 
@@ -208,6 +352,23 @@
   from { transform: translate3d(0, 0, 0); }
   to   { transform: translate3d(50%, 0, 0); }
 }
+@keyframes hero-settle {
+  from { transform: scale(1.07); }
+  to   { transform: scale(1); }
+}
+@keyframes parallax-drift {
+  from { transform: translate3d(0, calc(var(--px, 0px) * -1), 0); }
+  to   { transform: translate3d(0, var(--px, 0px), 0); }
+}
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes stamp-press {
+  0%   { transform: scale(1.5) rotate(-12deg); opacity: 0; }
+  60%  { transform: scale(0.92) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
 /* Per-word mask reveal for hero headlines. The word span holds a real
    text node — nothing is duplicated or aria-hidden — so the accessibility
    tree and the crawler's text extraction are identical to plain markup. */
@@ -226,6 +387,381 @@
   animation-delay: calc(var(--d, 0) * 1ms);
 }
 
+/* ---------------------------------------------------------------------
+   Reveals. The trigger is one IntersectionObserver in lib/motion-runtime.ts,
+   which only flips `data-in`. Everything below is transform/opacity/clip-path
+   on the compositor (§7). With JS off the <noscript> rule in app/layout.tsx
+   hands the content straight back.
+   --------------------------------------------------------------------- */
+[data-rv] {
+  opacity: 0;
+  transform: translate3d(var(--rx, 0), var(--ry, 24px), 0);
+  transition:
+    opacity var(--dur-slow) var(--ease-out-soft) var(--rd, 0ms),
+    transform var(--dur-slow) var(--ease-out-soft) var(--rd, 0ms);
+}
+[data-rv][data-in] {
+  opacity: 1;
+  transform: none;
+}
+
+[data-rv][data-rv-kind="wipe"] {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 0 100%);
+  transition: clip-path 1s var(--ease-out-soft) var(--rd, 0ms);
+}
+[data-rv][data-rv-kind="wipe"][data-in] {
+  clip-path: inset(0 0 0 0);
+}
+[data-rv-inner] {
+  transform: scale(1.12);
+  transition: transform 1.2s var(--ease-out-soft) var(--rd, 0ms);
+}
+[data-in] > [data-rv-inner] {
+  transform: none;
+}
+
+[data-rv-item] {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  transition:
+    opacity var(--dur-slow) var(--ease-out-soft),
+    transform var(--dur-slow) var(--ease-out-soft);
+  /* Capped: a long list never makes the last row wait. */
+  transition-delay: calc(var(--rd, 0ms) + min(var(--i, 0), 10) * var(--rs, 80ms));
+}
+[data-rv-item="tile"] {
+  transform: translate3d(0, 24px, 0) scale(0.96);
+}
+[data-rv-group][data-in] > [data-rv-item] {
+  opacity: 1;
+  transform: none;
+}
+
+[data-rv-word] {
+  opacity: 0;
+  transform: translate3d(0, 1.1em, 0);
+  transition:
+    opacity 0.75s var(--ease-out-soft),
+    transform 0.75s var(--ease-out-soft);
+  transition-delay: calc(var(--i, 0) * var(--rs, 55ms));
+}
+[data-rv-words][data-in] [data-rv-word] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Parallax and the reading bar are scroll-driven CSS: compositor only, no JS.
+   Browsers without it simply show a static page. */
+@supports (animation-timeline: view()) {
+  [data-parallax] {
+    animation: parallax-drift linear both;
+    animation-timeline: view();
+  }
+  [data-scroll-progress] {
+    transform-origin: right;
+    animation: grow-x linear both;
+    animation-timeline: scroll(root);
+  }
+}
+@supports not (animation-timeline: view()) {
+  [data-scroll-progress] { display: none; }
+}
+@media (max-width: 767px) {
+  /* §7: parallax is halved below md. */
+  @keyframes parallax-drift {
+    from { transform: translate3d(0, calc(var(--px, 0px) * -0.5), 0); }
+    to   { transform: translate3d(0, calc(var(--px, 0px) * 0.5), 0); }
+  }
+}
+
+/* The calculator's illustration: a punch presses in and a sticker lands when the
+   slider earns them. Both are SVG groups, hence fill-box. */
+.stamp-new {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: stamp-press 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.perk-sticker {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(0.7) rotate(-10deg);
+  transition: opacity var(--dur-fast) var(--ease-out-soft), transform var(--dur-base) cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.perk-sticker[data-on] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------------------------------------------------------------------
+   /map: a folded paper sheet on the pine ground. The art is inside .map-art so
+   it can be zoomed on phones around the pin, which is the exact centre of the
+   frame at every size. Reveals and ripples are clip-path, transform and opacity.
+   --------------------------------------------------------------------- */
+.map-sheet {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 6px;
+  background: hsl(var(--cream));
+  box-shadow: var(--shadow-lg);
+}
+/* The folds: a soft dark edge and a bright one, two across and one down. */
+.map-sheet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  --fold-d: hsl(var(--espresso-deep) / 0.09);
+  --fold-l: hsl(0 0% 100% / 0.2);
+  background-image:
+    linear-gradient(90deg, transparent calc(33.33% - 9px), var(--fold-d) 33.33%, var(--fold-l) calc(33.33% + 1px), transparent calc(33.33% + 7px)),
+    linear-gradient(90deg, transparent calc(66.66% - 9px), var(--fold-d) 66.66%, var(--fold-l) calc(66.66% + 1px), transparent calc(66.66% + 7px)),
+    linear-gradient(180deg, transparent calc(50% - 9px), var(--fold-d) 50%, var(--fold-l) calc(50% + 1px), transparent calc(50% + 7px));
+}
+.map-art {
+  position: absolute;
+  inset: 0;
+  animation: map-unfold 1200ms var(--ease-out-soft) both;
+}
+@keyframes map-unfold {
+  from { clip-path: circle(16% at 50% 50%); }
+  to   { clip-path: circle(120% at 50% 50%); }
+}
+
+/* Type on the sheet is in viewBox units, so it is sized against the crop. */
+.map-label {
+  font-size: 20px;
+  font-weight: 500;
+  fill: hsl(var(--espresso));
+  stroke: hsl(var(--cream-3));
+  stroke-width: 4.5px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.map-label--major { font-size: 22px; font-weight: 700; }
+.map-label--carmel { font-size: 27px; font-weight: 900; fill: hsl(var(--olive)); stroke-width: 6px; }
+.map-ring-label {
+  font-size: 20px;
+  font-weight: 700;
+  fill: hsl(24 58% 20%);
+  stroke: hsl(var(--cream-3));
+  stroke-width: 4.5px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.map-p-disc { fill: hsl(var(--olive)); stroke: hsl(var(--cream-3)); stroke-width: 2.5px; }
+.map-p-glyph {
+  font-size: 18px;
+  font-weight: 700;
+  fill: hsl(var(--cream));
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* A surveyor's border: a rule with a tick every 80px, on all four sides. */
+.map-neatline {
+  position: absolute;
+  inset: 12px;
+  z-index: 1;
+  pointer-events: none;
+  border: 1px solid hsl(var(--espresso) / 0.55);
+  --tick: hsl(var(--espresso) / 0.55);
+  background:
+    repeating-linear-gradient(90deg, var(--tick) 0 1px, transparent 1px 80px) top / 100% 6px no-repeat,
+    repeating-linear-gradient(90deg, var(--tick) 0 1px, transparent 1px 80px) bottom / 100% 6px no-repeat,
+    repeating-linear-gradient(180deg, var(--tick) 0 1px, transparent 1px 80px) left / 6px 100% no-repeat,
+    repeating-linear-gradient(180deg, var(--tick) 0 1px, transparent 1px 80px) right / 6px 100% no-repeat;
+}
+.map-title {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  padding: 10px 14px;
+  background: hsl(var(--cream));
+  border-inline-start: 1px solid hsl(var(--espresso) / 0.55);
+  border-bottom: 1px solid hsl(var(--espresso) / 0.55);
+}
+.map-compass {
+  position: absolute;
+  bottom: 26px;
+  left: 26px;
+  z-index: 2;
+  width: 40px;
+  color: hsl(var(--espresso));
+}
+.map-credit {
+  position: absolute;
+  bottom: 13px;
+  right: 13px;
+  z-index: 2;
+  padding: 3px 7px;
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  color: hsl(var(--espresso));
+  background: hsl(var(--cream));
+}
+.map-credit:hover { text-decoration: underline; }
+/* Small type, full-size target (§6). */
+.map-credit::after {
+  content: "";
+  position: absolute;
+  inset: -20px -4px -6px -4px;
+}
+
+/* The pin. */
+.map-dot,
+.map-ripple,
+.map-leader,
+.map-polaroid {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+}
+.map-dot {
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 9999px;
+  background: hsl(var(--olive));
+  box-shadow: 0 0 0 3px hsl(var(--cream-3)), var(--shadow-sm);
+}
+.map-ripple {
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border-radius: 9999px;
+  border: 2px solid hsl(var(--olive));
+  opacity: 0;
+  animation: map-ripple 3.6s var(--ease-out-soft) 900ms infinite;
+}
+.map-ripple--late { animation-delay: 2100ms; }
+@keyframes map-ripple {
+  0%        { transform: scale(0.12); opacity: 0.6; }
+  75%, 100% { transform: scale(1); opacity: 0; }
+}
+.map-leader {
+  width: 2px;
+  height: 34px;
+  margin: -34px 0 0 -1px;
+  background: hsl(var(--espresso));
+}
+.map-polaroid {
+  width: 112px;
+  padding: 6px 6px 12px;
+  background: hsl(0 0% 100%);
+  box-shadow: var(--shadow-lg);
+  transform: translate(-62%, calc(-100% - 32px)) rotate(-3deg);
+  animation: map-polaroid 800ms var(--ease-out-soft) 350ms both;
+}
+.map-polaroid::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  z-index: 1;
+  width: 46px;
+  height: 16px;
+  margin-left: -23px;
+  background: hsl(var(--stroke) / 0.9);
+  box-shadow: var(--shadow-xs);
+  transform: rotate(2.5deg);
+}
+@keyframes map-polaroid {
+  from { opacity: 0; transform: translate(-62%, calc(-100% - 12px)) rotate(4deg) scale(1.08); }
+}
+@media (min-width: 768px) {
+  .map-polaroid { width: 156px; padding: 7px 7px 18px; }
+}
+@media (max-width: 1439px) {
+  /* A smaller frame shows the same sheet at a smaller scale. */
+  .map-label { font-size: 23px; stroke-width: 5px; }
+  .map-label--major { font-size: 25px; }
+  .map-label--carmel { font-size: 30px; stroke-width: 6.5px; }
+  .map-ring-label { font-size: 23px; stroke-width: 5px; }
+}
+@media (max-width: 767px) {
+  .map-art { transform: scale(1.4); }
+  .map-compass { display: none; }
+}
+@media (max-width: 639px) {
+  /* A phone's frame is small: the art comes in closer above, and the type is set
+     larger against that crop so it still reads at about 13px. The title goes
+     because the marker needs that corner, and the <h1> just above says the same. */
+  .map-label { font-size: 30px; stroke-width: 6.5px; }
+  .map-label--major { font-size: 31px; }
+  .map-label--carmel { font-size: 36px; stroke-width: 8px; }
+  .map-label--minor { display: none; }
+  .map-ring-label { font-size: 29px; stroke-width: 6.5px; transform: translateY(-34px); }
+  .map-title,
+  .map-neatline { display: none; }
+  .map-credit { right: 6px; bottom: 6px; padding: 2px 5px; font-size: 0.625rem; }
+  /* Taller with its deeper bottom edge, so a shorter stem keeps it inside a small frame. */
+  .map-polaroid { width: 104px; padding: 5px 5px 11px; transform: translate(-62%, calc(-100% - 22px)) rotate(-3deg); }
+  .map-leader { height: 24px; margin-top: -24px; }
+  .map-polaroid::before { top: -6px; height: 12px; }
+}
+
+/* The "open now" dot breathes. */
+.seal-ping {
+  animation: seal-ping 2.2s var(--ease-out-soft) infinite;
+}
+@keyframes seal-ping {
+  0%   { transform: scale(1); opacity: 0.7; }
+  80%, 100% { transform: scale(2.6); opacity: 0; }
+}
+
+/* The calculator's slider: native input, styled, with a 44px hit area. */
+.cs-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 44px;
+  background: transparent;
+  cursor: pointer;
+}
+/* Fills from the right, because a range input runs right to left under dir="rtl". */
+.cs-range::-webkit-slider-runnable-track {
+  height: 10px;
+  border-radius: 9999px;
+  background: linear-gradient(to left, hsl(var(--cs-ink)) var(--fill, 0%), hsl(var(--cs-ink) / 0.18) var(--fill, 0%));
+}
+.cs-range::-moz-range-track {
+  height: 10px;
+  border-radius: 9999px;
+  background: linear-gradient(to left, hsl(var(--cs-ink)) var(--fill, 0%), hsl(var(--cs-ink) / 0.18) var(--fill, 0%));
+}
+.cs-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 34px;
+  height: 34px;
+  margin-top: -12px;
+  border-radius: 9999px;
+  border: 3px solid hsl(var(--cs-ink));
+  background: hsl(var(--cs-cream));
+  box-shadow: -3px 3px 0 hsl(var(--cs-ink));
+  transition: transform var(--dur-fast) var(--ease-out-soft);
+}
+.cs-range::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  border: 3px solid hsl(var(--cs-ink));
+  background: hsl(var(--cs-cream));
+  box-shadow: -3px 3px 0 hsl(var(--cs-ink));
+}
+.cs-range:hover::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -238,9 +774,27 @@
 
   /* Kill switch, not a speed-up: anything that only exists as motion
      is removed outright rather than played instantly. */
-  .scroll-cue::after {
+  .scroll-cue::after,
+  [data-scroll-progress] {
     display: none;
   }
+  html[data-smooth] { scroll-behavior: auto; }
+  [data-rv],
+  [data-rv-item],
+  [data-rv-word],
+  [data-rv-inner] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+  [data-parallax],
+  .seal-ping,
+  .hero-settle,
+  .map-art,
+  .map-polaroid {
+    animation: none !important;
+  }
+  .map-ripple { display: none; }
 }
 
 /* ---------------------------------------------------------------------
@@ -258,8 +812,9 @@ html.a11y-contrast {
   --stroke:        24 10% 38%;
   --olive:         152 30% 15%;
   --olive-soft:    152 22% 24%;
-  --jachnun:       14 70% 32%;
+  --jachnun:       14 80% 28%;
   --brass-ink:     36 55% 24%;
+  --sage-deep:     130 18% 28%;
 }
 html.a11y-contrast [class*="text-cream/"] { color: hsl(var(--cream)) !important; }
 html.a11y-contrast [class*="text-espresso/"] { color: hsl(var(--espresso)) !important; }
@@ -283,7 +838,24 @@ html.a11y-motion *::after {
   transition-duration: 0.001ms !important;
   scroll-behavior: auto !important;
 }
-html.a11y-motion .scroll-cue::after { display: none; }
+html.a11y-motion .scroll-cue::after,
+html.a11y-motion [data-scroll-progress] { display: none; }
+html.a11y-motion [data-rv],
+html.a11y-motion [data-rv-item],
+html.a11y-motion [data-rv-word],
+html.a11y-motion [data-rv-inner] {
+  opacity: 1 !important;
+  transform: none !important;
+  clip-path: none !important;
+}
+html.a11y-motion .map-ripple { display: none; }
+html.a11y-motion .map-art,
+html.a11y-motion .map-polaroid,
+html.a11y-motion [data-parallax],
+html.a11y-motion .seal-ping,
+html.a11y-motion .hero-settle {
+  animation: none !important;
+}
 
 html.a11y-font,
 html.a11y-font * {
@@ -339,7 +911,11 @@ html.a11y-font * {
 
   /* Framer writes its `initial` state inline; without this a printed
      page can come out blank if a section never entered the viewport. */
-  [data-motion] {
+  [data-motion],
+  [data-rv],
+  [data-rv-item],
+  [data-rv-word],
+  [data-rv-inner] {
     opacity: 1 !important;
     transform: none !important;
     clip-path: none !important;

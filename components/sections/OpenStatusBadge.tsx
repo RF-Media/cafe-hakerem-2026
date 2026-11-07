@@ -10,7 +10,7 @@ import { getOpenStatus, type OpenStatus } from "@/lib/hours-status";
  * shows a status that went stale hours ago — same reasoning as the
  * client-side jachnun slot computation.
  */
-export function OpenStatusBadge() {
+export function OpenStatusBadge({ className = "text-cream/90" }: { className?: string }) {
   const [status, setStatus] = useState<OpenStatus | null>(null);
 
   useEffect(() => {
@@ -20,11 +20,13 @@ export function OpenStatusBadge() {
   if (!status) return null;
 
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-cream/80">
-      <span
-        aria-hidden
-        className={`w-1.5 h-1.5 rounded-full ${status.isOpen ? "bg-brass" : "bg-cream/30"}`}
-      />
+    <span className={`inline-flex items-center gap-2 text-sm font-medium ${className}`}>
+      <span aria-hidden className="relative flex h-2 w-2">
+        {status.isOpen ? (
+          <span className="seal-ping absolute inset-0 rounded-full bg-[hsl(140_60%_55%)]" />
+        ) : null}
+        <span className={`relative h-2 w-2 rounded-full ${status.isOpen ? "bg-[hsl(140_60%_55%)]" : "bg-current opacity-40"}`} />
+      </span>
       {status.label}
     </span>
   );

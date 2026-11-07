@@ -4,13 +4,11 @@
  * Count-up on scroll into view.
  *
  * The FINAL value is what renders in the SSR HTML and what stays in the
- * accessibility tree — the animation only ever replaces it visually, after
- * hydration, in a sibling marked `aria-hidden`. A crawler, a screen reader,
- * or a browser with JS off all see the real number, never a `0` and never
- * a half-counted intermediate.
+ * accessibility tree. The animation only ever replaces it visually, after
+ * hydration, in a sibling marked `aria-hidden`. A crawler, a screen reader, or
+ * a browser with JS off all see the real number, never a `0`.
  */
 import { useEffect, useRef, useState } from "react";
-import { useInView } from "framer-motion";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 export function Counter({
@@ -25,24 +23,35 @@ export function Counter({
   duration?: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
   const reduced = useReducedMotion();
   const [display, setDisplay] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!inView || reduced) return;
+    const node = ref.current;
+    if (!node || reduced) return;
     let frame = 0;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / (duration * 1000));
-      // easeOutExpo — fast off the mark, long settle
-      const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-      setDisplay(Math.round(eased * value));
-      if (t < 1) frame = requestAnimationFrame(tick);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        const start = performance.now();
+        const tick = (now: number) => {
+          const t = Math.min(1, (now - start) / (duration * 1000));
+          // easeOutExpo: fast off the mark, long settle
+          const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+          setDisplay(Math.round(eased * value));
+          if (t < 1) frame = requestAnimationFrame(tick);
+        };
+        frame = requestAnimationFrame(tick);
+      },
+      { rootMargin: "0px 0px -60px 0px" },
+    );
+    observer.observe(node);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
     };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [inView, reduced, value, duration]);
+  }, [reduced, value, duration]);
 
   const animating = !reduced && display !== null && display !== value;
 

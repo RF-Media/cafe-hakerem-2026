@@ -10,7 +10,7 @@ import { forwardRef, type ReactNode } from "react";
  */
 
 export type ButtonProps = {
-  variant: "primary" | "secondary" | "ghost" | "onDark" | "onDarkGhost";
+  variant: "primary" | "secondary" | "ghost" | "onDark" | "onDarkGhost" | "ink" | "inkGhost";
   size?: "sm" | "md" | "lg" | "xl";
   as?: "button" | "a";
   href?: string;
@@ -31,7 +31,7 @@ export type ButtonProps = {
 const sizeClasses: Record<NonNullable<ButtonProps["size"]>, string> = {
   sm: "min-h-[44px] md:min-h-0 px-4 py-2.5 text-sm",
   md: "min-h-[48px] md:min-h-0 px-6 py-3 text-base",
-  lg: "min-h-[52px] px-8 py-4 text-lg",
+  lg: "min-h-[52px] px-6 py-3.5 text-base md:px-8 md:py-4 md:text-lg",
   xl: "min-h-[56px] px-9 py-4 text-lg md:text-xl",
 };
 
@@ -54,10 +54,13 @@ const variantClasses: Record<ButtonProps["variant"], string> = {
   onDarkGhost:
     "bg-cream/10 text-cream border border-cream/35 backdrop-blur-sm " +
     "hover:bg-cream/20 hover:border-brass/70",
+  // The club's button, on amber: CoffeeStream's ink with its cream type.
+  ink: "bg-cs-ink text-cs-cream hover:bg-black shadow-sm hover:shadow-md",
+  inkGhost: "bg-transparent text-cs-ink border-2 border-cs-ink hover:bg-cs-ink hover:text-cs-cream",
 };
 
 const base =
-  "group/btn relative inline-flex items-center justify-center gap-2 rounded-pill font-medium " +
+  "group/btn relative inline-flex cursor-pointer items-center justify-center gap-2 rounded-pill font-medium " +
   "transition-[transform,background-color,border-color,color,box-shadow] " +
   "duration-fast ease-out-soft " +
   "hover:-translate-y-px active:translate-y-0 active:scale-[0.98] " +

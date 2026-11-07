@@ -1,16 +1,11 @@
-"use client";
-
 /**
  * Clip-path wipe with an inner counter-scale. The mask opens from the RTL
  * start edge (visual right) while the image settles from 1.12 → 1, so the
  * picture appears to be uncovered rather than to slide in.
  *
- * `clip-path` and `transform` are both compositor properties — no layout
- * is recalculated during the reveal.
+ * `clip-path` and `transform` are both compositor properties, so no layout is
+ * recalculated during the reveal. CSS-only: see "Reveals" in globals.css.
  */
-import { m } from "framer-motion";
-import { EASE_OUT_SOFT, VIEWPORT } from "@/lib/motion";
-
 export function ImageReveal({
   children,
   className,
@@ -21,24 +16,16 @@ export function ImageReveal({
   delay?: number;
 }) {
   return (
-    <m.div
-      data-motion="image-reveal"
+    <div
+      data-rv=""
+      data-rv-kind="wipe"
       className={`overflow-hidden ${className ?? ""}`}
-      initial={{ clipPath: "inset(0 0 0 100%)" }}
-      whileInView={{ clipPath: "inset(0 0 0 0%)" }}
-      viewport={VIEWPORT}
-      transition={{ duration: 1, ease: EASE_OUT_SOFT, delay }}
+      suppressHydrationWarning
+      style={{ "--rd": `${Math.round(delay * 1000)}ms` } as React.CSSProperties}
     >
-      <m.div
-        data-motion="image-reveal-inner"
-        className="h-full w-full will-change-transform"
-        initial={{ scale: 1.12 }}
-        whileInView={{ scale: 1 }}
-        viewport={VIEWPORT}
-        transition={{ duration: 1.2, ease: EASE_OUT_SOFT, delay }}
-      >
+      <div data-rv-inner="" className="h-full w-full">
         {children}
-      </m.div>
-    </m.div>
+      </div>
+    </div>
   );
 }

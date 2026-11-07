@@ -8,9 +8,11 @@ export type SectionHeadingProps = {
   title: string;
   description?: string;
   action?: ReactNode;
+  /** Stack the action under the title at every width, instead of in the corner. */
+  actionBelow?: boolean;
   as?: "h2" | "h3";
-  /** Set on dark bands so the eyebrow and rule stay legible. */
-  tone?: "light" | "dark";
+  /** Set on dark bands so the eyebrow and rule stay legible. `ink` is the amber band. */
+  tone?: "light" | "dark" | "ink";
   id?: string;
   className?: string;
 };
@@ -20,23 +22,26 @@ export function SectionHeading({
   title,
   description,
   action,
+  actionBelow = false,
   as: Tag = "h2",
   tone = "light",
   id,
   className = "",
 }: SectionHeadingProps) {
   const dark = tone === "dark";
+  const ink = tone === "ink";
 
   return (
     <header
       className={
-        "flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14 " +
+        "flex flex-col gap-6 mb-10 md:mb-14 " +
+        (actionBelow ? "" : "md:flex-row md:items-end md:justify-between ") +
         className
       }
     >
-      <div className="max-w-2xl">
+      <div className="max-w-3xl">
         <Reveal direction="up" distance={12}>
-          <Eyebrow tone={dark ? "cream" : "olive"} withRule>
+          <Eyebrow tone={dark ? "brass" : ink ? "ink" : "olive"} withRule>
             {eyebrow}
           </Eyebrow>
         </Reveal>
@@ -48,26 +53,19 @@ export function SectionHeading({
         <Tag
           id={id}
           className={
-            "mt-4 type-title text-3xl md:text-[2.75rem] " +
-            (dark ? "text-cream" : "text-espresso")
+            "mt-4 type-statement text-4xl md:text-5xl lg:text-6xl " +
+            (dark ? "text-cream" : ink ? "text-cs-ink" : "text-espresso")
           }
         >
           <SplitReveal text={title} />
         </Tag>
-
-        <Reveal direction="up" distance={10} delay={0.15}>
-          <span
-            aria-hidden
-            className={"mt-6 block h-px w-16 " + (dark ? "bg-brass/50" : "bg-brass-ink/45")}
-          />
-        </Reveal>
 
         {description ? (
           <Reveal direction="up" distance={14} delay={0.1}>
             <p
               className={
                 "mt-5 type-lede text-base md:text-lg max-w-prose-he " +
-                (dark ? "text-cream/75" : "text-espresso-soft")
+                (dark ? "text-cream/85" : ink ? "text-cs-ink" : "text-espresso-soft")
               }
             >
               {description}

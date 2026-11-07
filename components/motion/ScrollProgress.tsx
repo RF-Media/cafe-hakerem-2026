@@ -1,26 +1,8 @@
-"use client";
-
 /**
- * Hairline reading-progress bar. Purely decorative — `aria-hidden`, no
- * role, no value — because a scrollbar already conveys this to assistive
- * tech and a second announcement is noise.
- *
- * Scales a fixed-width element on the X axis rather than animating `width`,
- * so it never triggers layout.
+ * Reading-progress hairline. A CSS scroll-driven animation on the root
+ * scroller, so it costs nothing on the main thread; where unsupported it is
+ * simply absent (globals.css). `aria-hidden`: it only exists as motion.
  */
-import { m, useScroll, useSpring } from "framer-motion";
-
 export function ScrollProgress({ className }: { className?: string }) {
-  const { scrollYProgress } = useScroll();
-  const scale = useSpring(scrollYProgress, { stiffness: 260, damping: 40, restDelta: 0.001 });
-
-  return (
-    <m.div
-      aria-hidden
-      style={{ scaleX: scale }}
-      className={
-        "h-[3px] w-full origin-right bg-brass-ink will-change-transform " + (className ?? "")
-      }
-    />
-  );
+  return <div aria-hidden data-scroll-progress="" className={`h-[2px] w-full bg-brass ${className ?? ""}`} />;
 }

@@ -11,16 +11,10 @@
  */
 import { useEffect, useState } from "react";
 import { business } from "@/content/business";
+import { todayInJerusalem } from "@/lib/hours-status";
 
-function todayInJerusalem(): number {
-  const name = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Jerusalem",
-    weekday: "short",
-  }).format(new Date());
-  return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(name);
-}
-
-export function HoursList() {
+export function HoursList({ tone = "light" }: { tone?: "light" | "dark" }) {
+  const dark = tone === "dark";
   const [today, setToday] = useState<number | null>(null);
 
   useEffect(() => {
@@ -28,7 +22,7 @@ export function HoursList() {
   }, []);
 
   return (
-    <ul className="text-espresso">
+    <ul className={dark ? "text-cream" : "text-espresso"}>
       {business.hours.map((h) => {
         const isToday = today === h.day;
         const closed = !h.open || !h.close;
@@ -38,19 +32,21 @@ export function HoursList() {
             className={
               "flex justify-between gap-4 rounded-input px-2 py-1.5 -mx-2 " +
               "transition-colors duration-base " +
-              (isToday ? "bg-brass-ink/10 font-medium" : "")
+              (isToday ? (dark ? "bg-cream/10 font-medium" : "bg-brass-ink/10 font-medium") : "")
             }
           >
             <span className="flex items-center gap-2">
               {h.label.he}
               {isToday ? (
-                <span className="type-index text-[0.625rem] text-brass-ink">
+                <span className={`type-index text-[0.625rem] ${dark ? "text-brass" : "text-brass-ink"}`}>
                   היום
                 </span>
               ) : null}
             </span>
-            <span className={closed ? "text-espresso-soft" : "text-espresso-soft tabular-nums"}>
-              {closed ? "סגור" : `${h.open}–${h.close}`}
+            <span className={`${dark ? "text-cream/85" : "text-espresso-soft"} ${closed ? "" : "tabular-nums"}`}>
+              {/* <bdi>: an en dash is a bidi neutral, so a bare "07:00–20:00" in an
+                  RTL run displays as closing time first. */}
+              {closed ? "סגור" : <bdi dir="ltr">{`${h.open}–${h.close}`}</bdi>}
             </span>
           </li>
         );

@@ -1,26 +1,15 @@
 /**
- * "מגשי אירוח" on the home page — an editorial split rather than the
- * numbered tile grid it replaces (four `№ 0{i}` tiles with no photo, no
- * capacity, no price, and two names — "מגש ישיבה"/"מגש קומבינציה" — that
- * didn't exist in the real catalog; see CLAUDE.md 2026-08-09 decision
- * log). One large featured tray card sits beside a compact list of the
- * rest, both driven directly by `catering.options` — home and `/catering`
- * now share one catalog, permanently.
- *
- * Server component: nothing here needs client state. Hover/touch/video
- * live entirely in `<VideoTestimonialAccordion>`, composed as its own
- * section right after this one.
+ * "מגשי אירוח" on the home page: the sage band, in the colour of the fluted
+ * tile on the café's counter. Three equal 16:9 trays with title, description
+ * and price lined up across the row, driven directly by `catering.options`, so
+ * home and /catering share one catalog permanently (see the 2026-08-09 Decision Log).
  */
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { CafeImage } from "@/components/ui/CafeImage";
-import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { IconArrow } from "@/components/ui/icons";
-import { ImageReveal } from "@/components/motion/ImageReveal";
-import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import type { CateringOption } from "@/content/catering";
 
@@ -42,10 +31,10 @@ export function CateringEditorialSplit({
   featuredOptionId,
 }: CateringEditorialSplitProps) {
   const featured = options.find((o) => o.id === featuredOptionId) ?? options[0];
-  const rest = options.filter((o) => o.id !== featured.id);
+  const ordered = [featured, ...options.filter((o) => o.id !== featured.id)];
 
   return (
-    <Section id="catering" tone="cream-2" spacing="md" ariaLabelledby="catering-heading">
+    <Section id="catering" tone="sage" spacing="md" ariaLabelledby="catering-heading">
       <SectionHeading
         id="catering-heading"
         eyebrow={eyebrow}
@@ -58,104 +47,40 @@ export function CateringEditorialSplit({
         }
       />
 
-      <div className="grid md:grid-cols-12 gap-6 md:gap-8 items-start">
-        {/* Featured tray — first in DOM, which in this RTL document lands
-            at the visual right (the reading start). */}
-        <Reveal className="md:col-span-7">
-          <Link
-            href={`/catering#${featured.id}`}
-            className="group block rounded-card focus-visible:outline-none focus-visible:ring-2
-                       focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-cream-2"
-          >
-            <Card
-              padding="md"
-              tone="cream-3"
-              hoverable
-              elevation="raised"
-              className="relative overflow-hidden"
+      <Stagger className="grid gap-10 md:grid-cols-3 md:gap-8 lg:gap-12" stagger={0.08}>
+        {ordered.map((o) => (
+          <StaggerItem key={o.id} variant="tile">
+            <Link
+              href={`/catering#${o.id}`}
+              className="group flex h-full flex-col rounded-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-sage"
             >
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -top-12 -start-12 w-72 h-72 rounded-full
-                           bg-[radial-gradient(circle,hsl(var(--olive)/0.08),transparent_65%)] blur-2xl"
-              />
-              <ImageReveal className="rounded-card mb-5">
+              <span className="zoom-frame block rounded-card">
                 <CafeImage
                   variant="tray"
-                  src={featured.photo}
-                  alt={`${featured.title.he} - מגש אירוח מומלץ של קפה הכרם`}
-                  ratio="aspect-[16/9]"
-                  tone="olive"
-                  sizes="(max-width: 768px) 100vw, 55vw"
+                  src={o.photo}
+                  alt={`${o.title.he} - מגש אירוח של קפה הכרם`}
+                  ratio="aspect-video"
+                  position={o.photoPosition}
+                  sizes="(max-width: 768px) 100vw, 33vw"
                 />
-              </ImageReveal>
-              <Eyebrow tone="olive" withRule>
-                המגש המומלץ
-              </Eyebrow>
-              <h3 className="mt-2 type-sub text-xl md:text-2xl text-espresso">
-                {featured.title.he}
-              </h3>
-              <span
-                className="mt-2 inline-flex items-center rounded-pill border border-brass-ink/40
-                           bg-cream px-3 py-1 text-sm text-brass-ink"
-              >
-                {featured.serves}
               </span>
-              <ul className="mt-4 space-y-1.5 text-base text-espresso-soft">
-                {featured.includes.map((it) => (
-                  <li key={it} className="flex gap-2">
-                    <span aria-hidden className="text-brass-ink">
-                      ·
-                    </span>
-                    <span>{it}</span>
-                  </li>
-                ))}
-              </ul>
-              {featured.fromPrice ? (
-                <div className="mt-4 pt-3 border-t border-stroke flex items-baseline justify-between">
-                  <span className="text-sm text-espresso-soft">מחיר</span>
-                  <span className="type-sub text-xl text-brass-ink">{featured.fromPrice}</span>
-                </div>
-              ) : null}
-            </Card>
-          </Link>
-        </Reveal>
-
-        {/* Compact list of the remaining trays. */}
-        <Stagger as="ul" className="md:col-span-5 flex flex-col gap-3" stagger={0.07}>
-          {rest.map((o) => (
-            <StaggerItem key={o.id} as="li">
-              <Link
-                href={`/catering#${o.id}`}
-                className="block rounded-card focus-visible:outline-none focus-visible:ring-2
-                           focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-cream-2"
-              >
-                <Card
-                  tone="cream"
-                  padding="md"
-                  className="border-r-2 border-r-transparent hover:border-r-olive/60
-                             transition-colors duration-base ease-out-soft"
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <div className="type-sub text-lg text-espresso">{o.title.he}</div>
-                      <p className="mt-1 text-sm text-espresso-soft line-clamp-1">
-                        {o.includes[0]}
-                      </p>
-                    </div>
-                    <span
-                      className="shrink-0 rounded-pill border border-brass-ink/40 bg-cream-3
-                                 px-2.5 py-1 text-xs text-brass-ink whitespace-nowrap"
-                    >
-                      {o.serves}
-                    </span>
-                  </div>
-                </Card>
-              </Link>
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </div>
+              <span className="mt-6 flex items-start justify-between gap-3">
+                <span className="type-sub text-xl text-espresso transition-colors duration-fast group-hover:text-olive md:text-2xl">
+                  {o.title.he}
+                </span>
+                <IconArrow className="mt-1.5 h-5 w-5 shrink-0 text-espresso transition-transform duration-base ease-out-soft group-hover:-translate-x-1" />
+              </span>
+              <span className="mt-2.5 block text-base leading-relaxed text-espresso-soft">
+                {o.includes.join(", ")}
+              </span>
+              <span className="mt-auto flex flex-wrap items-center gap-2 pt-4 text-sm">
+                <span className="rounded-pill bg-olive px-3 py-1 text-cream">{o.serves}</span>
+                {o.fromPrice ? <span className="font-medium text-espresso">{o.fromPrice}</span> : null}
+              </span>
+            </Link>
+          </StaggerItem>
+        ))}
+      </Stagger>
     </Section>
   );
 }

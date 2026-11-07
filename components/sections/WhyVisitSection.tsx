@@ -1,18 +1,19 @@
 /**
- * "שלוש סיבות לבוא" — three reason cards, each carrying its own image
- * instead of the identical cream-3/brass-ink tile the section used to
- * repeat three times. Hover is the plain `<Card hoverable>` lift only —
- * no color inversion.
+ * "שלוש סיבות": the pine band. Three 16:9 photos on one baseline, with a big
+ * numeral catching the brass on hover.
  */
-import { Card } from "@/components/ui/Card";
 import { CafeImage } from "@/components/ui/CafeImage";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ImageReveal } from "@/components/motion/ImageReveal";
-import { Stagger, StaggerItem } from "@/components/motion/Stagger";
-import type { PlaceholderVariant } from "@/components/ui/placeholders";
 
-type WhyVisitItem = { title: string; body: string; imageAlt: string };
+type WhyVisitItem = {
+  title: string;
+  body: string;
+  image: string;
+  imageAlt: string;
+  imagePosition?: string;
+};
 
 type WhyVisitSectionProps = {
   eyebrow: string;
@@ -20,47 +21,41 @@ type WhyVisitSectionProps = {
   items: WhyVisitItem[];
 };
 
-const cardStyle: {
-  imageVariant: PlaceholderVariant;
-  imageTone: "olive" | "brass";
-  src?: string;
-}[] = [
-  { imageVariant: "cup", imageTone: "olive", src: "/images/coffee-beans_home.jpg" },
-  { imageVariant: "pastry", imageTone: "brass", src: "/images/croissant_home.jpg" },
-  { imageVariant: "map", imageTone: "olive", src: "/images/outdoor-seating_home.jpg" },
-];
-
 export function WhyVisitSection({ eyebrow, title, items }: WhyVisitSectionProps) {
   return (
-    <Section tone="cream-2">
-      <SectionHeading eyebrow={eyebrow} title={title} />
-      <Stagger className="grid md:grid-cols-3 gap-5 md:gap-6" stagger={0.1}>
-        {items.map((item, i) => {
-          const style = cardStyle[i];
-          return (
-            <StaggerItem key={item.title} variant="tile">
-              <Card padding="lg" hoverable tone="cream-3" className="h-full">
-                <div className="-mx-6 -mt-6 md:-mx-8 md:-mt-8 mb-5 overflow-hidden rounded-t-card">
-                  <ImageReveal>
-                    <CafeImage
-                      variant={style.imageVariant}
-                      tone={style.imageTone}
-                      src={style.src}
-                      alt={item.imageAlt}
-                      ratio="aspect-[4/3]"
-                    />
-                  </ImageReveal>
-                </div>
-
-                <div className="type-sub text-xl md:text-2xl">{item.title}</div>
-                <p className="mt-2.5 text-base leading-relaxed text-espresso-soft">
-                  {item.body}
-                </p>
-              </Card>
-            </StaggerItem>
-          );
-        })}
-      </Stagger>
+    <Section tone="pine" spacing="md">
+      <SectionHeading eyebrow={eyebrow} title={title} tone="dark" className="md:[&>div]:max-w-none" />
+      <div className="grid gap-10 md:grid-cols-3 md:gap-8 lg:gap-12">
+        {items.map((item, i) => (
+          <article key={item.title} className="group">
+            <ImageReveal delay={i * 0.08} className="rounded-card">
+              <div className="zoom-frame">
+                <CafeImage
+                  variant="cup"
+                  src={item.image}
+                  alt={item.imageAlt}
+                  ratio="aspect-video"
+                  position={item.imagePosition}
+                  className="!rounded-none"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+              </div>
+            </ImageReveal>
+            <div className="mt-6 flex items-baseline gap-4">
+              {/* Ghost numerals are CSS content: decoration, not text to read. */}
+              <span
+                aria-hidden
+                data-n={i + 1}
+                className="type-statement text-5xl text-cream/30 tabular-nums transition-colors duration-base before:content-[attr(data-n)] group-hover:text-brass"
+              />
+              <div>
+                <h3 className="type-sub text-2xl text-cream">{item.title}</h3>
+                <p className="mt-2.5 text-base leading-relaxed text-cream/85">{item.body}</p>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
     </Section>
   );
 }

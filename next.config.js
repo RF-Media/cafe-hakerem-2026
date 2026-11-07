@@ -21,10 +21,16 @@ const nextConfig = {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 31536000, // 1 year
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2560],
-    imageSizes: [16, 32, 64, 96, 128, 256],
+    imageSizes: [40, 64, 128, 256, 384, 512],
   },
   async headers() {
     const rules = [
+      {
+        // Photos change rarely but keep their names, so a day at the edge rather
+        // than `immutable`. next/image responses have their own long TTL.
+        source: "/images/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
       {
         source: "/:path*",
         headers: [
@@ -52,7 +58,10 @@ const nextConfig = {
   async redirects() {
     // [TODO: enumerate legacy WordPress URLs once Search Console access is available.
     // Per CLAUDE.md §10, every old URL with inbound links should 301 to its new equivalent.]
-    return [];
+    return [
+      // The club moved here on 2026-11-07. Shared links may still point at the old slug.
+      { source: "/club", destination: "/coffee-club", permanent: true },
+    ];
   },
 };
 

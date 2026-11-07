@@ -29,13 +29,16 @@ export type MenuCategory = {
   title: { he: string }; // Section heading
   blurb?: string;        // 1-line Hebrew intro shown under the heading
   items: MenuItem[];
-  /** Optional background photo for the "מה חדש" category tile on the home
-   *  page (`AlwaysRollingSection`). Categories without one keep the plain
-   *  text tile — this fills in per-category as photography arrives. */
+  /** The category's photo: its tile on the home page, its panel on /menu. */
   image?: string;
   imageAlt?: string;
+  /** `object-position`, where the centre crop misses the subject. */
+  imagePosition?: string;
 };
 
+/* `specials` holds only the house muesli, and the café's photo folder has no
+   muesli shot, so its photo is the nearest thing with fruit on it. Replace it
+   when a muesli photo exists. */
 export const menuCategories: MenuCategory[] = [
   {
     id: "burekas",
@@ -44,8 +47,8 @@ export const menuCategories: MenuCategory[] = [
     items: [
       { name: "בורקס תורכי בעבודת יד", description: "4 יחידות בורקס תורכי בעבודת יד", price: "₪46" },
     ],
-    image: "/images/burekas-spread_shared.jpg",
-    imageAlt: "מגש בורקסים תורכיים טריים מהתנור של קפה הכרם, מוזהבים ומפוזרים במלח גס",
+    image: "/images/burekas-golden_shared.jpg",
+    imageAlt: "בורקסים תורכיים מוזהבים בתבנית, ישר מהתנור של קפה הכרם",
   },
   {
     id: "sandwiches",
@@ -108,8 +111,8 @@ export const menuCategories: MenuCategory[] = [
         badges: ["vegetarian"],
       },
     ],
-    image: "/images/sandwiches_home.jpg",
-    imageAlt: "באגט דגנים במילוי טונה, חסה ועגבנייה טרייה מקפה הכרם",
+    image: "/images/sandwich-seeded_shared.jpg",
+    imageAlt: "כריך בבאגט דגנים עם חסה ועגבנייה טרייה מקפה הכרם",
   },
   {
     id: "salads",
@@ -129,8 +132,8 @@ export const menuCategories: MenuCategory[] = [
         badges: ["vegetarian", "gluten-free"],
       },
     ],
-    image: "/images/salads_home.jpg",
-    imageAlt: "סלט עגבניות שרי וגבינה לבנה עם רוטב בלסמי בקערה לבנה בקפה הכרם",
+    image: "/images/salad-box_shared.jpg",
+    imageAlt: "סלט טונה עם מלפפון, עגבנייה, בצל סגול וזיתים בקופסת קרטון של קפה הכרם",
   },
   {
     id: "specials",
@@ -144,6 +147,9 @@ export const menuCategories: MenuCategory[] = [
         badges: ["vegetarian"],
       },
     ],
+    image: "/images/pastry-berries_shared.jpg",
+    imageAlt: "מאפה עם תותים ואוכמניות על נייר אפייה, על שולחן בחוץ בקפה הכרם",
+    imagePosition: "50% 62%",
   },
   {
     id: "pastries",
@@ -169,6 +175,8 @@ export const menuCategories: MenuCategory[] = [
         badges: ["vegetarian"],
       },
     ],
+    image: "/images/cinnamon-rolls_shared.jpg",
+    imageAlt: "סינבונים עם זילוף לבן ישר מהתנור של קפה הכרם",
   },
   {
     id: "cakes",
@@ -182,6 +190,9 @@ export const menuCategories: MenuCategory[] = [
       { name: "קוביות בראוניז \"חלומות\"", description: "4 יחידות", price: "₪24", badges: ["vegetarian"] },
       { name: "פרוסת עוגת גבינה פירות יער אפויה", price: "₪42", badges: ["vegetarian"] },
     ],
+    image: "/images/cheesecake-basque_shared.jpg",
+    imageAlt: "עוגת גבינה באסקית שרופה ופרוסה, על שולחן בקפה הכרם",
+    imagePosition: "50% 92%",
   },
   {
     id: "drinks",
@@ -199,8 +210,9 @@ export const menuCategories: MenuCategory[] = [
       { name: "קפה קר", description: "חלב, קוביות קרח ואספרסו. ניתן לבקש חיזוק אספרסו בהערות", price: "₪22", badges: ["vegetarian"] },
       { name: "אמריקנו קר", description: "מים, קוביות קרח ואספרסו כפול", price: "₪20", badges: ["vegan", "gluten-free"] },
     ],
-    image: "/images/drinks_home.jpg",
-    imageAlt: "חליטת תה קר עם נענע ולימון בכוסות זכוכית על מגש בקפה הכרם",
+    image: "/images/matcha-iced_shared.jpg",
+    imageAlt: "מאצ'ה קרה בכוס זכוכית עם קרח, מוחזקת ביד בקפה הכרם",
+    imagePosition: "50% 45%",
   },
   {
     id: "juices",
@@ -213,6 +225,9 @@ export const menuCategories: MenuCategory[] = [
       { name: "תפוזים", price: "₪25", badges: ["vegan", "gluten-free"] },
       { name: "תפוגזר כורכום", description: "תפוזים, גזר וכורכום", price: "₪25", badges: ["vegan", "gluten-free"] },
     ],
+    image: "/images/juice-orange_shared.jpg",
+    imageAlt: "בקבוק מיץ תפוזים סחוט על שולחן שחור בחצר של קפה הכרם",
+    imagePosition: "28% 40%",
   },
   {
     id: "soft-drinks",
@@ -226,6 +241,9 @@ export const menuCategories: MenuCategory[] = [
       { name: "קינלי סודה", description: "בקבוק זכוכית, 250 מ״ל", price: "₪12" },
       { name: "מיץ ענבים", price: "₪14" },
     ],
+    image: "/images/cold-drinks_shared.jpg",
+    imageAlt: "שתייה קרה עם לימון ונענע בכוסות שקופות על שולחן עץ בקפה הכרם",
+    imagePosition: "50% 40%",
   },
   {
     id: "coffee-products",
@@ -261,8 +279,9 @@ export const menuCategories: MenuCategory[] = [
         price: "₪72",
       },
     ],
-    image: "/images/coffee-products_home.jpg",
-    imageAlt: "כוסות הקפה הממותגות של קפה הכרם וכוסות זכוכית מוערמות ליד מכונת הקפה",
+    image: "/images/coffee-shelf_shared.jpg",
+    imageAlt: "שקיות פולי קפה Hausbrandt על מדפי העץ של קפה הכרם",
+    imagePosition: "70% 62%",
   },
 ];
 

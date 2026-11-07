@@ -15,16 +15,33 @@ export type CateringOption = {
   includes: string[];    // bullet list
   fromPrice?: string;    // "מ-₪320" — optional
   photo?: string;        // /public path
+  photoPosition?: string; // object-position for the home page's 16:9 card
   popular?: boolean;     // shows a "מומלץ!" ribbon
 };
 
 export const catering = {
   hero: {
     eyebrow: "מגשי אירוח",
+    kicker: "מגשי אירוח של קפה הכרם, גני תקווה",
     title: "אתם מארחים. אנחנו נדאג לשולחן.",
+    image: "/images/burekas-table_shared.jpg",
+    imageAlt: "מגש בורקס תורכי ומטבלים על שולחן בחצר של קפה הכרם, ויד שמתקרבת לקחת",
+    cta: "לטופס הפנייה",
     lede:
       "מגשי האירוח של הכרם מתאימים לישיבות במשרד, אירוח בבית, ימי הולדת ואירועים קטנים - " +
       "טריים, יפים ומוכנים להגשה.",
+  },
+
+  /* What people host with these trays. Only the occasions the café's own copy
+     names, so nobody orders for something the kitchen never said it does. */
+  occasions: {
+    eyebrow: "למה מזמינים",
+    title: "כל שולחן שצריך למלא",
+    items: [
+      { title: "ישיבות במשרד", body: "מגש כריכונים במרכז השולחן, וכולם ממשיכים לעבוד.", image: "/images/sandwich-close_catering.jpg", alt: "כריכוני ביס במילוי עגבנייה וחסה, צפופים במגש של קפה הכרם" },
+      { title: "אירוח בבית", body: "בורקס חם, מטבלים וזיתים, בלי לעמוד במטבח.", image: "/images/burekas-dish_catering.jpg", alt: "תבנית בורקס תורכי אפוי במבט מלמעלה עם מטבלים וזיתים של קפה הכרם" },
+      { title: "ימי הולדת ואירועים קטנים", body: "מגש מתוק ליד הקפה, ואף אחד לא הולך הביתה רעב.", image: "/images/cinnamon-rolls_shared.jpg", alt: "סינבונים עם זילוף לבן ישר מהתנור של קפה הכרם" },
+    ],
   },
 
   /* Three trust signals shown under the hero. */
@@ -53,12 +70,13 @@ export const catering = {
       // "§9 exception: demo prices" entry. `includes` is the café's own
       // copy (2026-10-20 copywriting doc). No fromPrice (§9 forbids
       // inventing prices; the field is optional and the UI renders without it).
-      serves: "10–15 איש",
+      serves: "10-15 איש",
       includes: [
         "מבחר בורקסים טורקיים במילוי גבינה, תפוחי אדמה או תרד",
         "לצד ביצים, זיתים ורוטב הבית שלנו",
       ],
-      photo: "/images/burekas-tray_catering.jpg",
+      photo: "/images/burekas-dips_catering.jpg",
+      photoPosition: "50% 12%",
       popular: true,
     },
     {
@@ -74,17 +92,17 @@ export const catering = {
         "אבוקדו ביצה קשה",
       ],
       fromPrice: "החל מ-₪320",
-      photo: "/images/sandwich-tray_catering.jpg",
+      photo: "/images/sandwich-box_catering.jpg",
     },
     {
       id: "sweet-tray",
       title: { he: "מגש מתוק" },
-      serves: "10–12 איש",
+      serves: "10-12 איש",
       includes: [
         "מאפים מתוקים, עוגיות וכל מה שכיף להגיש ליד הקפה",
       ],
       fromPrice: "מ-₪280",
-      photo: "/images/sweet-tray_catering.jpg",
+      photo: "/images/sweet-box_catering.jpg",
     },
   ] as CateringOption[],
 

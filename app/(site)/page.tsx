@@ -1,30 +1,29 @@
 export const dynamic = "force-static";
 export const revalidate = 86400;
 
-import type { Metadata } from "next";
-import Image, { getImageProps } from "next/image";
 import Link from "next/link";
-import nextDynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { CafeImage } from "@/components/ui/CafeImage";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { Section, container } from "@/components/ui/Section";
+import { Section } from "@/components/ui/Section";
 import { FAQBlock } from "@/components/ui/FAQBlock";
-import { IconArrow, IconPin, IconPhone, IconWhatsapp } from "@/components/ui/icons";
+import { IconArrow, IconPin, IconSpark } from "@/components/ui/icons";
 import { ImageReveal } from "@/components/motion/ImageReveal";
-import { Magnetic } from "@/components/motion/Magnetic";
 import { Parallax } from "@/components/motion/Parallax";
 import { Reveal } from "@/components/motion/Reveal";
-import { SplitText } from "@/components/motion/SplitText";
+import { SplitReveal } from "@/components/motion/SplitReveal";
+import { Ticker } from "@/components/motion/Ticker";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
-import { FactualParagraph } from "@/components/sections/FactualParagraph";
-import { JachnunPromo } from "@/components/sections/JachnunPromo";
 import { AlwaysRollingSection } from "@/components/sections/AlwaysRollingSection";
 import { CateringEditorialSplit } from "@/components/sections/CateringEditorialSplit";
+import { ClubBand } from "@/components/sections/ClubBand";
+import { FactualParagraph } from "@/components/sections/FactualParagraph";
+import { HomeHero } from "@/components/sections/HomeHero";
+import { HoursList } from "@/components/sections/HoursList";
+import { InstagramGallery } from "@/components/sections/InstagramGallery";
+import { JachnunPromo } from "@/components/sections/JachnunPromo";
 import { WhyVisitSection } from "@/components/sections/WhyVisitSection";
-import { OpenStatusBadge } from "@/components/sections/OpenStatusBadge";
 import { business } from "@/content/business";
 import { catering } from "@/content/catering";
 import { homeFAQs } from "@/content/faqs";
@@ -33,262 +32,47 @@ import {
   homeAlwaysRolling,
   homeCatering,
   homeFactualFocus,
-  homeHero,
+  homeTicker,
   homeValues,
+  homeVisit,
 } from "@/content/home";
 import { instagram, instagramSection } from "@/content/instagram";
 import { menuCategories } from "@/content/menu";
+import { pageMetadata } from "@/lib/seo";
 
-// Deferred to its own chunk: it's the furthest-down section and owns its
-// own ResizeObserver (HorizontalRail) on top of several Reveal instances.
-// Still SSR'd (no `ssr: false`) — GEO extraction and no-JS usability both
-// need the HTML present — this only keeps its hydration JS out of the
-// homepage's initial bundle. Placeholder height approximates the real
-// section (intro copy + one row of square cards) to keep the CLS budget.
-const InstagramGallery = nextDynamic(() =>
-  import("@/components/sections/InstagramGallery").then((mod) => mod.InstagramGallery),
-  {
-    loading: () => (
-      <div className="bg-espresso-deep min-h-[720px] md:min-h-[820px]" aria-hidden />
-    ),
-  },
-);
-
-export const metadata: Metadata = {
-  title: "קפה הכרם - בית קפה בוטיקי בגני תקווה",
-  description:
-    "קפה הכרם - בית קפה בוטיקי ברחוב הכרמל 20, גני תקווה. ארוחות בוקר, קפה איכותי, מאפים טריים, מגשי אירוח וג'חנון של שבת להזמנה מראש.",
-};
+export const metadata = pageMetadata("home");
 
 export default function HomePage() {
-  const heroImage = { alt: homeHero.imageAlt, fill: true, priority: true, quality: 85 };
-  const { props: heroLandscape } = getImageProps({
-    ...heroImage,
-    src: homeHero.image,
-    sizes: "100vw",
-    className: "object-cover object-[center_68%]",
-  });
-  const { props: heroPortrait } = getImageProps({ ...heroImage, src: homeHero.imageMobile, sizes: "100vw" });
-
   return (
     <>
       <BreadcrumbSchema trail={[]} />
 
-      {/* 1 — Hero.
-          The h1 reveal is CSS keyframes (`.hero-word`), not Framer: it paints
-          straight from the SSR HTML, so the largest text on the page never
-          waits on the JS bundle. Everything below the fold uses Framer. */}
-      <section className="relative isolate flex min-h-[70svh] md:min-h-[78svh] items-center overflow-hidden bg-espresso-deep">
-        {/* The storefront photograph, full-bleed. `fill` rather than a ratio
-            box: the frame here is the viewport, not the file's own 16:9.
-            Portrait screens swap in a portrait photo (see `homeHero`). */}
-        <picture>
-          <source media="(orientation: portrait)" srcSet={heroPortrait.srcSet} sizes={heroPortrait.sizes} />
-          <img {...heroLandscape} />
-        </picture>
+      {/* Colour runs the page: espresso, brass, porcelain, pine, terracotta,
+          sage, amber, espresso, porcelain, pine. Each topic has one ground, so
+          a scroll past it still tells you where you are. */}
+      <HomeHero />
 
-        {/* Scrim. The photo is bright and warm — cream wall along the top,
-            a lit interior through the middle — so cream text can't sit on it
-            unmediated. Three cheap layers instead of one heavy one: a flat
-            wash for the baseline, a vertical ramp that seats the band against
-            the section below it, and a start-side ramp (visual RIGHT in RTL)
-            that darkens specifically under the headline column. Lightened
-            from the original pass so more of the counter/shelf photo reads
-            through — the text keeps its legibility from the per-line
-            text-shadow below, not from a heavy wash. */}
-        <div aria-hidden className="absolute inset-0 bg-espresso-deep/30" />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-espresso-deep via-espresso-deep/45 to-transparent"
+      <div className="relative z-10 bg-brass py-3 text-espresso-deep">
+        <Ticker
+          items={homeTicker}
+          duration={46}
+          itemClassName="type-sub whitespace-nowrap text-base md:text-lg"
+          separator={<IconSpark className="h-3 w-3" />}
         />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-l from-espresso-deep/55 via-espresso-deep/10 to-transparent"
-        />
+      </div>
 
-        <Parallax speed={-0.35} className="pointer-events-none absolute inset-0">
-          <div className="hero-grain" aria-hidden />
-        </Parallax>
-
-        {/* Warm bloom, sitting behind the visit card on the end side rather
-            than in the corner — the card then reads as backlit signage
-            instead of the gradient reading as a stray light leak. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-16 -end-32 w-[38rem] h-[38rem] rounded-full
-                     bg-[radial-gradient(circle,hsl(var(--brass)/0.20),transparent_65%)] blur-2xl"
-        />
-
-        <div
-          className={`${container} relative w-full py-20 md:py-24 grid lg:grid-cols-12 gap-10 lg:gap-12 items-center`}
-        >
-          <div className="lg:col-span-7">
-            <div className="hero-fade" style={{ ["--d" as never]: 0 }}>
-              <Eyebrow withRule tone="cream">
-                {homeHero.eyebrow}
-              </Eyebrow>
-            </div>
-
-            {/* Cream, not pure white — `--cream` is the site's off-white and
-                keeps the headline in the same warm family as the photograph.
-                The text-shadow is insurance: the scrim handles today's crop,
-                a re-crop or a swapped photo shouldn't be able to break the
-                h1's legibility. */}
-            <h1
-              className="mt-5 type-display text-[2.5rem] leading-[1.03] md:text-6xl lg:text-7xl text-cream
-                         [text-shadow:0_2px_28px_hsl(var(--espresso-deep)/0.55)]"
-            >
-              <SplitText text={homeHero.headline} delay={80} />
-            </h1>
-
-            <p
-              className="hero-fade mt-6 type-lede text-base md:text-xl text-cream/85 max-w-xl
-                         [text-shadow:0_1px_16px_hsl(var(--espresso-deep)/0.5)]"
-              style={{ ["--d" as never]: 420 }}
-            >
-              {homeHero.lede}
-            </p>
-
-            <div
-              className="hero-fade mt-8 flex flex-wrap gap-3"
-              style={{ ["--d" as never]: 560 }}
-            >
-              <Magnetic>
-                <Button as="a" href="/menu" variant="onDark" size="xl" icon={<IconArrow />}>
-                  {homeHero.primaryCta}
-                </Button>
-              </Magnetic>
-              <Magnetic>
-                <Button as="a" href="/jachnun" variant="onDarkGhost" size="xl">
-                  {homeHero.secondaryCta}
-                </Button>
-              </Magnetic>
-            </div>
-          </div>
-
-          {/* The visit card, seated at the bottom of the row (`lg:self-end`)
-              so it lines up with the CTAs rather than floating mid-headline.
-              The cream lockup sits inside the card now, above the VISIT row
-              — the card's top padding is pushed out (`pt-10`) to give the
-              mark room without it crowding the eyebrow underneath.
-
-              No explicit `order` here: mobile stacking follows DOM order,
-              and the headline column above is already first in the JSX —
-              headline, lede and both CTAs render before the Visit card on
-              every viewport. The `<h1>` never moves regardless (CLAUDE.md
-              §7, hard rule 1). */}
-          <div className="lg:col-span-5 lg:self-end">
-            <Parallax speed={0.12}>
-              <div
-                className="hero-fade flex flex-col items-center lg:items-stretch"
-                style={{ ["--d" as never]: 500 }}
-              >
-                <div className="w-full max-w-[380px]">
-                  {/* Espresso, not cream-3: a bright card here would be the
-                      only light object on a dark hero and would pull focus off
-                      the headline. Dark card, cream ink, brass for the phone —
-                      olive on this ground is nearly black. */}
-                  <Card
-                    padding="lg"
-                    tone="espresso"
-                    elevation="floating"
-                    className="ring-1 ring-cream/10 pt-12"
-                  >
-                    <Image
-                      src="/images/logo_cream.png"
-                      alt={business.name.he}
-                      width={1251}
-                      height={574}
-                      sizes="200px"
-                      className="mx-auto h-16 md:h-20 w-auto"
-                    />
-
-                    <div className="mt-7 mb-7 h-px bg-cream/15" />
-
-                    <div className="flex items-center justify-between gap-3">
-                      <Eyebrow tone="brass">{homeHero.visitEyebrow}</Eyebrow>
-                      <OpenStatusBadge />
-                    </div>
-
-                    <div className="mt-5 flex items-start gap-3">
-                      <IconPin className="w-5 h-5 mt-0.5 text-brass shrink-0" />
-                      <div>
-                        <div className="type-sub text-2xl text-cream">
-                          {business.address.street.he}
-                        </div>
-                        <div className="text-cream/70">
-                          {business.address.neighborhood.he}, {business.address.city.he}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* The whole row is the tel: link, not just the number —
-                        a bigger tap target on mobile. Icon and text share one
-                        `text-brass` ancestor so the icon (stroke="currentColor")
-                        inherits the same hover color for free. */}
-                    <a
-                      href={`tel:${business.phone.tel}`}
-                      className="mt-4 pt-4 border-t border-cream/15 flex items-center gap-3
-                                 text-brass hover:text-cream transition-colors"
-                    >
-                      <IconPhone className="w-5 h-5 shrink-0" />
-                      <span>{business.phone.display}</span>
-                    </a>
-
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      <Button
-                        as="a"
-                        href={business.socials.waze}
-                        external
-                        variant="onDarkGhost"
-                        size="sm"
-                        icon={<IconPin className="w-4 h-4" />}
-                        iconPosition="start"
-                      >
-                        נווטו אלינו
-                      </Button>
-                      <Button
-                        as="a"
-                        href={`https://wa.me/${business.whatsapp.number}?text=${encodeURIComponent(business.whatsapp.prefilledMessage)}`}
-                        external
-                        variant="onDarkGhost"
-                        size="sm"
-                        icon={<IconWhatsapp className="w-4 h-4" />}
-                        iconPosition="start"
-                      >
-                        וואטסאפ
-                      </Button>
-                    </div>
-                  </Card>
-                </div>
-              </div>
-            </Parallax>
-          </div>
-        </div>
-
-        <div
-          aria-hidden
-          className="hidden md:block absolute bottom-8 start-6 md:start-10 lg:start-16 h-16"
-        >
-          <div className="scroll-cue h-full w-px" />
-        </div>
-      </section>
-
-      {/* 2 — Three values */}
-      <WhyVisitSection eyebrow={homeValues.eyebrow} title={homeValues.title} items={homeValues.items} />
-
-      {/* 3 — "מה חדש": the category rail. Owns the category index. */}
       <AlwaysRollingSection
         categories={menuCategories}
         eyebrow={homeAlwaysRolling.eyebrow}
         title={homeAlwaysRolling.title}
+        cta={homeAlwaysRolling.cta}
         caption={homeAlwaysRolling.caption}
       />
 
-      {/* 6 — Jachnun. */}
+      <WhyVisitSection eyebrow={homeValues.eyebrow} title={homeValues.title} items={homeValues.items} />
+
       <JachnunPromo />
 
-      {/* 7 — Catering: editorial split (featured tray + compact list). */}
       <CateringEditorialSplit
         eyebrow={homeCatering.eyebrow}
         title={homeCatering.title}
@@ -298,70 +82,154 @@ export default function HomePage() {
         featuredOptionId={homeCatering.featuredOptionId}
       />
 
-      {/* 8 — About preview */}
-      <Section tone="cream">
-        <div className="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
-          <div>
+      <ClubBand />
+
+      {/* The story, in the dark: three photos at three speeds beside the text. */}
+      <Section tone="espresso" spacing="lg" className="overflow-hidden">
+        <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-20">
+          <div className="lg:col-span-6">
             <Reveal>
-              <Eyebrow withRule>{homeAbout.eyebrow}</Eyebrow>
+              <Eyebrow tone="brass" withRule>
+                {homeAbout.eyebrow}
+              </Eyebrow>
             </Reveal>
-            <Reveal delay={0.05}>
-              <h2 className="mt-4 type-title text-3xl md:text-4xl text-espresso">
-                {homeAbout.title}
-              </h2>
-            </Reveal>
-            <div className="mt-6 space-y-4 text-base md:text-lg leading-relaxed text-espresso-soft max-w-prose-he">
+            <h2 className="mt-5 type-statement text-4xl md:text-6xl">
+              <SplitReveal text={homeAbout.title} />
+            </h2>
+            <div className="mt-6 max-w-prose-he space-y-4 text-base leading-relaxed text-cream/85 md:text-lg">
               {homeAbout.paragraphs.map((p, i) => (
-                <Reveal key={i} delay={0.08 + i * 0.06}>
+                <Reveal key={i} delay={0.06 + i * 0.06}>
                   <p>{p}</p>
                 </Reveal>
               ))}
             </div>
-            <Reveal delay={0.3}>
-              <div className="mt-7">
-                <Link
-                  href="/about"
-                  className="group/link inline-flex items-center gap-2 text-olive hover:text-espresso transition-colors"
-                >
+            <Reveal delay={0.26}>
+              <div className="mt-8">
+                <Button as="a" href="/about" variant="onDark" icon={<IconArrow />}>
                   {homeAbout.cta}
-                  <IconArrow className="w-4 h-4 transition-transform duration-fast group-hover/link:-translate-x-1" />
-                </Link>
+                </Button>
               </div>
             </Reveal>
           </div>
 
-          <Parallax speed={0.18}>
-            <ImageReveal className="rounded-card">
-              <CafeImage
-                variant="interior"
-                src="/images/storefront_home.jpg"
-                alt={homeAbout.imageAlt}
-                ratio="aspect-[4/5]"
-                className="[&_img]:object-top"
-                tone="olive"
-                sizes="(max-width: 768px) 100vw, 45vw"
-              />
-            </ImageReveal>
-          </Parallax>
+          <div className="grid grid-cols-5 items-end gap-4 lg:col-span-6">
+            <Parallax speed={0.14} className="col-span-3">
+              <ImageReveal className="rounded-card">
+                <CafeImage
+                  variant="interior"
+                  src={homeAbout.image}
+                  alt={homeAbout.imageAlt}
+                  ratio="aspect-[4/5]"
+                  position="50% 15%"
+                  className="!rounded-none"
+                  sizes="(max-width: 1024px) 60vw, 30vw"
+                />
+              </ImageReveal>
+            </Parallax>
+            <div className="col-span-2 space-y-4">
+              <Parallax speed={-0.12}>
+                <ImageReveal delay={0.1} className="rounded-card">
+                  <CafeImage
+                    variant="pastry"
+                    src={homeAbout.imageSecond}
+                    alt={homeAbout.imageSecondAlt}
+                    ratio="aspect-[4/5]"
+                    sizes="(max-width: 1024px) 40vw, 20vw"
+                  />
+                </ImageReveal>
+              </Parallax>
+              <Parallax speed={0.08}>
+                <ImageReveal delay={0.18} className="rounded-card">
+                  <CafeImage
+                    variant="founder"
+                    src={homeAbout.imageThird}
+                    alt={homeAbout.imageThirdAlt}
+                    ratio="aspect-square"
+                    sizes="(max-width: 1024px) 40vw, 20vw"
+                  />
+                </ImageReveal>
+              </Parallax>
+            </div>
+          </div>
         </div>
       </Section>
 
-      {/* 9 — Instagram Gallery. A curated lookbook moments experience. */}
-      {instagram.length > 0 ? (
-        <InstagramGallery
-          items={instagram}
-          eyebrow={instagramSection.eyebrow}
-          title={instagramSection.title}
-          lede={instagramSection.body}
-          ctaLabel={instagramSection.ctaLabel}
-        />
-      ) : null}
+      <InstagramGallery
+        items={instagram}
+        eyebrow={instagramSection.eyebrow}
+        title={instagramSection.title}
+        lede={instagramSection.body}
+        ctaLabel={instagramSection.ctaLabel}
+      />
 
-      {/* 10 — FAQ + factual paragraph */}
-      <Section tone="cream">
-        <FAQBlock items={homeFAQs} heading="שאלות נפוצות על הקפה" />
+      <Section tone="cream-2">
+        <FAQBlock items={homeFAQs} heading="שאלות נפוצות על קפה הכרם" />
         <FAQSchema items={homeFAQs} />
         <FactualParagraph focus={homeFactualFocus} />
+      </Section>
+
+      {/* The last thing before the footer is how to actually get here. */}
+      <Section tone="pine" spacing="lg" className="overflow-hidden">
+        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-6">
+            <Reveal>
+              <Eyebrow tone="brass" withRule>
+                {homeVisit.eyebrow}
+              </Eyebrow>
+            </Reveal>
+            <h2 className="mt-5 type-statement text-4xl md:text-6xl">
+              <SplitReveal text={homeVisit.title} />
+            </h2>
+            <Reveal delay={0.1}>
+              <p className="mt-5 max-w-xl type-lede text-lg text-cream/90">{homeVisit.body}</p>
+            </Reveal>
+            <Reveal delay={0.16}>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Button
+                  as="a"
+                  href={business.socials.waze}
+                  external
+                  variant="onDark"
+                  icon={<IconPin className="h-4 w-4" />}
+                  iconPosition="start"
+                >
+                  {homeVisit.navigate}
+                </Button>
+                <Button as="a" href="/map" variant="onDarkGhost">
+                  {homeVisit.maps}
+                </Button>
+              </div>
+            </Reveal>
+            <Reveal delay={0.22}>
+              <Link href="/contact" className="link-draw mt-5 inline-block text-sm text-cream">
+                {homeVisit.contact}
+              </Link>
+            </Reveal>
+          </div>
+
+          <div className="lg:col-span-6">
+            <Reveal distance={32}>
+              <div className="overflow-hidden rounded-card bg-espresso-deep/40">
+                <div className="zoom-frame">
+                  <CafeImage
+                    variant="interior"
+                    src={homeVisit.image}
+                    alt={homeVisit.imageAlt}
+                    ratio="aspect-[16/9]"
+                    className="!rounded-none"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                  />
+                </div>
+                <div className="p-5 md:p-6">
+                  <h3 className="type-index text-brass">{homeVisit.hoursTitle}</h3>
+                  <div className="mt-3">
+                    <HoursList tone="dark" />
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
       </Section>
     </>
   );

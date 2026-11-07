@@ -12,11 +12,9 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, MotionGlobalConfig, m } from "framer-motion";
 import clsx from "clsx";
 import {
   AArrowUp,
-  Accessibility,
   Check,
   Contrast,
   FileText,
@@ -27,9 +25,9 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
+import { IconUniversalAccess } from "@/components/ui/icons";
 import { a11yWidget as copy } from "@/content/accessibility";
 import { A11Y_DEFAULTS, A11Y_STORAGE_KEY, a11yClasses, type A11yPrefs } from "@/lib/a11y-prefs";
-import { sidePanelVariants } from "@/lib/motion";
 
 function loadPrefs(): A11yPrefs {
   try {
@@ -50,10 +48,6 @@ function savePrefs(prefs: A11yPrefs) {
 function applyPrefs(prefs: A11yPrefs) {
   const html = document.documentElement.classList;
   for (const [name, on] of Object.entries(a11yClasses(prefs))) html.toggle(name, on);
-  // Framer reads MotionConfig's reducedMotion only when an element mounts,
-  // and only for positional keys. This flag is checked as each animation
-  // starts, so the toggle also stops reveals already on the page.
-  MotionGlobalConfig.skipAnimations = prefs.motion;
 }
 
 function Option({
@@ -177,21 +171,13 @@ export function AccessibilityWidget() {
         aria-label={copy.toggle}
         aria-expanded={open}
         aria-controls="a11y-panel"
-        className="fixed left-0 top-1/2 z-[45] flex h-12 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-r-card border border-l-0 border-brass/40 bg-espresso-deep text-brass shadow-md transition-[filter] duration-fast hover:brightness-125"
+        className="fixed bottom-[76px] left-0 z-[45] flex h-12 w-11 cursor-pointer items-center justify-center rounded-r-card border border-l-0 border-brass/40 bg-espresso-deep text-brass shadow-md transition-[filter] duration-fast hover:brightness-125 md:bottom-4"
       >
-        <Accessibility size={24} strokeWidth={2.2} aria-hidden />
+        <IconUniversalAccess className="h-6 w-6" />
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <m.div
-            key="a11y-panel"
-            variants={sidePanelVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            className="pointer-events-none fixed inset-y-0 left-14 z-[45] flex items-center"
-          >
+      {open && (
+          <div className="hero-fade pointer-events-none fixed bottom-[76px] left-14 z-[45] flex items-end md:bottom-4">
             <div
               ref={panelRef}
               id="a11y-panel"
@@ -253,9 +239,8 @@ export function AccessibilityWidget() {
                 </Link>
               </div>
             </div>
-          </m.div>
-        )}
-      </AnimatePresence>
+          </div>
+      )}
     </div>
   );
 }

@@ -25,6 +25,14 @@ const config: Config = {
         // contrast failure, not a shade preference.
         brass: "hsl(var(--brass) / <alpha-value>)",
         "brass-ink": "hsl(var(--brass-ink) / <alpha-value>)",
+        // Colour worlds: see the note beside the tokens in globals.css.
+        sage: "hsl(var(--sage) / <alpha-value>)",
+        "sage-deep": "hsl(var(--sage-deep) / <alpha-value>)",
+        amber: "hsl(var(--amber) / <alpha-value>)",
+        "amber-soft": "hsl(var(--amber-soft) / <alpha-value>)",
+        "amber-wash": "hsl(var(--amber-wash) / <alpha-value>)",
+        "cs-ink": "hsl(var(--cs-ink) / <alpha-value>)",
+        "cs-cream": "hsl(var(--cs-cream) / <alpha-value>)",
       },
       borderRadius: {
         card: "var(--radius-card)",
@@ -46,7 +54,7 @@ const config: Config = {
         latin: ["var(--font-latin)", "system-ui", "sans-serif"],
       },
       maxWidth: {
-        container: "1200px",
+        container: "1280px",
         "prose-he": "68ch",
       },
       // `svh` rather than `vh` — `vh` jitters against the iOS Safari

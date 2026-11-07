@@ -5,7 +5,7 @@ export type CardProps = {
   /** Adds a lift + shadow step on hover. Implies `elevation="raised"`. */
   hoverable?: boolean;
   elevation?: "flat" | "raised" | "floating";
-  tone?: "cream" | "cream-3" | "espresso" | "jachnun";
+  tone?: "cream" | "cream-3" | "espresso" | "jachnun" | "pine";
   children: ReactNode;
   className?: string;
   as?: "div" | "article" | "li";
@@ -24,6 +24,7 @@ const toneClasses = {
   "cream-3": "bg-cream-3 border-stroke text-espresso",
   espresso: "bg-espresso-deep border-cream/10 text-cream",
   jachnun: "bg-jachnun border-cream/15 text-cream",
+  pine: "bg-olive border-cream/15 text-cream",
 } as const;
 
 export function Card({
