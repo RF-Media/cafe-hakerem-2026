@@ -107,7 +107,7 @@ export async function POST(req: Request) {
 
   /* ── Pickup slot ──
      Re-derived from the server clock, not trusted from the payload. The
-     Thursday 18:00 cutoff can pass while a customer is filling the form. */
+     Friday 16:00 cutoff can pass while a customer is filling the form. */
   if (!isAvailableSlot(data.pickupSlot)) {
     return err(
       "חלון האיסוף שנבחר אינו זמין יותר. בחרו חלון אחר ונשלים את ההזמנה.",

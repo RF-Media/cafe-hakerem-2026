@@ -8,14 +8,37 @@
  * permanent fixture, and 64px of a small viewport is too much to spend on
  * something the user is scrolling past. The matching bottom padding on
  * `<main>` (see app/(site)/layout.tsx) is what keeps it off the footer.
+ *
+ * It also steps aside while anything marked `data-hide-mobile-bar` is on
+ * screen: the jachnun order card pins its own summary and primary action to
+ * the bottom edge, and two bars stacked there would cover the form.
  */
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { business } from "@/content/business";
 import { IconPhone, IconPin, IconStamp, IconWhatsapp } from "@/components/ui/icons";
 
 export function MobileBar() {
   const [hidden, setHidden] = useState(false);
+  const [yielding, setYielding] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setYielding(false);
+    const targets = document.querySelectorAll("[data-hide-mobile-bar]");
+    if (!targets.length) return;
+    const visible = new Set<Element>();
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) visible.add(e.target);
+        else visible.delete(e.target);
+      }
+      setYielding(visible.size > 0);
+    });
+    targets.forEach((t) => io.observe(t));
+    return () => io.disconnect();
+  }, [pathname]);
 
   useEffect(() => {
     let last = window.scrollY;
@@ -48,11 +71,12 @@ export function MobileBar() {
 
   return (
     <div
+      data-track-area="mobile_bar"
       className={
         "md:hidden fixed bottom-0 inset-x-0 z-40 bg-cream " +
         "border-t border-stroke shadow-md pb-[env(safe-area-inset-bottom)] " +
         "transition-transform duration-[280ms] ease-out-soft " +
-        (hidden ? "translate-y-[110%]" : "translate-y-0")
+        (hidden || yielding ? "translate-y-[110%]" : "translate-y-0")
       }
       role="region"
       aria-label="פעולות מהירות"

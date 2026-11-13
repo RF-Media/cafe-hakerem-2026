@@ -9,7 +9,7 @@ import {
   unitsForPackage,
 } from "@/lib/jachnun-pricing";
 import { formatILS } from "@/lib/money";
-import { jachnun, jachnunPackages, jachnunPricing, jachnunStartingPriceAgorot } from "@/content/jachnun";
+import { jachnun, jachnunPackages, jachnunPricing, jachnunStartingPriceAgorot, jachnunUnitPriceAgorot } from "@/content/jachnun";
 
 const NO_EXTRAS = { tomato: 0, olives: 0, egg: 0 };
 const { addons, maxExtraPerUnit } = jachnunPricing;
@@ -137,6 +137,6 @@ describe("itemCount", () => {
 
 describe("display strings", () => {
   it("keeps the marketing copy in step with the numbers", () => {
-    expect(jachnun.pricing.perUnit).toContain(formatILS(jachnunStartingPriceAgorot));
+    expect(jachnun.pricing.perUnit).toContain(formatILS(jachnunUnitPriceAgorot));
   });
 });

@@ -14,7 +14,7 @@ import { waitUntil } from "@vercel/functions";
 import { jachnunConfirmationEmail, jachnunOrderTicket } from "@/lib/email-templates";
 import { jachnunConfirmationHtml, pdfAttachment } from "@/lib/confirmation-pdf";
 import { formatILS } from "@/lib/money";
-import { jachnunPackages } from "@/content/jachnun";
+import { preorderAsPackage } from "@/lib/preorder";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,7 +22,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 /**
- * Phase-1 jachnun pre-order: the one-step form on /jachnun. Pay at pickup,
+ * Phase-1 jachnun + burekas pre-order: the form on /jachnun. Pay at pickup,
  * no database — the café's notification email IS the order.
  *
  * That inverts CLAUDE.md §13 step 4. Elsewhere the email is fire-and-forget
@@ -64,14 +64,16 @@ export async function POST(req: Request) {
   }
   const data = parsed.data;
 
-  // Re-derived from the server clock: the Thursday 18:00 cutoff can pass
+  // Re-derived from the server clock: the Friday 16:00 cutoff can pass
   // while the form is open.
   const slot = getAvailableSlots().find((s) => s.iso === data.pickupSlot);
   if (!slot) {
     return err("חלון האיסוף שבחרתם כבר לא זמין. בחרו חלון אחר ושלחו שוב.", 409, "slot_unavailable");
   }
 
-  const pkg = jachnunPackages.find((p) => p.id === data.packageId)!;
+  // Jachnun and burekas folded into the one-package shape the existing
+  // email/PDF templates render (lib/preorder.ts), priced server-side.
+  const pkg = preorderAsPackage({ jachnun: data.quantity, burekas: data.burekas });
   const reference = generateReference("JCH");
   const subject = `הזמנת ג'חנון ${reference} · ${slot.label} · ${data.name}`;
 
@@ -81,12 +83,12 @@ export async function POST(req: Request) {
   const html = rtlEmail(
     `הזמנת ג'חנון חדשה - ${reference}`,
     `
-      <p>התקבלה הזמנת ג'חנון חדשה דרך האתר. <strong>התשלום באיסוף</strong> - לא שולם מראש.</p>
+      <p>התקבלה הזמנת ג'חנון חדשה דרך האתר. <strong>לא שולם מראש</strong> - יש להתקשר ללקוח לאישור ההזמנה וגביית התשלום.</p>
       <table cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
         ${row("מספר הזמנה", escapeHtml(reference))}
         ${row("איסוף", `${escapeHtml(slot.day)} · <span dir="ltr">${escapeHtml(slot.window)}</span>`)}
-        ${row("חבילה", `${escapeHtml(pkg.title)} (${pkg.units} יח׳)`)}
-        ${row("לתשלום באיסוף", formatILS(pkg.totalAgorot))}
+        ${row("כמות", `${escapeHtml(pkg.title)} (${pkg.units} יח׳)`)}
+        ${row("סכום משוער", formatILS(pkg.totalAgorot))}
         ${row("שם", escapeHtml(data.name))}
         ${row("טלפון", `<a href="tel:${escapeHtml(data.phone)}">${escapeHtml(data.phone)}</a>`)}
         ${data.email ? row("אימייל", `<a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a>`) : ""}

@@ -13,6 +13,7 @@
 import { useEffect, useRef, useState } from "react";
 import { container } from "@/components/ui/Section";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { ev } from "@/lib/analytics";
 
 export type RailItem = { id: string; label: string };
 
@@ -143,6 +144,7 @@ export function MenuCategoryRail({ items }: { items: RailItem[] }) {
                 <a
                   href={`#${c.id}`}
                   data-chip={c.id}
+                  {...ev("menu_category_click", { menu_category: c.id, ui_location: "menu_rail" })}
                   aria-current={isActive ? "true" : undefined}
                   className={
                     "inline-flex items-center min-h-[40px] scroll-mt-[-2px] rounded-pill border px-4 text-sm " +

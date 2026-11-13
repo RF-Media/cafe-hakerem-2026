@@ -10,16 +10,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { FAQBlock } from "@/components/ui/FAQBlock";
 import { Section, container } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import {
-  IconArrow,
-  IconCheck,
-  IconCup,
-  IconGift,
-  IconPhoneCard,
-  IconQr,
-  IconSpark,
-  IconStamp,
-} from "@/components/ui/icons";
+import { IconArrow, IconCheck, IconPhoneCard, IconQr, IconStamp } from "@/components/ui/icons";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitReveal } from "@/components/motion/SplitReveal";
@@ -44,9 +35,6 @@ const ICONS = {
   qr: IconQr,
   phone: IconPhoneCard,
   stamp: IconStamp,
-  cup: IconCup,
-  gift: IconGift,
-  spark: IconSpark,
 };
 
 function clubSchema() {
@@ -164,44 +152,28 @@ export default function ClubPage() {
         />
       </Section>
 
-      {/* What you get */}
+      {/* The mechanics' sibling: offers. Not a benefits list — just the one
+          clear door into /offers, next to the one stat that's genuinely a
+          club mechanic (status tiers). */}
       <Section tone="cream">
-        <SectionHeading eyebrow={club.perks.eyebrow} title={club.perks.title} />
-        <Stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.07}>
-          {club.perks.items.map((perk) => {
-            const Icon = ICONS[perk.icon];
-            return (
-              <StaggerItem key={perk.title} variant="tile">
-                <div className="group h-full rounded-card bg-cream-2 p-6 transition-[background-color,transform] duration-base ease-out-soft hover:-translate-y-1 hover:bg-amber-soft">
-                  <Icon className="h-8 w-8 text-cs-ink transition-transform duration-base ease-out-soft group-hover:-rotate-6" />
-                  <h3 className="mt-5 type-sub text-xl text-espresso">{perk.title}</h3>
-                  <p className="mt-2 text-base leading-snug text-espresso-soft group-hover:text-espresso">{perk.body}</p>
-                </div>
-              </StaggerItem>
-            );
-          })}
-        </Stagger>
+        <SectionHeading eyebrow={club.offersSection.eyebrow} title={club.offersSection.title} />
 
-        <div className="mt-10 grid gap-5 lg:grid-cols-2">
+        <div className="grid gap-5 lg:grid-cols-2">
           <Reveal>
-            <div className="sticker flex h-full flex-col rounded-[22px] bg-cs-cream p-6 text-cs-ink md:p-8">
+            <Link
+              href="/offers"
+              className="sticker group flex h-full flex-col rounded-[22px] bg-cs-cream p-6 text-cs-ink md:p-8"
+            >
               <Eyebrow tone="ink" withRule>
-                {club.deals.eyebrow}
+                {club.offersCta.eyebrow}
               </Eyebrow>
-              <h3 className="mt-3 type-sub text-2xl">{club.deals.title}</h3>
-              <ul className="mt-5 flex-1 space-y-3">
-                {club.deals.items.map((deal) => (
-                  <li key={deal.name} className="flex items-baseline justify-between gap-4 border-b border-cs-ink/15 pb-3">
-                    <span>
-                      <span className="type-sub text-lg">{deal.name}</span>
-                      <span className="ms-2 text-sm text-cs-ink/80">{deal.was}</span>
-                    </span>
-                    <span className="type-statement text-2xl tabular-nums">{deal.price}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-4 text-sm text-cs-ink/80">{club.deals.note}</p>
-            </div>
+              <h3 className="mt-3 type-sub text-2xl">{club.offersCta.title}</h3>
+              <p className="mt-4 flex-1 text-base leading-relaxed">{club.offersCta.body}</p>
+              <span className="mt-6 inline-flex items-center gap-2 type-sub text-lg">
+                {club.offersCta.cta}
+                <IconArrow className="h-4 w-4 transition-transform duration-base ease-out-soft group-hover:-translate-x-1" />
+              </span>
+            </Link>
           </Reveal>
 
           <Reveal delay={0.08}>

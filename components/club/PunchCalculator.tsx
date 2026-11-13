@@ -16,6 +16,7 @@ import { club } from "@/content/club";
 import { Button } from "@/components/ui/Button";
 import { IconArrow } from "@/components/ui/icons";
 import { PERK_ICONS, RewardScene } from "@/components/club/StampScene";
+import { track } from "@/lib/analytics";
 
 const TOTAL = business.coffeestream.punchesRequired;
 const MIN = 1;
@@ -24,6 +25,7 @@ const c = club.calculator;
 
 export function PunchCalculator({ heading }: { heading: ReactNode }) {
   const [cups, setCups] = useState(5);
+  const used = useRef(false);
   const previous = useRef(5);
 
   const days = Math.max(1, Math.round((TOTAL / cups) * 7));
@@ -68,6 +70,12 @@ export function PunchCalculator({ heading }: { heading: ReactNode }) {
           onChange={(e) => {
             previous.current = cups;
             setCups(Number(e.target.value));
+            if (!used.current) {
+              used.current = true;
+              // The same value twice: GA4 registers a parameter as a dimension or a metric, not both.
+              const perWeek = Number(e.target.value);
+              track("club_calculator_use", { cups_per_week: perWeek, cups_per_week_num: perWeek });
+            }
           }}
           className="cs-range mt-3 w-full"
         />

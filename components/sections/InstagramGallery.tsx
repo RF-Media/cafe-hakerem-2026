@@ -12,6 +12,7 @@ import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { Section } from "@/components/ui/Section";
 import { instagramCategories, instagramSection, type InstagramPost } from "@/content/instagram";
 import { business } from "@/content/business";
+import { ev } from "@/lib/analytics";
 
 type InstagramGalleryProps = {
   items: InstagramPost[];
@@ -72,6 +73,7 @@ export function InstagramGallery({ items, eyebrow, title, lede, ctaLabel }: Inst
               type="button"
               aria-pressed={isActive}
               onClick={() => setActive(cat)}
+              {...ev("gallery_filter", { gallery_category: cat })}
               className={
                 "min-h-[44px] cursor-pointer rounded-full px-5 text-sm transition-colors duration-fast " +
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive " +

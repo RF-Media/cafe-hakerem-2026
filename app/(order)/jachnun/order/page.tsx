@@ -5,7 +5,7 @@ import { CHECKOUT_ENABLED, orderCopy } from "@/content/jachnun-order";
 
 /**
  * The checkout is per-visitor and time-sensitive (pickup windows shift across
- * the Thursday 18:00 cutoff), so unlike the content pages it is not statically
+ * the Friday 16:00 cutoff), so unlike the content pages it is not statically
  * rendered with a 24h revalidate.
  */
 export const dynamic = "force-dynamic";

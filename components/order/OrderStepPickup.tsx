@@ -9,7 +9,7 @@
  *
  * The slots themselves are computed by `OrderFlow` after mount — never during
  * render, because the server runs in UTC and the visitor is in Asia/Jerusalem,
- * and around the Thursday 18:00 cutoff the two disagree about which Shabbat
+ * and around the Friday 16:00 cutoff the two disagree about which Shabbat
  * is on offer. That is a hydration mismatch on the one field where being
  * wrong costs a real order.
  */

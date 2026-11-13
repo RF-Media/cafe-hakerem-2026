@@ -16,6 +16,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { imageTone } from "@/lib/image-meta";
+import { ev } from "@/lib/analytics";
 import type { MenuCategory } from "@/content/menu";
 
 type AlwaysRollingSectionProps = {
@@ -62,6 +63,7 @@ export function AlwaysRollingSection({ categories, eyebrow, title, cta, caption 
               <Link
                 href={`/menu#${cat.id}`}
                 data-spot=""
+                {...ev("menu_category_click", { menu_category: cat.id, ui_location: "home_categories" })}
                 className="group relative block h-full overflow-hidden rounded-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
                 style={{ backgroundColor: imageTone(cat.image) }}
               >

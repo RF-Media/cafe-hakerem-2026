@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Live clock to Thursday 18:00, because a deadline you can see moves people and
+ * Live clock to Friday 16:00, because a deadline you can see moves people and
  * a sentence about one doesn't. Everything is computed after mount (the page is
  * force-static and the server runs in UTC). Until then, and with JS off, the
  * plain sentence stands in.
@@ -10,8 +10,8 @@ import { useEffect, useState } from "react";
 import { getAvailableSlots } from "@/lib/jachnun-cutoff";
 import { IconClock } from "@/components/ui/icons";
 
-/** Saturday's first pickup slot is 08:00; Thursday 18:00 is 38 hours before it. */
-const CUTOFF_BEFORE_FIRST_SLOT_MS = 38 * 60 * 60 * 1000;
+/** Saturday's first pickup slot is 08:00; Friday 16:00 is 16 hours before it. */
+const CUTOFF_BEFORE_FIRST_SLOT_MS = 16 * 60 * 60 * 1000;
 
 function remaining(now: Date): string | null {
   const first = getAvailableSlots(now)[0];

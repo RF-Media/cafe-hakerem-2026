@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { CafeImage } from "@/components/ui/CafeImage";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Section } from "@/components/ui/Section";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { FAQBlock } from "@/components/ui/FAQBlock";
 import { IconArrow, IconPin, IconSpark } from "@/components/ui/icons";
 import { ImageReveal } from "@/components/motion/ImageReveal";
@@ -27,6 +28,7 @@ import { WhyVisitSection } from "@/components/sections/WhyVisitSection";
 import { business } from "@/content/business";
 import { catering } from "@/content/catering";
 import { homeFAQs } from "@/content/faqs";
+import { homeHolidays } from "@/content/holidays";
 import {
   homeAbout,
   homeAlwaysRolling,
@@ -68,6 +70,16 @@ export default function HomePage() {
         cta={homeAlwaysRolling.cta}
         caption={homeAlwaysRolling.caption}
       />
+
+      {/* Holiday promotions band — copy pending, see content/holidays.ts. */}
+      <Section tone="cream-3">
+        <Reveal>
+          <SectionHeading eyebrow={homeHolidays.eyebrow} title={homeHolidays.title} />
+        </Reveal>
+        <Reveal delay={0.06}>
+          <p className="mt-4 max-w-prose-he text-base text-espresso-soft md:text-lg">{homeHolidays.body}</p>
+        </Reveal>
+      </Section>
 
       <WhyVisitSection eyebrow={homeValues.eyebrow} title={homeValues.title} items={homeValues.items} />
 

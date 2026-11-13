@@ -93,7 +93,7 @@ export function OrderFlow() {
   /* ── Slots ──
      After mount only: the server renders in UTC, the visitor is in
      Asia/Jerusalem, and the two disagree about which Shabbat is on offer
-     around the Thursday 18:00 cutoff. */
+     around the Friday 16:00 cutoff. */
   const refreshSlots = useCallback(() => {
     const next = getAvailableSlots();
     setSlots(next);
@@ -222,7 +222,7 @@ export function OrderFlow() {
         const message: string = body?.error ?? orderCopy.errors.generic;
 
         if (code === "slot_unavailable") {
-          // The Thursday 18:00 cutoff can pass while a customer fills the
+          // The Friday 16:00 cutoff can pass while a customer fills the
           // form. Re-offer whatever is open now and send them back to step 3.
           dispatch({ type: "clearSlot" });
           const next = refreshSlots();

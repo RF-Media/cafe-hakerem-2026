@@ -7,7 +7,9 @@ import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { FAQBlock } from "@/components/ui/FAQBlock";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { Reveal } from "@/components/motion/Reveal";
+import { CookieSettingsButton } from "@/components/cookiestream/CookieSettingsButton";
 import { business } from "@/content/business";
+import { cookieSettingsLabel } from "@/content/cookies";
 import { privacyFAQs } from "@/content/faqs";
 import { pageMetadata } from "@/lib/seo";
 
@@ -23,7 +25,7 @@ export default function PrivacyPage() {
           that the motion is decorative rather than considered. */}
       <article className="mx-auto max-w-3xl px-6 md:px-10 lg:px-16 pt-12 md:pt-20 pb-20 space-y-8">
         <h1 className="type-display text-[2.75rem] leading-[1.03] md:text-6xl text-espresso">מדיניות פרטיות</h1>
-        <p className="text-sm text-espresso-soft">עודכן: 6 בנובמבר 2026</p>
+        <p className="text-sm text-espresso-soft">עודכן: 10 בנובמבר 2026</p>
 
         <Reveal as="section" className="space-y-3">
           <h2 className="type-title text-2xl text-espresso">איזה מידע אנחנו אוספים</h2>
@@ -45,9 +47,29 @@ export default function PrivacyPage() {
         <Reveal as="section" className="space-y-3">
           <h2 className="type-title text-2xl text-espresso">עוגיות (Cookies)</h2>
           <p className="text-espresso-soft leading-relaxed">
-            האתר משתמש בעוגיות נחוצות בלבד, וכן בכלי אנליטיקה ({"Vercel Analytics"}) לזיהוי דפוסי שימוש
-            אנונימיים. לא נעשה שימוש בעוגיות פרסומיות.
+            עוגיה הכרחית אחת, cs_consent, זוכרת למשך 180 יום מה בחרתם בבאנר העוגיות, כדי שלא נשאל שוב בכל
+            ביקור. העדפות הנגישות שבחרתם נשמרות בדפדפן שלכם בלבד. שני אלה לא נשלחים לשום שירות חיצוני.
           </p>
+          <p className="text-espresso-soft leading-relaxed">
+            אם תאשרו סטטיסטיקה בבאנר העוגיות, האתר יטען את Google Tag Manager, שמפעיל את Google Analytics
+            כדי להבין כמה אנשים מבקרים באתר ובאילו עמודים. הכלי שולח ל-Google נתוני שימוש, כמו העמודים
+            שנצפו, סוג המכשיר ומיקום משוער, ושומר עוגיות משלו בדפדפן. בלי אישור הוא לא נטען ולא נשלח אליו
+            דבר. על המידע הזה חלה גם{" "}
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-olive underline underline-offset-4 hover:text-espresso">
+              מדיניות הפרטיות של Google
+            </a>
+            .
+          </p>
+          <p className="text-espresso-soft leading-relaxed">
+            בנוסף, Vercel Analytics סופר ביקורים באופן אנונימי, בלי עוגיות. לא נעשה שימוש בעוגיות פרסומיות.
+          </p>
+          <p className="text-espresso-soft leading-relaxed">
+            אפשר לשנות את הבחירה בכל רגע דרך &quot;{cookieSettingsLabel}&quot; בתחתית העמוד או בכפתור כאן. אם
+            תבטלו את האישור, האתר ימחק את עוגיות Google Analytics מהדפדפן ויטען את העמוד מחדש.
+          </p>
+          <CookieSettingsButton className="inline-flex min-h-[44px] cursor-pointer items-center rounded-pill border border-stroke bg-cream px-5 text-sm font-medium text-espresso transition-colors duration-fast hover:border-espresso">
+            {cookieSettingsLabel}
+          </CookieSettingsButton>
         </Reveal>
 
         <Reveal as="section" className="space-y-3">

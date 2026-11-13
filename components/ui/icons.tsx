@@ -131,6 +131,15 @@ export function IconStamp({ className }: IconProps) {
   );
 }
 
+export function IconEdit({ className }: IconProps) {
+  return (
+    <svg {...base} className={className ?? "w-4 h-4"}>
+      <path d="M4 20h4L18.5 9.5a2.12 2.12 0 0 0-3-3L5 17v3z" />
+      <path d="M13.5 7.5l3 3" />
+    </svg>
+  );
+}
+
 export function IconCheck({ className }: IconProps) {
   return (
     <svg {...base} className={className ?? size}>
@@ -187,6 +196,15 @@ export function IconSpark({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden className={className ?? size}>
       <path d="M12 0c1 6.5 5.5 11 12 12-6.5 1-11 5.5-12 12-1-6.5-5.5-11-12-12C6.5 11 11 6.5 12 0z" />
+    </svg>
+  );
+}
+
+export function IconWine({ className }: IconProps) {
+  return (
+    <svg {...base} className={className ?? size}>
+      <path d="M7 3.5h10l-1 8a4 4 0 0 1-8 0z" />
+      <path d="M12 15.5V21M8.5 21h7" />
     </svg>
   );
 }

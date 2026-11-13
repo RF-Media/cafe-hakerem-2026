@@ -7,8 +7,9 @@
     "dev": "next dev",
     "check:todos": "tsx scripts/check-todos.ts",
     "check:geo": "tsx scripts/check-geo.ts",
+    "check:trackers": "tsx scripts/check-trackers.ts",
     "build": "next build",
-    "preflight": "npm run check:todos && npm run check:geo && next build",
+    "preflight": "npm run check:todos && npm run check:geo && next build && npm run check:trackers",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
@@ -45,6 +46,7 @@
     "glob": "^11.0.0",
     "postcss": "^8.4.49",
     "prisma": "^5.22.0",
+    "sharp": "^0.35.5",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"

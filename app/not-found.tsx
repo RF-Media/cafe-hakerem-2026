@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function NotFound() {
   return (
-    <main id="main" className="flex-1 bg-espresso-deep text-cream">
+    <main id="main" data-not-found="" className="flex-1 bg-espresso-deep text-cream">
       <div className={`${container} grid min-h-[100svh] items-center gap-10 py-16 md:grid-cols-2`}>
         <div>
           <p className="type-index text-brass">404</p>
