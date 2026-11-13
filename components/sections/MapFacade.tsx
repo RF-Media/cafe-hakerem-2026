@@ -9,6 +9,7 @@ import { useState } from "react";
 import { business } from "@/content/business";
 import { CafeImage } from "@/components/ui/CafeImage";
 import { IconPin } from "@/components/ui/icons";
+import { ev } from "@/lib/analytics";
 
 export function MapFacade({ label, imageAlt }: { label: string; imageAlt: string }) {
   const [loaded, setLoaded] = useState(false);
@@ -28,6 +29,7 @@ export function MapFacade({ label, imageAlt }: { label: string; imageAlt: string
     <button
       type="button"
       onClick={() => setLoaded(true)}
+      {...ev("map_load")}
       className="group relative block h-full w-full cursor-pointer overflow-hidden rounded-card text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive focus-visible:ring-offset-2"
     >
       <span className="zoom-frame absolute inset-0 block">

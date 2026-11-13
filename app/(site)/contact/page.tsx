@@ -20,6 +20,7 @@ import { business } from "@/content/business";
 import { contactFAQs } from "@/content/faqs";
 import { homeVisit } from "@/content/home";
 import { pageMetadata } from "@/lib/seo";
+import { ev } from "@/lib/analytics";
 
 export const metadata = pageMetadata("contact");
 
@@ -119,12 +120,14 @@ export default function ContactPage() {
                 <div className="mt-3">
                   <HoursList />
                 </div>
+                <p className="mt-3 text-xs text-espresso-soft">{business.hoursFootnote}</p>
               </div>
             </StaggerItem>
 
             <StaggerItem variant="tile" className="sm:col-span-2">
               <a
                 href={business.socials.google}
+                {...ev("reviews_click")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center justify-between gap-4 rounded-card bg-olive p-6 text-cream transition-transform duration-fast ease-out-soft hover:-translate-y-0.5"

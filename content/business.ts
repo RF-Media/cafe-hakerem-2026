@@ -129,6 +129,11 @@ export const business = {
   mapEmbed:
     "https://www.google.com/maps?q=%D7%A7%D7%A4%D7%94%20%D7%94%D7%9B%D7%A8%D7%9D%20%D7%94%D7%9B%D7%A8%D7%9E%D7%9C%2020%20%D7%92%D7%A0%D7%99%20%D7%AA%D7%A7%D7%95%D7%95%D7%94&hl=he&z=16&output=embed",
 
+  /* ─── Hours footnote ───────────────────────────────────────── */
+  // Shown under the hours block on /contact, asterisked.
+  hoursFootnote:
+    "* מגיעים להופעה או הצגה במרכז הבמה בגני תקווה? אנחנו פתוחים עד לשעת תחילת ההצגה או ההופעה.",
+
   /* ─── CoffeeStream (the loyalty club) ──────────────────────── */
   // Slug and values read off the public shop page. "hakerem" is a 404 there;
   // "cafehakerem" is the live one.

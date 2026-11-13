@@ -11,6 +11,7 @@
  */
 
 import { formatILS } from "@/lib/money";
+import { menuCategories } from "@/content/menu";
 
 /* ────────────────────────────────────────────────────────────────
    Real pricing, confirmed by the café (2026-08-05) — supersedes the
@@ -83,6 +84,32 @@ export const jachnunPackages: JachnunPackage[] = [
 /** The single-unit package is the reference price for "you saved ₪X" on the bigger ones. */
 export const jachnunStartingPriceAgorot = jachnunPackages[0].totalAgorot;
 
+/**
+ * Flat per-unit price for the live phase-1 pre-order (see Decision Log,
+ * "2.7 — jachnun moves from packages to a flat per-unit price"). This
+ * supersedes `jachnunStartingPriceAgorot` for anything the phase-1 form or
+ * marketing copy displays. `jachnunPackages` above, and everything in
+ * lib/jachnun-pricing.ts, stay untouched — they belong to the gated phase-2
+ * checkout, which keeps its own previously-confirmed package pricing until
+ * that flow is reconciled and switched back on.
+ */
+export const jachnunUnitPriceAgorot = 3000;
+
+/** Past this many units, the café quotes a special price rather than N × the flat rate. */
+export const jachnunBulkThresholdUnits = 20;
+
+/**
+ * Burekas on the pre-order form, read off the menu's own burekas item so the
+ * form can never quote a different serving or price than /menu does.
+ */
+const burekasMenuItem = menuCategories.find((c) => c.id === "burekas")?.items[0];
+if (!burekasMenuItem) throw new Error("content/menu.ts has no burekas item for the jachnun pre-order.");
+export const burekasServing = {
+  name: "בורקס תורכי",
+  description: burekasMenuItem.description ?? "",
+  priceAgorot: Number(burekasMenuItem.price.replace(/[^\d]/g, "")) * 100,
+};
+
 export const jachnunPricing = {
   /**
    * Add-ons. Every jachnun unit ships with `includedPerUnit` of each at no
@@ -141,6 +168,8 @@ export const jachnun = {
   },
 
   /* "Why ours" — 3 short reasons. Each ≤ 12 words. */
+  // [TODO: לאשר עם רועי האם הניסוח "בצד בעבודת יד" מכוון או שגיאת הקלדה ל"בצק"] —
+  // do not change the title below from "בצק שנערך ביד" until that's confirmed.
   threeReasons: [
     {
       title: "בצק שנערך ביד",
@@ -156,62 +185,107 @@ export const jachnun = {
     },
     {
       title: "מגיע עם הכל",
-      body: "ביצה קשה, רסק עגבניות וסחוג של הבית בכל הזמנה.",
+      body: "ביצה קשה, רסק עגבניות וסחוג הבית בכל הזמנה.",
       image: "/images/jachnun-closeup_shared.jpg",
       imageAlt: "קרוב על רסק עגבניות טרי, ביצה קשה וג'חנון מגולגל",
     },
   ],
-
-  /* Under the "what's included" list on /jachnun. */
-  crossSell: "וגם בורקס תורכי בעבודת יד, בתפריט",
 
   /* What's included in a single jachnun order. */
   whatsIncluded: [
     "ג'חנון אחד, אפוי לילה שלם",
     "ביצה קשה חומה",
     "רסק עגבניות טרי",
-    "סחוג ירוק של הבית",
+    "סחוג הבית",
   ],
 
   /* Display strings, derived so they can never contradict the numbers. */
   pricing: {
-    perUnit: `${formatILS(jachnunStartingPriceAgorot)} ליחידה`,
-    bundleNote: "אפשר גם בחבילה: זוג, חמישייה או עשרה - משתלם יותר ליחידה.",
+    perUnit: `${formatILS(jachnunUnitPriceAgorot)} ליחידה`,
+    // CONFIRM BEFORE LAUNCH — amount/percentage not supplied yet.
+    bulkNote: `מעל ${jachnunBulkThresholdUnits} יח' - מחיר מיוחד. [TODO: לקבוע סכום/אחוז ההנחה מעל 20 יחידות ג'חנון]`,
   },
 
   /* Phase-1 one-step pre-order on /jachnun (the five-step checkout at
-     /jachnun/order is phase 2 — see CHECKOUT_ENABLED). Pay at pickup. */
+     /jachnun/order is phase 2 — see CHECKOUT_ENABLED). Flat per-unit price,
+     paid over the phone once a rep calls to confirm (see Decision Log). */
   preorder: {
     eyebrow: "הזמנה מראש",
-    title: "להזמין ג'חנון לשבת",
-    lede: "בוחרים חבילה וחלון איסוף, משאירים שם וטלפון - ואוספים חם בשבת בבוקר.",
-    reassurance: "רוצים להיות בטוחים שיש? מומלץ להזמין מראש.",
-    perUnit: "ליחידה",
+    title: "להזמין לשבת",
+    lede: "ג'חנון, ואם בא לכם גם בורקס. בוחרים, קובעים שעה ואוספים חם בשבת בבוקר.",
 
-    packages: { legend: "כמה ג'חנון?", required: "בחרו חבילה." },
+    steps: [
+      { id: "items", short: "מה", title: "מה מזמינים?" },
+      { id: "pickup", short: "מתי", title: "מתי לאסוף?" },
+      { id: "details", short: "פרטים", title: "למי ההזמנה?" },
+    ],
+    progressLabel: "שלבי ההזמנה",
+    stepOf: (n: number, total: number) => `שלב ${n} מתוך ${total}:`,
+    back: "חזרה",
+    backTo: (title: string, chosen: string) => `שינוי ${title} (${chosen})`,
+
+    items: {
+      jachnun: {
+        name: "ג'חנון",
+        short: "ג'חנון",
+        detail: "עם ביצה קשה, רסק וסחוג",
+        unit: "ליחידה",
+        image: "/images/jachnun-plate_jachnun.jpg",
+      },
+      burekas: {
+        name: burekasServing.name,
+        short: "בורקס",
+        detail: burekasServing.description,
+        unit: "למנה",
+        image: "/images/burekas-golden_shared.jpg",
+      },
+      increase: (name: string) => `להוסיף ${name}`,
+      decrease: (name: string) => `להוריד ${name}`,
+      count: (name: string, n: number) => `${name}: ${n}`,
+      empty: "בחרו לפחות פריט אחד.",
+      bulkNote: `מעל ${jachnunBulkThresholdUnits} יח' ג'חנון - מחיר מיוחד. נציג שלנו ייצור קשר.`,
+    },
+    /** One line naming the whole order, for the summary bar, the emails and the PDF. */
+    orderTitle: (jachnunQty: number, burekasQty: number) => {
+      const burekas = burekasQty
+        ? `${burekasServing.name} × ${burekasQty} ${burekasQty === 1 ? "מנה" : "מנות"}`
+        : "";
+      const jach = jachnunQty ? (jachnunQty === 1 && !burekas ? "ג'חנון" : `ג'חנון × ${jachnunQty}`) : "";
+      return [jach, burekas].filter(Boolean).join(" + ");
+    },
+
     pickup: {
-      legend: "מתי לאסוף?",
       where: "רחוב הכרמל 20",
       loading: "טוען חלונות איסוף…",
       required: "בחרו חלון איסוף.",
-      cutoffNote: "ההזמנות לשבת הקרובה נסגרות ביום חמישי ב-18:00. אחר כך - לשבת הבאה.",
+      cutoffNote: "ההזמנות לשבת הקרובה נסגרות ביום שישי ב-16:00. אחר כך - לשבת הבאה.",
     },
     details: {
-      legend: "הפרטים שלכם",
       name: { label: "שם מלא", placeholder: "ישראל ישראלי" },
-      phone: { label: "טלפון נייד", placeholder: "050-1234567", hint: "לזיהוי באיסוף ולעדכונים על ההזמנה בלבד." },
+      phone: { label: "טלפון נייד", placeholder: "050-1234567", hint: "נציג יתקשר למספר הזה לאישור ההזמנה." },
       email: { label: "אימייל (אופציונלי)", placeholder: "you@example.com", hint: "נשלח אליך אישור הזמנה עם כל הפרטים." },
+      notesToggle: "+ בקשה מיוחדת, אלרגיה או תוספת",
       notes: {
         label: "בקשות מיוחדות (אופציונלי)",
         hint: "תוספות, אלרגיות, אריזה נפרדת - כל דבר שכדאי שנדע.",
       },
     },
 
-    total: "לתשלום באיסוף",
-    totalEmpty: "בחרו חבילה",
+    summary: {
+      heading: "ההזמנה שלך",
+      empty: "עוד לא נבחר כלום",
+      pickup: "איסוף",
+      pickupPending: "בשלב הבא",
+    },
+    next: {
+      items: "המשך לבחירת שעה",
+      pickup: "המשך לפרטים",
+    },
+
+    total: "סכום משוער",
     submit: "שליחת ההזמנה",
     submitting: "שולח…",
-    payNote: "אין תשלום באתר - משלמים בקפה, באיסוף.",
+    payNote: "אין תשלום באתר. נציג יתקשר לאשר ולסגור תשלום.",
     network: "אין חיבור לרשת. ההזמנה לא נשלחה - בדקו את החיבור ונסו שוב.",
     generic: "משהו השתבש וההזמנה לא נשלחה.",
     callPrefix: "אפשר גם להזמין בטלפון:",
@@ -220,8 +294,8 @@ export const jachnun = {
       title: "ההזמנה התקבלה!",
       referenceLabel: "מספר הזמנה",
       referenceHint: "שמרו את המספר - נשתמש בו באיסוף.",
+      confirmationNote: "קבלת מספר ההזמנה אינה מהווה אישור סופי - נציג שלנו יצור קשר לאישור ההזמנה ולסגירת התשלום.",
       pickup: "איסוף",
-      package: "חבילה",
       questions: "שאלות על ההזמנה?",
       again: "הזמנה נוספת",
     },
@@ -234,17 +308,21 @@ export const jachnun = {
      new copy. */
   reassurance: {
     eyebrow: "איך זה עובד",
-    title: "מהזמנה ועד לשולחן, בארבעה צעדים",
+    title: "מהזמנה ועד לשולחן, בחמישה צעדים",
     steps: [
-      { title: "בוחרים חבילה ושעה", body: "בטופס ההזמנה כאן באתר." },
+      { title: "בוחרים כמות ושעה", body: "ג'חנון, ואם רוצים גם בורקס, בטופס כאן באתר." },
       { title: "משאירים שם וטלפון", body: "ההזמנה נשלחת ישירות לקפה." },
       {
         title: "מקבלים מספר הזמנה",
         body: "במסך - כדאי לשמור אותו לאיסוף.",
       },
       {
+        title: "נציג מתקשר ומאשר",
+        body: "מאמת את ההזמנה וגובה את התשלום בטלפון.",
+      },
+      {
         title: "מגיעים בשבת בבוקר",
-        body: "לרחוב הכרמל 20, ומשלמים באיסוף.",
+        body: "לרחוב הכרמל 20, ואוספים את הג'חנון.",
       },
     ],
   },

@@ -386,6 +386,10 @@
   animation: fade-in 0.8s var(--ease-out-soft) both;
   animation-delay: calc(var(--d, 0) * 1ms);
 }
+/* A form step arriving (the jachnun pre-order). Same keyframe, short. */
+.step-in {
+  animation: fade-in var(--dur-base) var(--ease-out-soft) both;
+}
 
 /* ---------------------------------------------------------------------
    Reveals. The trigger is one IntersectionObserver in lib/motion-runtime.ts,
@@ -924,5 +928,45 @@ html.a11y-font * {
   a[href^="tel:"]::after {
     content: " (" attr(href) ")";
     font-size: 0.75em;
+  }
+}
+
+/* CookieStream (components/cookiestream), on the site's tokens. z 44: above
+   MobileBar (40), under the accessibility tab and panel (45) so they stay usable
+   while the banner is open, and under the header (50). */
+.cookiestream {
+  --cs-z: 44;
+  --cs-bg: hsl(var(--cream-3));
+  --cs-fg: hsl(var(--espresso));
+  --cs-muted: hsl(var(--espresso-soft));
+  --cs-border: hsl(var(--stroke));
+  --cs-raised: hsl(var(--cream-2));
+  --cs-accent: hsl(var(--espresso));
+  --cs-accent-hover: hsl(var(--olive));
+  --cs-accent-fg: hsl(var(--cream));
+  --cs-link: hsl(var(--olive));
+  --cs-focus: hsl(var(--olive));
+  --cs-toggle-edge: hsl(var(--espresso-soft));
+  --cs-radius: var(--radius-card);
+  --cs-button-radius: var(--radius-pill);
+  --cs-shadow: var(--shadow-lg);
+}
+/* The banner's wrapper shares its class name with the club's amber .cs-panel. */
+.cookiestream .cs-panel {
+  background: none;
+  color: inherit;
+}
+.cookiestream .cs-panel::before {
+  content: none;
+}
+/* Clear the accessibility tab: above it on phones, beside it from md. */
+@media (max-width: 767px) {
+  .cookiestream {
+    --cs-offset-bottom: 7.25rem;
+  }
+}
+@media (min-width: 768px) {
+  .cookiestream[data-position] {
+    padding-left: 4.25rem;
   }
 }

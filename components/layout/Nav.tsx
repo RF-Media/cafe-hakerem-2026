@@ -36,6 +36,7 @@ type NavItem =
 
 const navItems: NavItem[] = [
   { type: "dropdown", id: "menu", href: "/menu", label: "תפריט" },
+  { type: "link", href: "/offers", label: "מבצעים" },
   { type: "link", href: "/jachnun", label: "ג'חנון" },
   { type: "dropdown", id: "catering", href: "/catering", label: "מגשי אירוח" },
   { type: "link", href: "/about", label: "עלינו" },

@@ -2,8 +2,8 @@
  * Asia/Jerusalem timezone math for jachnun pre-orders.
  *
  * Rules (CLAUDE.md §13):
- *   - Orders open for the upcoming Shabbat until Thursday 18:00 Jerusalem time.
- *   - After Thursday 18:00, only the FOLLOWING Shabbat's slots are offered.
+ *   - Orders open for the upcoming Shabbat until Friday 16:00 Jerusalem time.
+ *   - After Friday 16:00, only the FOLLOWING Shabbat's slots are offered.
  *   - `getAvailableSlots()` returns the slots for whichever window is open.
  *
  * Implementation notes:
@@ -17,13 +17,24 @@
 
 const TZ = "Asia/Jerusalem";
 
-/** Fixed slot start times on Saturday morning, local Jerusalem clock. */
-const SATURDAY_SLOT_HOURS: { hour: number; minute: number; label: string }[] = [
-  { hour: 8,  minute: 0,  label: "08:00–08:30" },
-  { hour: 8,  minute: 30, label: "08:30–09:00" },
-  { hour: 9,  minute: 0,  label: "09:00–09:30" },
-  { hour: 9,  minute: 30, label: "09:30–10:00" },
-];
+/**
+ * Half-hour slot start times across the café's Saturday pickup window,
+ * 08:00–15:00 local Jerusalem clock (see CLAUDE.md §13).
+ */
+function buildSaturdaySlotHours(startHour: number, endHour: number): { hour: number; minute: number; label: string }[] {
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  const slots: { hour: number; minute: number; label: string }[] = [];
+  for (let totalMin = startHour * 60; totalMin < endHour * 60; totalMin += 30) {
+    const hour = Math.floor(totalMin / 60);
+    const minute = totalMin % 60;
+    const endMin = totalMin + 30;
+    const endLabel = `${pad(Math.floor(endMin / 60))}:${pad(endMin % 60)}`;
+    slots.push({ hour, minute, label: `${pad(hour)}:${pad(minute)}–${endLabel}` });
+  }
+  return slots;
+}
+
+const SATURDAY_SLOT_HOURS = buildSaturdaySlotHours(8, 15);
 
 export type Slot = {
   /** Absolute UTC ISO timestamp of slot start — what gets submitted/stored. */
@@ -37,7 +48,7 @@ export type Slot = {
 
 /**
  * Returns the date parts of `instant` interpreted in Asia/Jerusalem.
- * Used so we can do "is it past Thursday 18:00?" arithmetic in local time
+ * Used so we can do "is it past Friday 16:00?" arithmetic in local time
  * without pulling in a heavy date library.
  */
 function partsInJerusalem(instant: Date): {
@@ -96,13 +107,13 @@ function daysToNextSaturday(weekday: number): number {
 }
 
 /**
- * Is the current moment past Thursday 18:00 Jerusalem time?
+ * Is the current moment past Friday 16:00 Jerusalem time?
  * If yes, the upcoming Shabbat is closed for new orders — move to the next.
  */
-function isPastThursdayCutoff(p: ReturnType<typeof partsInJerusalem>): boolean {
-  // Past cutoff if: today is Thursday and hour >= 18, OR today is Fri/Sat.
-  if (p.weekday === 4 && p.hour >= 18) return true;
-  if (p.weekday === 5 || p.weekday === 6) return true;
+function isPastFridayCutoff(p: ReturnType<typeof partsInJerusalem>): boolean {
+  // Past cutoff if: today is Friday and hour >= 16, OR today is Saturday.
+  if (p.weekday === 5 && p.hour >= 16) return true;
+  if (p.weekday === 6) return true;
   return false;
 }
 
@@ -112,7 +123,7 @@ function isPastThursdayCutoff(p: ReturnType<typeof partsInJerusalem>): boolean {
 export function targetSaturday(now: Date = new Date()): { year: number; month: number; day: number } {
   const p = partsInJerusalem(now);
   let add = daysToNextSaturday(p.weekday);
-  if (isPastThursdayCutoff(p)) add += 7;
+  if (isPastFridayCutoff(p)) add += 7;
 
   // Add `add` days to (year, month, day) via a date math helper.
   const base = new Date(Date.UTC(p.year, p.month - 1, p.day));

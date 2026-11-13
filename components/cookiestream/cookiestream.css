@@ -1,0 +1,393 @@
+/*
+ * CookieStream. Map the --cs-* variables to the site's tokens in the site's own CSS:
+ *
+ *   .cookiestream { --cs-bg: var(--card); --cs-accent: var(--brand); ... }
+ *
+ * The defaults sit in :where(), which has no specificity, so that mapping wins
+ * whatever order the stylesheets load in. Sizes are in rem so a site's text
+ * enlargement reaches the banner too.
+ */
+
+:where(.cookiestream) {
+  --cs-z: 60;
+  --cs-bg: #fff;
+  --cs-fg: #1c1c1c;
+  --cs-muted: #4d4d4d;
+  --cs-border: #d9d9d9;
+  --cs-raised: #f4f4f2;
+  --cs-accent: #17794f;
+  --cs-accent-hover: #13683f;
+  --cs-accent-fg: #fff;
+  --cs-link: currentColor;
+  --cs-focus: #17794f;
+  --cs-toggle-edge: #6b6b6b;
+  --cs-radius: 8px;
+  --cs-button-radius: 6px;
+  --cs-shadow: 0 10px 30px rgb(0 0 0 / 0.18);
+  /* Raises the banner on phones, to clear a floating widget in a bottom corner. */
+  --cs-offset-bottom: 0px;
+}
+
+.cookiestream {
+  position: fixed;
+  inset: 0;
+  z-index: var(--cs-z);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0.75rem;
+  padding-bottom: calc(max(0.75rem, env(safe-area-inset-bottom)) + var(--cs-offset-bottom));
+  pointer-events: none;
+}
+.cookiestream[data-position='center'] {
+  align-items: center;
+}
+@media (min-width: 640px) {
+  .cookiestream {
+    padding: 1.5rem;
+    padding-bottom: calc(1.5rem + var(--cs-offset-bottom));
+  }
+  .cookiestream[data-position='bottom-left'] {
+    justify-content: flex-start;
+  }
+  .cookiestream[data-position='bottom-right'] {
+    justify-content: flex-end;
+  }
+}
+
+.cs-panel {
+  width: 100%;
+  pointer-events: auto;
+  animation: cs-rise 220ms ease-out;
+}
+@media (min-width: 768px) {
+  .cs-panel {
+    width: min(920px, calc(100vw - 3rem));
+  }
+}
+.cookiestream[data-position='center'] .cs-panel {
+  animation-name: cs-settle;
+}
+@keyframes cs-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+@keyframes cs-settle {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-panel {
+    animation-name: none;
+  }
+}
+@media print {
+  .cookiestream {
+    display: none;
+  }
+}
+
+/* A container, so the layout follows the card's own width: banner and admin preview alike. */
+.cs-card {
+  container-type: inline-size;
+  max-height: calc(100dvh - 1.5rem - var(--cs-offset-bottom));
+  overflow-y: auto;
+  padding: 1.25rem;
+  border: 1px solid var(--cs-border);
+  border-radius: var(--cs-radius);
+  background: var(--cs-bg);
+  color: var(--cs-fg);
+  box-shadow: var(--cs-shadow);
+}
+
+.cs-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.cs-title:focus {
+  outline: none;
+}
+.cs-body {
+  margin: 0.375rem 0 0;
+  color: var(--cs-muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.cs-link {
+  color: var(--cs-link);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.cs-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.cs-actions,
+.cs-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.cs-actions {
+  margin-top: 1rem;
+}
+.cs-footer {
+  margin-top: 0.5rem;
+}
+.cs-actions > button,
+.cs-footer > button {
+  width: 100%;
+}
+.cs-footer-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+/* Two across on a narrow phone: the label wraps before it overflows. */
+.cs-footer-pair > button {
+  min-width: 0;
+  padding-inline: 0.5rem;
+  white-space: normal;
+}
+
+.cs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.25rem;
+  border: 2px solid transparent;
+  border-radius: var(--cs-button-radius);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: filter 150ms ease-out, background-color 150ms ease-out;
+}
+.cs-btn--accept {
+  background: var(--cs-accent);
+  color: var(--cs-accent-fg);
+}
+.cs-btn--accept:hover {
+  background: var(--cs-accent-hover);
+}
+.cs-btn--outline {
+  border-color: var(--cs-fg);
+  background: transparent;
+  color: var(--cs-fg);
+}
+.cs-btn--outline:hover {
+  background: var(--cs-raised);
+}
+.cs-btn--quiet {
+  background: transparent;
+  color: var(--cs-muted);
+}
+.cs-btn--quiet:hover {
+  background: var(--cs-raised);
+  color: var(--cs-fg);
+}
+.cs-btn:focus-visible,
+.cs-back:focus-visible,
+.cs-toggle:focus-visible,
+.cs-link:focus-visible {
+  outline: 3px solid var(--cs-focus);
+  outline-offset: 2px;
+}
+
+.cs-settings-head {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.cs-settings-head .cs-title {
+  padding-inline-start: 0.5rem;
+}
+.cs-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  min-height: 2.75rem;
+  margin-inline-start: -0.5rem;
+  padding-inline: 0.375rem 0.625rem;
+  border: 0;
+  border-radius: var(--cs-button-radius);
+  background: transparent;
+  color: var(--cs-muted);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cs-back:hover {
+  background: var(--cs-raised);
+  color: var(--cs-fg);
+}
+.cs-back-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+/* Back points the way the reader came from: right in RTL, left in LTR. */
+.cs-card[dir='ltr'] .cs-back-icon {
+  transform: scaleX(-1);
+}
+.cs-divider {
+  width: 1px;
+  height: 1rem;
+  background: var(--cs-border);
+}
+
+.cs-rows {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.cs-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-block: 0.75rem;
+  border-top: 1px solid var(--cs-border);
+}
+.cs-row:first-child {
+  border-top: 0;
+}
+.cs-row-text {
+  min-width: 0;
+}
+.cs-row-label {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.cs-row-desc {
+  margin: 0.125rem 0 0;
+  color: var(--cs-muted);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+.cs-always {
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  background: var(--cs-raised);
+  color: var(--cs-fg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cs-toggle {
+  position: relative;
+  flex-shrink: 0;
+  width: 3rem;
+  height: 1.75rem;
+  margin-top: 0.125rem;
+  padding: 0;
+  border: 1.5px solid var(--cs-toggle-edge);
+  border-radius: 9999px;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 150ms ease-out;
+}
+/* Pads the tap area to 44px without changing the switch's look. */
+.cs-toggle::after {
+  content: '';
+  position: absolute;
+  inset: -0.5rem -0.25rem;
+}
+.cs-toggle[aria-checked='true'] {
+  background: var(--cs-accent);
+}
+.cs-toggle-knob {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: 0.1875rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background: var(--cs-toggle-edge);
+  transform: translateY(-50%);
+  transition: inset-inline-start 200ms ease-out;
+}
+.cs-toggle[aria-checked='true'] .cs-toggle-knob {
+  inset-inline-start: 1.3125rem;
+  background: var(--cs-accent-fg);
+}
+
+@container (min-width: 640px) {
+  .cs-intro {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+  .cs-intro-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .cs-actions {
+    flex-direction: row;
+    flex-shrink: 0;
+    align-items: center;
+    margin-top: 0;
+  }
+  .cs-actions > button {
+    width: auto;
+    min-width: 7.5rem;
+  }
+  .cs-actions > button:last-child {
+    min-width: 0;
+  }
+  .cs-rows {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  .cs-rows[data-count='2'] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .cs-rows[data-count='3'] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .cs-row {
+    padding: 0.875rem;
+    border-top: 0;
+    border-radius: var(--cs-button-radius);
+    background: var(--cs-raised);
+  }
+  .cs-row .cs-always {
+    background: var(--cs-bg);
+  }
+  .cs-footer {
+    flex-direction: row;
+    margin-top: 1rem;
+  }
+  .cs-footer > button {
+    width: auto;
+    min-width: 15rem;
+  }
+  .cs-footer-pair {
+    display: flex;
+  }
+  .cs-footer-pair > button {
+    padding-inline: 1.25rem;
+    white-space: nowrap;
+  }
+}

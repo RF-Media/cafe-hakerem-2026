@@ -8,6 +8,7 @@ import { z } from "zod";
 import { PACKAGE_IDS, jachnunPackages, jachnunPricing } from "@/content/jachnun";
 import { PAYMENT_METHODS } from "@/content/jachnun-order";
 import { isValidIsraeliMobile, normalizePhone } from "@/lib/phone";
+import { PREORDER_MAX } from "@/lib/preorder";
 
 /* Israeli mobile phone. The rule itself lives in lib/phone.ts so the
  * checkout can validate on blur without shipping Zod to the browser. */
@@ -89,16 +90,28 @@ export type JachnunOrderInput = z.infer<typeof jachnunOrderSchema>;
 
 /* ─── Jachnun pre-order (phase 1) ──────────────────────────────── */
 
-/* The one-step form on /jachnun: no add-ons, no payment, no client total.
-   The price in the café's email is looked up from the package server-side. */
-export const jachnunPreorderSchema = z.object({
-  name: nameSchema,
-  phone: phoneSchema,
-  email: optionalEmailSchema,
-  packageId: z.enum(PACKAGE_IDS, { errorMap: () => ({ message: "בחרו חבילה." }) }),
-  pickupSlot: z.string().datetime({ message: "מועד איסוף לא תקין." }),
-  notes: optionalNotesSchema,
-});
+/* The pre-order form on /jachnun: jachnun and burekas, no payment, no client
+   total. The price in the café's email is recomputed by lib/preorder.ts. */
+const preorderQty = (max: number) =>
+  z
+    .number({ invalid_type_error: "כמות לא תקינה." })
+    .int({ message: "כמות לא תקינה." })
+    .min(0, { message: "כמות לא תקינה." })
+    .max(max, { message: "כמות לא תקינה." });
+
+export const jachnunPreorderSchema = z
+  .object({
+    name: nameSchema,
+    phone: phoneSchema,
+    email: optionalEmailSchema,
+    /** Jachnun units. Kept under its original name so an open tab from before burekas still submits. */
+    quantity: preorderQty(PREORDER_MAX.jachnun),
+    /** Burekas servings (4 pieces each). */
+    burekas: preorderQty(PREORDER_MAX.burekas).default(0),
+    pickupSlot: z.string().datetime({ message: "מועד איסוף לא תקין." }),
+    notes: optionalNotesSchema,
+  })
+  .refine((d) => d.quantity + d.burekas > 0, { message: "בחרו לפחות פריט אחד.", path: ["quantity"] });
 
 export type JachnunPreorderInput = z.infer<typeof jachnunPreorderSchema>;
 

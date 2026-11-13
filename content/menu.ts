@@ -45,7 +45,7 @@ export const menuCategories: MenuCategory[] = [
     title: { he: "בורקס הכרם" },
     blurb: "בורקס תורכי בעבודת יד, מוכן במטבח שלנו לפי מתכון מסורתי.",
     items: [
-      { name: "בורקס תורכי בעבודת יד", description: "4 יחידות בורקס תורכי בעבודת יד", price: "₪46" },
+      { name: "בורקס תורכי בעבודת יד", description: "4 יחידות בורקס תורכי בעבודת יד", price: "₪36" },
     ],
     image: "/images/burekas-golden_shared.jpg",
     imageAlt: "בורקסים תורכיים מוזהבים בתבנית, ישר מהתנור של קפה הכרם",
@@ -54,6 +54,10 @@ export const menuCategories: MenuCategory[] = [
     id: "sandwiches",
     title: { he: "כריכים" },
     blurb: "טוסטים ופוקאצ'ות אפויות אצלנו, לאכול כאן או לקחת.",
+    // [TODO: לאשר עם רועי - הבקשה הייתה לציין זמינות גרסה טבעונית ל"כריך
+    // סביח" (לא פוקאצ'ה), אבל אין פריט כזה ברשימה - יש רק "פוקאצ'ת סביח"
+    // (כבר מסומנת טבעוני) למטה. לאשר לאיזה פריט הכוונה.]
+    // [TODO: מה מרכיב הכריך הטבעוני - תחליף לביצה/שינוי מתכון?]
     items: [
       { name: "טוסט ספיישל", description: "לחם קסטן, גבינת גאודה, בצל מקורמל וביצה קשה", price: "₪42", badges: ["vegetarian"] },
       { name: "טוסט בהרכבה", description: "טוסט בלחם קסטן לבן בהרכבה אישית", price: "₪39" },
@@ -151,6 +155,9 @@ export const menuCategories: MenuCategory[] = [
     imageAlt: "מאפה עם תותים ואוכמניות על נייר אפייה, על שולחן בחוץ בקפה הכרם",
     imagePosition: "50% 62%",
   },
+  // [TODO: להשוות מחירי המאפים (קרואסון חמאה/שוקולד, שקדים, פאן סוויס, סינבון,
+  // רוגלך, ריקוטה-תות, ספוליאטלה) מול תפריאט ולעדכן בהתאם] — מחקר בלבד, לא
+  // לשנות מחירים בלי אימות.
   {
     id: "pastries",
     title: { he: "מאפים" },
@@ -197,7 +204,7 @@ export const menuCategories: MenuCategory[] = [
   {
     id: "drinks",
     title: { he: "משקאות" },
-    blurb: "קפה קר, תה וצ'אי - מוגשים לאורך כל היום.",
+    blurb: "קפה קר, תה וצ'אי - מוגשים לאורך כל היום. יש גם מגוון משקאות עונתיים, שמשתנה לפי העונה.",
     items: [
       { name: "חליטת תה קר", description: "חליטה קרה, נענע ולימון", price: "₪21", badges: ["vegan", "gluten-free"] },
       { name: "מאצ'ה קרה", description: "מאצ'ה של MIX&MATCHA, מוגש בבקבוק", price: "₪27", badges: ["vegetarian"] },
@@ -256,6 +263,7 @@ export const menuCategories: MenuCategory[] = [
         description: "בלנד של 70% ערביקה ו-30% רובוסטה, מריר, אגוזי ובעל חמיצות נמוכה מאוד",
         price: "₪160",
       },
+      { name: "קפסולות קפה איטלקיות", description: "10 יחידות", price: "₪25" },
       { name: "אבקת מאצ'ה MIX&MATCHA", description: "30 גרם", price: "₪139" },
       { name: "סירופ וניל MIX&MATCHA", description: "סירופ מקנה סוכר אורגני להוספה לקפה או למאצ'ה, 1 ליטר", price: "₪170" },
       { name: "סירופ קרמל MIX&MATCHA", description: "סירופ מקנה סוכר אורגני להוספה לקפה או למאצ'ה, 1 ליטר", price: "₪170" },

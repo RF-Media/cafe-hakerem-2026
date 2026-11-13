@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { business } from "@/content/business";
+import { cookieSettingsLabel } from "@/content/cookies";
+import { CookieSettingsButton } from "@/components/cookiestream/CookieSettingsButton";
 import { IconPhone, IconPin, IconStamp } from "@/components/ui/icons";
 import { container } from "@/components/ui/Section";
 
@@ -15,6 +17,7 @@ const linkGroups: { title: string; items: { href: string; label: string }[] }[] 
     title: "האתר",
     items: [
       { href: "/menu", label: "התפריט" },
+      { href: "/offers", label: "מבצעים" },
       { href: "/jachnun", label: "ג'חנון של שבת" },
       { href: "/catering", label: "מגשי אירוח" },
       { href: "/coffee-club", label: "מועדון הלקוחות" },
@@ -117,6 +120,9 @@ export function Footer() {
             <Link href="/privacy" className="transition-colors hover:text-brass">
               פרטיות
             </Link>
+            <CookieSettingsButton className="cursor-pointer transition-colors hover:text-brass">
+              {cookieSettingsLabel}
+            </CookieSettingsButton>
           </div>
         </div>
       </div>

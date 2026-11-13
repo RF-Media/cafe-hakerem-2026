@@ -216,37 +216,10 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      {/* The album: real empty frames for photos the café is still looking for.
-          Give an entry a `src` in content/about.ts and the frame becomes it. */}
-      <Section tone="cream-2">
-        <SectionHeading eyebrow={about.album.eyebrow} title={about.album.title} description={about.album.lede} />
-        <Stagger className="grid gap-8 sm:grid-cols-3 sm:gap-6" stagger={0.1}>
-          {about.album.photos.map((photo, i) => (
-            <StaggerItem key={photo.caption} variant="tile">
-              <figure
-                className={
-                  "mx-auto max-w-xs rounded-[6px] bg-cream-3 p-3 pb-5 shadow-md transition-[transform,box-shadow] duration-base ease-out-soft hover:rotate-0 hover:shadow-lg " +
-                  (i === 0 ? "-rotate-2" : i === 1 ? "rotate-1" : "-rotate-1")
-                }
-              >
-                <CafeImage
-                  variant={photo.variant}
-                  src={photo.src}
-                  alt={photo.alt}
-                  ratio="aspect-square"
-                  tone="espresso"
-                  className="!rounded-[3px]"
-                  sizes="(max-width: 640px) 80vw, 30vw"
-                />
-                <figcaption className="mt-4 text-center">
-                  <span className="block type-sub text-base text-espresso">{photo.caption}</span>
-                  {!photo.src ? <span className="mt-1 block text-xs text-espresso-soft">{about.album.pendingNote}</span> : null}
-                </figcaption>
-              </figure>
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </Section>
+      {/* TODO: the album section (real empty frames for photos the café is
+          still looking for) is hidden at the café's request until real
+          photography exists for it. Content stays in content/about.ts
+          (about.album) — restore this block to bring it back. */}
 
       <Section tone="pine">
         <div className="mx-auto max-w-2xl text-center">

@@ -30,7 +30,7 @@ export function HomeHero() {
   const whatsapp = `https://wa.me/${business.whatsapp.number}?text=${encodeURIComponent(business.whatsapp.prefilledMessage)}`;
 
   return (
-    <section className="relative isolate -mt-[var(--nav-h)] flex min-h-[100svh] flex-col justify-end overflow-hidden bg-espresso-deep text-cream">
+    <section data-track-area="home_hero" className="relative isolate -mt-[var(--nav-h)] flex min-h-[100svh] flex-col justify-end overflow-hidden bg-espresso-deep text-cream">
       <div className="absolute inset-x-0 top-0 -z-10 h-[50svh] overflow-hidden md:h-full">
         <picture className="hero-settle absolute inset-0 block">
           <source media="(orientation: portrait)" srcSet={portrait.srcSet} sizes={portrait.sizes} />

@@ -9,6 +9,7 @@ const indexed: { key: PageKey; priority: number; images: string[] }[] = [
   { key: "menu", priority: 0.9, images: ["/images/burekas-golden_shared.jpg", "/images/sandwich-seeded_shared.jpg", "/images/cinnamon-rolls_shared.jpg", "/images/cheesecake-basque_shared.jpg"] },
   { key: "jachnun", priority: 0.9, images: ["/images/jachnun-closeup_shared.jpg", "/images/jachnun-tray_shared.jpg"] },
   { key: "catering", priority: 0.8, images: ["/images/burekas-table_shared.jpg", "/images/sandwich-box_catering.jpg", "/images/sweet-box_catering.jpg"] },
+  { key: "offers", priority: 0.8, images: ["/images/coffee-duo_shared.jpg"] },
   { key: "club", priority: 0.8, images: ["/images/cup-pastry_coffee-club.jpg"] },
   { key: "about", priority: 0.7, images: ["/images/yard_shared.jpg", "/images/storefront_shared.jpg"] },
   { key: "contact", priority: 0.7, images: ["/images/storefront_shared.jpg"] },

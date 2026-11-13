@@ -3,10 +3,14 @@ import { Noto_Sans_Hebrew } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { AccessibilityWidget } from "@/components/layout/AccessibilityWidget";
+import { CookieStream } from "@/components/cookiestream/CookieStream";
+import { Measurement } from "@/components/analytics/Measurement";
 import { business } from "@/content/business";
+import { cookieConsent } from "@/content/cookies";
 import { CREAM_HEX } from "@/lib/theme";
 import { A11Y_BOOT_SCRIPT } from "@/lib/a11y-prefs";
 import { MOTION_RUNTIME } from "@/lib/motion-runtime";
+import "@/components/cookiestream/cookiestream.css";
 import "./globals.css";
 
 // Single unified family across the site (CLAUDE.md §5). Bound to all
@@ -173,6 +177,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main" className="skip-link">דלגו לתוכן</a>
         <JsonLd data={globalSchema()} />
         <AccessibilityWidget />
+        {/* The only place tracking loads, and only after consent. Never paste a tag into a layout. */}
+        <CookieStream config={cookieConsent} />
+        <Measurement />
         {children}
         {/* After the content, so everything it observes is already parsed. */}
         <script dangerouslySetInnerHTML={{ __html: MOTION_RUNTIME }} />

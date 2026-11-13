@@ -103,17 +103,21 @@ export const club = {
     ],
   },
 
-  /* CONFIRM BEFORE LAUNCH: two live promos read off the café's CoffeeStream
-     card on 2026-11-05. They change there without touching this repo, so
-     delete this block if the café would rather not name specifics. */
-  deals: {
-    eyebrow: "רץ עכשיו בכרטיס",
-    title: "ככה נראים מבצעים לחברים",
-    items: [
-      { name: "ארבעה בורקסים", price: "₪36", was: "₪46 בתפריט" },
-      { name: "זוג כדורי שוקולד", price: "₪10", was: "עם קוקוס או סוכריות" },
-    ],
-    note: "המבצעים מתחלפים. מה שמופיע בכרטיס שלכם הוא מה שתקף.",
+  /* What used to sit here (`deals`, a two-item price list mirroring the
+     café's live CoffeeStream card) is now the whole job of /offers — see
+     the 2026-11-13 Decision Log entry. This section of the page instead
+     points there. */
+  offersSection: {
+    eyebrow: "לחברי המועדון",
+    title: "גם הנחות, לא רק קפה חינם",
+  },
+  offersCta: {
+    eyebrow: "מבצעים לחברים",
+    title: "האפי אאוור, הנחות וכוס יין",
+    body:
+      "בין 14:00 ל-19:00 הכרטיס שלכם פותח קפה שני בחצי מחיר, 10% הנחה על התפריט וכוס יין ב-₪30. " +
+      "יש גם עוד כמה הטבות שרצות.",
+    cta: "לכל המבצעים לחברי המועדון",
   },
 
   status: {

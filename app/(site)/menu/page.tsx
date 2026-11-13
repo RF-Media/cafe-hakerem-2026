@@ -66,7 +66,7 @@ const hoursLines = business.hours
   .map((h) => ({ days: h.day === 0 ? "א׳-ה׳" : h.label.he, time: `${h.open}-${h.close}` }));
 
 const facts = [
-  { term: "להזמנה", desc: "איסוף עצמי · ישיבה במקום" },
+  { term: "להזמנה", desc: "איסוף עצמי · ישיבה במקום · משלוח בוולט" },
   { term: "סימון בתפריט", desc: "טבעוני, צמחוני, ללא גלוטן וחריף" },
 ];
 
@@ -82,7 +82,7 @@ function JachnunInterlude() {
             <SplitReveal text="ג'חנון של שבת, להזמנה מראש" />
           </h2>
           <p className="mt-4 max-w-prose-he type-lede text-lg">
-            {jachnun.hero.lede} ההזמנות נסגרות ביום חמישי בשעה 18:00.
+            {jachnun.hero.lede} ההזמנות נסגרות ביום שישי בשעה 16:00.
           </p>
         </div>
         <div className="md:col-span-4 md:text-end">
@@ -98,7 +98,7 @@ function JachnunInterlude() {
 /** And an amber one further down, for the people ordering every week anyway. */
 function ClubInterlude() {
   return (
-    <section className="cs-panel">
+    <section className="cs-panel z-[1]">
       <div className={`${container} grid items-center gap-6 py-12 md:grid-cols-12 md:py-14`}>
         <div className="flex items-center gap-5 md:col-span-8">
           <span className="sticker hidden h-16 w-16 shrink-0 -rotate-6 place-items-center rounded-[18px] bg-amber sm:grid">

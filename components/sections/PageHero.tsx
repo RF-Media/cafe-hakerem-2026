@@ -86,7 +86,7 @@ export function PageHero({
   // page's hero.
   if (bleed) {
     return (
-      <section className={`relative isolate overflow-hidden ${t.ground} ${t.text}`}>
+      <section data-track-area="page_hero" className={`relative isolate overflow-hidden ${t.ground} ${t.text}`}>
         <div className="grid md:grid-cols-2 md:items-stretch">
           <div className="order-2 px-6 pb-10 pt-8 md:order-1 md:px-10 md:py-14 lg:px-16 lg:py-20">
             <Breadcrumb items={crumbs} tone={t.dark ? "dark" : "light"} bare />
@@ -114,7 +114,7 @@ export function PageHero({
   }
 
   return (
-    <section className={`relative isolate overflow-hidden ${t.ground} ${t.text}`}>
+    <section data-track-area="page_hero" className={`relative isolate overflow-hidden ${t.ground} ${t.text}`}>
       <div className={`${container} pt-6`}>
         <Breadcrumb items={crumbs} tone={t.dark ? "dark" : "light"} bare />
         <div className="mt-8 grid items-end gap-10 md:mt-6 md:grid-cols-12 lg:gap-16">
