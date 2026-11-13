@@ -202,8 +202,6 @@ export const jachnun = {
   /* Display strings, derived so they can never contradict the numbers. */
   pricing: {
     perUnit: `${formatILS(jachnunUnitPriceAgorot)} ליחידה`,
-    // CONFIRM BEFORE LAUNCH — amount/percentage not supplied yet.
-    bulkNote: `מעל ${jachnunBulkThresholdUnits} יח' - מחיר מיוחד. [TODO: לקבוע סכום/אחוז ההנחה מעל 20 יחידות ג'חנון]`,
   },
 
   /* Phase-1 one-step pre-order on /jachnun (the five-step checkout at
