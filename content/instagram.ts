@@ -22,7 +22,7 @@ export type InstagramPost = {
 };
 
 export const instagram: InstagramPost[] = [
-  { src: "/images/tray-carry_shared.jpg", alt: "מגש עם מאצ'ה קרה וכריך, בידיים של אורחת בשמלה לבנה בקפה הכרם", category: "בחוץ", variant: "tray" },
+  { src: "/images/coffee-duo_shared.jpg", alt: "שתי כוסות קפה ממותגות של קפה הכרם וקרואסון מעליהן, בידיים של אורחת במעיל בז' בשמש", category: "בחוץ", variant: "cup" },
   { src: "/images/latte-cinnamon_shared.jpg", alt: "קפה בכוס זכוכית עם קצף וקינמון, על שולחן בהיר בקפה הכרם", category: "קפה", variant: "cup" },
   { src: "/images/orange-cake_shared.jpg", alt: "פרוסת עוגת תפוזים עם פרוסות הדר מקורמלות, על נייר אפייה", category: "מאפים", variant: "pastry" },
   { src: "/images/jachnun-plate_jachnun.jpg", alt: "ג'חנון מגולגל על צלחת עם רסק עגבניות, במבט מלמעלה", category: "ג'חנון", variant: "jachnun" },

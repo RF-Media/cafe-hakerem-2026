@@ -184,7 +184,7 @@ another's ground:
 | Pine | `tone="pine"` | the café itself: reasons to come, visiting, /about, /contact and /map |
 | Terracotta | `tone="jachnun"` | jachnun only (and the chapter of the story it began) |
 | Sage | `tone="sage"` | hosting: everything catering |
-| Amber | `tone="amber"` (`.cs-panel`) | the club only, on CoffeeStream's sign-in look |
+| Amber | `tone="amber"` (`.amber-panel`) | the club only, on CoffeeStream's sign-in look |
 | Porcelain | `cream*` | food photography, which brings its own colour, and FAQs |
 
 Small text on terracotta takes solid `text-cream`: `/85` is 4.4:1 there.
@@ -607,6 +607,8 @@ preference — do not assume.
 - Animating `width`, `height`, `top`, `left`, `margin` — compositor
   properties (`transform`, `opacity`, `clip-path`, `filter`) only.
 - Motion on an `<h1>` that delays first paint.
+- An opacity fade on a hero photo. It is the page's LCP element; `transform` only
+  (`.hero-settle`), so it shows the moment it decodes.
 - Loading screens, page-transition delays, typewriter effects.
 - Per-word splitting of body copy, FAQ answers, or
   `<FactualParagraph>`.
@@ -2353,7 +2355,7 @@ itself," jachnun, catering or the club exclusively, it's a cross-cutting page th
 to lean heavily on club content. Its hero is plain `bg-espresso-deep` (the general brand
 ground, same family as the home hero), earning its own identity before the CoffeeStream
 tie-in shows up in the grid, the sage section (reusing `club.platform`'s explanation of
-CoffeeStream rather than rewriting it) and the closing `cs-panel` band. Amber is used only
+CoffeeStream rather than rewriting it) and the closing `amber-panel` band. Amber is used only
 where the content is genuinely club content (the featured card's sticker, the "לחברי
 המועדון" exclusivity chip's accent, the closing CTA), consistent with how `<ClubBand>`
 already borrows amber on the home page outside `/coffee-club` itself.
@@ -2410,3 +2412,41 @@ request: `form_view` → `form_start` → `order_item_change` → `form_step` (p
 eight parameters, published as GTM version 3 ("Jachnun pre-order funnel", 2026-11-13, confirmed
 in the live gtm.js). GA4 custom definitions: dimensions `form_step`, `form_field`, `item_id`,
 `pickup_window`; metrics `jachnun_qty`, `burekas_qty`.
+
+**2026-11-14 — Temporary Hanukkah campaign behind one switch.**
+`hanukkahCampaign.enabled` in `content/holidays.ts` turns on a compact espresso card and
+swaps the "משהו מיוחד לחג" band for a "חנוכה בקפה הכרם" section (`#hanukkah`), which the
+card's button jumps to. False restores the original band and removes the card. The card
+does not sit in the hero: the hero's left side is the barista photo with the logo on his
+shirt. It goes in the empty end corner of the "מה בא לכם היום?" heading row on `lg+`
+(`aside` prop on `AlwaysRollingSection`), and above that heading on phones, the first thing
+after the hero and ticker. No approved Hanukkah offers exist in the project, so the button
+reads "לחנוכה בקפה הכרם" and the section is a greeting, not a list of deals. The
+sufganiyah is `public/images/sufganiyah.png`, a transparent PNG at most 512px wide,
+because it never renders wider than 256 CSS px.
+
+**2026-11-14 — The amber ground is `.amber-panel`; it no longer shares a name with the cookie banner.**
+Supersedes the class-name half of the 2026-11-10 consent entry. The guard added then only stopped
+the site's amber styles reaching the banner. The other direction was never covered:
+`cookiestream.css` sizes its own `.cs-panel` to `min(920px, 100vw - 3rem)` from `md` and gives it a
+rise animation, so every amber band on the site (home club band, both `/coffee-club` bands, `/offers`,
+`/menu`) shrank to a 920px block hugging the right edge. The site's class is now `.amber-panel`
+and the guard is gone. `cookiestream.css` is left as installed, so a reinstall can't bring the bug back.
+
+**2026-11-14 — The club calculator no longer pins.**
+Supersedes the sticky half of the 2026-11-07 club entry. With the scene pinned, the controls
+column scrolled past it, which the client read as a side panel scrolling on its own. The scene
+is now capped at 440px (or the viewport less 10rem) and centred beside the controls, the heading
+drops to `lg:text-5xl`, the result rows step down a size, and the section uses the default
+spacing, so the whole calculator fits one desktop screen. The "חישוב לדוגמה" note under the
+perks was removed at the client's request; the `CONFIRM BEFORE LAUNCH` on the perk positions
+still stands.
+
+**2026-11-14 — Inner-page hero photos no longer fade in.**
+`<PageHero>` gave its photo the same `.hero-fade` as the text: opacity 0 for 200ms, then an
+800ms fade. Measured on `/jachnun` (dev, 2× DPR) the image was decoded at 97ms but fully visible
+at 926ms, and LCP landed at 984ms, because Chrome doesn't count an element at opacity 0. After a
+nav click the bytes arrived at 90ms and the photo finished at 1,090ms. The server was never the
+problem: a cached `/_next/image` response takes ~1ms, and a cold encode 0.6–1.4s once per width.
+The photo now paints at first frame (LCP 156ms; 180ms at 4× CPU; 86ms after a nav click). The
+text keeps its fade. The home hero already did this right with the transform-only `.hero-settle`.

@@ -21,8 +21,8 @@
   --cs-link: currentColor;
   --cs-focus: #17794f;
   --cs-toggle-edge: #6b6b6b;
-  --cs-radius: 8px;
-  --cs-button-radius: 6px;
+  --cs-radius: 0px;
+  --cs-button-radius: 0px;
   --cs-shadow: 0 10px 30px rgb(0 0 0 / 0.18);
   /* Raises the banner on phones, to clear a floating widget in a bottom corner. */
   --cs-offset-bottom: 0px;
@@ -286,7 +286,7 @@
   flex-shrink: 0;
   margin-top: 0.125rem;
   padding: 0.25rem 0.625rem;
-  border-radius: 9999px;
+  border-radius: 0;
   background: var(--cs-raised);
   color: var(--cs-fg);
   font-size: 0.75rem;
@@ -302,7 +302,7 @@
   margin-top: 0.125rem;
   padding: 0;
   border: 1.5px solid var(--cs-toggle-edge);
-  border-radius: 9999px;
+  border-radius: 0;
   background: transparent;
   cursor: pointer;
   transition: background-color 150ms ease-out;
@@ -322,7 +322,7 @@
   inset-inline-start: 0.1875rem;
   width: 1.25rem;
   height: 1.25rem;
-  border-radius: 9999px;
+  border-radius: 0;
   background: var(--cs-toggle-edge);
   transform: translateY(-50%);
   transition: inset-inline-start 200ms ease-out;

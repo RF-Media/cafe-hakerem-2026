@@ -98,7 +98,7 @@ function JachnunInterlude() {
 /** And an amber one further down, for the people ordering every week anyway. */
 function ClubInterlude() {
   return (
-    <section className="cs-panel z-[1]">
+    <section className="amber-panel z-[1]">
       <div className={`${container} grid items-center gap-6 py-12 md:grid-cols-12 md:py-14`}>
         <div className="flex items-center gap-5 md:col-span-8">
           <span className="sticker hidden h-16 w-16 shrink-0 -rotate-6 place-items-center rounded-[18px] bg-amber sm:grid">

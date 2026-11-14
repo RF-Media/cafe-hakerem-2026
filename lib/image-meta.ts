@@ -21,7 +21,7 @@ export const imageMeta: Record<string, { w: number; h: number; c: string }> = {
   "/images/coffee-duo_shared.jpg": { w: 1600, h: 2000, c: "#897e73" },
   "/images/coffee-sandwich_shared.jpg": { w: 1350, h: 1800, c: "#6a6252" },
   "/images/coffee-shelf_shared.jpg": { w: 1439, h: 1800, c: "#6e6051" },
-  "/images/cold-drinks_shared.jpg": { w: 1600, h: 1537, c: "#8e7d60" },
+  "/images/iced-drinks_shared.jpg": { w: 1320, h: 1192, c: "#d68851" },
   "/images/courtyard-tall_shared.jpg": { w: 1200, h: 1800, c: "#87847d" },
   "/images/croissant-macro_shared.jpg": { w: 1013, h: 1800, c: "#a38255" },
   "/images/cup-pastry_coffee-club.jpg": { w: 1350, h: 1800, c: "#8d8276" },

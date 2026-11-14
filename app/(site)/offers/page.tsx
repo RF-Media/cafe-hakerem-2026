@@ -176,7 +176,7 @@ export default function OffersPage() {
       </Section>
 
       {/* Final ask, same shape as the club page's own closing band. */}
-      <section className="cs-panel overflow-hidden py-20 md:py-28">
+      <section className="amber-panel overflow-hidden py-20 md:py-28">
         <div className={`${container} grid items-center gap-10 md:grid-cols-12`}>
           <div className="md:col-span-8">
             <h2 className="type-statement text-4xl md:text-6xl">
