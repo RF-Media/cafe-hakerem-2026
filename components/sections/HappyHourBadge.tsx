@@ -9,7 +9,7 @@ import { getHappyHourStatus, type HappyHourStatus } from "@/lib/happy-hour-statu
  * revalidate, so a server-computed status would go stale (same reasoning
  * as `<OpenStatusBadge>`).
  */
-export function HappyHourBadge({ className = "" }: { className?: string }) {
+export function HappyHourBadge({ className = "", dotClassName = "bg-brass" }: { className?: string; dotClassName?: string }) {
   const [status, setStatus] = useState<HappyHourStatus | null>(null);
 
   useEffect(() => {
@@ -21,8 +21,8 @@ export function HappyHourBadge({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-2 text-sm font-medium ${className}`}>
       <span aria-hidden className="relative flex h-2 w-2">
-        {status.isActive ? <span className="seal-ping absolute inset-0 rounded-full bg-brass" /> : null}
-        <span className={`relative h-2 w-2 rounded-full ${status.isActive ? "bg-brass" : "bg-current opacity-40"}`} />
+        {status.isActive ? <span className={`seal-ping absolute inset-0 rounded-full ${dotClassName}`} /> : null}
+        <span className={`relative h-2 w-2 rounded-full ${status.isActive ? dotClassName : "bg-current opacity-40"}`} />
       </span>
       {status.label}
     </span>

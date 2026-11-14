@@ -127,6 +127,41 @@ const scenes: Record<OfferIllustrationKey, (props: Props) => React.ReactNode> = 
   student: Student,
 };
 
+/** A price tag with a percent sign punched into it, hanging off its string,
+ *  in the club's sticker language (amber fill, ink outline). Beside the
+ *  benefits table on /offers. */
+export function PercentTagArt({ className }: Props) {
+  return (
+    <svg viewBox="0 0 400 400" className={className ?? svg} aria-hidden focusable="false">
+      <path d="M219 136c-6-42 26-78 72-84" {...stroke} strokeWidth={4} className="text-cs-ink" />
+      <g transform="rotate(14 200 220)">
+        <path
+          d="M146 160 200 100l54 60v172a18 18 0 0 1-18 18h-72a18 18 0 0 1-18-18z"
+          transform="translate(-6 8)"
+          className="fill-cs-ink"
+        />
+        <path
+          d="M146 160 200 100l54 60v172a18 18 0 0 1-18 18h-72a18 18 0 0 1-18-18z"
+          className="fill-amber stroke-cs-ink"
+          strokeWidth={5}
+          strokeLinejoin="round"
+        />
+        <circle cx="200" cy="142" r="10" className="fill-cream-2 stroke-cs-ink" strokeWidth={4} />
+        <g className="text-cs-ink" {...stroke} strokeWidth={9}>
+          <circle cx="176" cy="212" r="15" />
+          <circle cx="224" cy="292" r="15" />
+          <path d="M228 200l-56 104" />
+        </g>
+      </g>
+      <g className="text-cs-ink" {...stroke} strokeWidth={4}>
+        <path d="M300 230v28M286 244h28" />
+        <path d="M92 132v20M82 142h20" />
+        <path d="M104 300l14 14M118 300l-14 14" opacity="0.6" />
+      </g>
+    </svg>
+  );
+}
+
 export function OfferScene({ variant, className }: { variant: OfferIllustrationKey; className?: string }) {
   const Scene = scenes[variant];
   return <Scene className={className} />;

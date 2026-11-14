@@ -55,8 +55,8 @@ export function AlwaysRollingSection({ categories, eyebrow, title, cta, caption,
   return (
     <Section tone="cream" spacing="md">
       {aside ? (
-        <div className="mb-10 flex flex-col gap-8 md:mb-14 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
-          <div className="-mt-8 md:mt-0 lg:order-last lg:w-[440px] lg:shrink-0 xl:w-[480px]">{aside}</div>
+        <div className="mb-10 flex flex-col gap-8 md:mb-14 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+          <div className="-mt-8 md:mt-0 lg:order-last lg:w-[440px] lg:shrink-0 xl:w-[500px]">{aside}</div>
           <SectionHeading eyebrow={eyebrow} title={title} action={menuButton} actionBelow className="!mb-0" />
         </div>
       ) : (

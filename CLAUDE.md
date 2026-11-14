@@ -597,6 +597,7 @@ preference — do not assume.
 | Map unfold | `.map-art` | once on load, `clip-path` circle from the pin |
 | Map ripple, polaroid drop | `.map-ripple`, `.map-polaroid` | `transform` + `opacity`; ripples removed by the kill switch |
 | Punch press, sticker landing | `<RewardScene>` | one-shot on slider input, `transform` + `opacity`; nothing in the scene runs on its own |
+| Coupon drop | `.coupon-drop` (/offers hero) | once on load, `transform` only, so the page's biggest numbers paint at full opacity |
 
 ### Forbidden
 
@@ -2450,3 +2451,45 @@ nav click the bytes arrived at 90ms and the photo finished at 1,090ms. The serve
 problem: a cached `/_next/image` response takes ~1ms, and a cold encode 0.6–1.4s once per width.
 The photo now paints at first frame (LCP 156ms; 180ms at 4× CPU; 86ms after a nav click). The
 text keeps its fade. The home hero already did this right with the transform-only `.hero-settle`.
+
+**2026-11-14 — Open questions answered by the café.**
+Kashrut: there is no certificate, so the existing wording stands. "ללא בשר" is removed from all
+four kashrut answers at the café's request. The two menu-level answers gain a line saying the menu
+has vegan options; the jachnun and tray answers don't (the jachnun comes with egg). Supersedes the
+"no meat" half of the 2026-11-03 entry. The merged catering cancellation sentence is now final, and
+the jachnun reason reads "בצק בעבודת יד". The bulk-jachnun FAQ says only that above 20 units there is a
+special price; no amount is published. The club calculator's perk positions stay illustrative and
+the page now says so ("* להמחשה ולשם הכיף בלבד"). "האפי אאוור" is written "Happy Hour" everywhere.
+The holiday band (`homeHolidays`) renders below the Hanukkah section for review, so its `[TODO]`
+body is visible on the home page until the café supplies copy.
+
+**2026-11-14 — /offers rebuilt around coupons; the offer is the hero.**
+Supersedes the layout half of the 2026-11-13 /offers entry. The old hero was a heading and a
+lede on espresso, and no promotion appeared above the fold at any width. The Happy Hour is now
+the hero itself: an amber ticket with `50%` / `10%` / `₪30` set large and a tear-off stub that
+holds the join button. On phones it follows the `<h1>` directly, so on a 390×844 screen the three
+values and the button are all visible on the first screen. An amber ticker of the club's numbers
+runs under the hero. Every other offer is an `<OfferTicket>`: body on the start side, value on a
+perforated stub at the end. Amber stub = club, pine stub = everyone, and the legend says so.
+Then comes a guest-vs-member `<table>` (`<OfferComparison>`). Its club rows mirror facts already in
+`content/club.ts`, and every `exclusivity: "all"` offer is appended automatically, so deleting an
+example promo removes its row. The closing amber band now holds three redeem steps beside
+`<ClubScene>`. The sage CoffeeStream section and `ClubPointerTile` were cut: the hero's "powered by"
+line and the final band say the same.
+
+The ticket notches are a CSS mask (`.ticket-x` / `.ticket-y`, `--tear` = stub size). A mask clips
+`box-shadow`, so edges come from `.ticket-shadow` (`filter: drop-shadow`) on the wrapper.
+Time ranges inside mixed Hebrew strings go through `<TimeText>`, which isolates only the
+`HH:MM–HH:MM` part. Isolating the whole string, as the old `TimeWindow` did, put the Hebrew
+words at the wrong end. The three EXAMPLE promos are still unconfirmed (2026-11-13).
+
+
+**2026-11-14 — Hanukkah card restyled as candlelight; the holiday band is hidden.**
+The card is a night scene on `espresso-deep`: pine in the start corner, an inset brass
+hairline, and the sufganiyah centred in a lit brass halo with two rings and three sparks. A
+nine-light hanukkiah drawn as inline SVG is the eyebrow's glyph. Its flames light once on
+load, from the shamash outwards (`.candle-lit`, `transform` + `opacity`), then hold still,
+and both kill switches show them lit. A first pass let the sufganiyah overhang the card's
+top edge; on desktop that left a tall card with empty space under it, so everything now sits
+inside the card and the heading row centres the two (`lg:items-center`). The "משהו מיוחד לחג" band is hidden at the café's request
+behind `homeHolidays.enabled`. Its `[TODO]` body still fails `check:todos`.
