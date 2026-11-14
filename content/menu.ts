@@ -248,7 +248,7 @@ export const menuCategories: MenuCategory[] = [
       { name: "קינלי סודה", description: "בקבוק זכוכית, 250 מ״ל", price: "₪12" },
       { name: "מיץ ענבים", price: "₪14" },
     ],
-    image: "/images/cold-drinks_shared.jpg",
+    image: "/images/iced-drinks_shared.jpg",
     imageAlt: "שתייה קרה עם לימון ונענע בכוסות שקופות על שולחן עץ בקפה הכרם",
     imagePosition: "50% 40%",
   },

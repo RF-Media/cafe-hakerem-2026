@@ -12,14 +12,13 @@ import type { CookieStreamConfig } from "@/components/cookiestream/config";
 
 export const cookieConsent: CookieStreamConfig = {
   version: 1,
-  // The accessibility tab owns the bottom-left corner.
-  position: "bottom-right",
+  position: "bottom-center",
   dir: "rtl",
   privacyHref: "/privacy",
   ids: { gtmId: "GTM-56MPGJWD", ga4Id: "G-KHG85VPG1Q", metaPixelId: "" },
   texts: {
-    title: "מי לא רוצה עוגיות?",
-    body: "האתר שומר את הבחירה שלכם כאן ואת העדפות הנגישות, כדי לעבוד כמו שצריך. אם תאשרו, נפעיל גם את Google Analytics כדי להבין אילו עמודים מעניינים אתכם. בלי אישור הוא לא נטען.",
+    title: "מי לא רוצה עוגיות? 🍪",
+    body: "האתר משתמש בעוגיות (Cookies) כדי לשפר את חוויית הגלישה שלך ולנתח את התנועה באתר. המשך הגלישה באתר מהווה הסכמה לשימוש בעוגיות בהתאם למדיניות הפרטיות שלנו.",
     privacyLabel: "מדיניות הפרטיות",
     newTab: "(נפתח בכרטיסייה חדשה)",
     accept: "אישור",

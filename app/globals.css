@@ -277,13 +277,13 @@
 
   /* CoffeeStream's sign-in panel: an amber radial with a dotted surround that
      fades out behind whatever sits in the middle. Used only for the club. */
-  .cs-panel {
+  .amber-panel {
     position: relative;
     isolation: isolate;
     background: radial-gradient(ellipse 70% 60% at 50% 42%, hsl(var(--amber-wash)) 0%, hsl(var(--amber-soft)) 55%, hsl(var(--amber)) 100%);
     color: hsl(var(--cs-ink));
   }
-  .cs-panel::before {
+  .amber-panel::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -948,16 +948,11 @@ html.a11y-font * {
   --cs-focus: hsl(var(--olive));
   --cs-toggle-edge: hsl(var(--espresso-soft));
   --cs-radius: var(--radius-card);
-  --cs-button-radius: var(--radius-pill);
+  --cs-button-radius: var(--radius-input);
   --cs-shadow: var(--shadow-lg);
 }
-/* The banner's wrapper shares its class name with the club's amber .cs-panel. */
-.cookiestream .cs-panel {
-  background: none;
-  color: inherit;
-}
-.cookiestream .cs-panel::before {
-  content: none;
+.cookiestream .cs-card {
+  border-top: 2px solid hsl(var(--brass-ink));
 }
 /* Clear the accessibility tab: above it on phones, beside it from md. */
 @media (max-width: 767px) {

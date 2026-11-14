@@ -59,7 +59,7 @@ export default function ClubPage() {
       {/* The ramp's first screen: CoffeeStream's amber panel, the illustration
           from its sign-in screen, and the two buttons that are the whole point
           of the page. */}
-      <section className="cs-panel overflow-hidden">
+      <section className="amber-panel overflow-hidden">
         <div className={`${container} pb-14 pt-6 md:pb-20`}>
           <Breadcrumb items={[{ name: "מועדון הלקוחות" }]} bare />
           <div className="mt-8 grid items-center gap-12 lg:mt-10 lg:grid-cols-12 lg:gap-16">
@@ -138,7 +138,7 @@ export default function ClubPage() {
       </Section>
 
       {/* The calculator: the interactive heart of the ramp, on CoffeeStream's amber. */}
-      <Section tone="amber" spacing="lg">
+      <Section tone="amber">
         <PunchCalculator
           heading={
             <SectionHeading
@@ -146,7 +146,7 @@ export default function ClubPage() {
               title={club.calculator.title}
               description={club.calculator.lede}
               tone="ink"
-              className="!mb-0"
+              className="!mb-0 lg:[&_h2]:text-5xl"
             />
           }
         />
@@ -251,7 +251,7 @@ export default function ClubPage() {
       </Section>
 
       {/* Last step of the ramp: button on phones, QR on a computer. */}
-      <section className="cs-panel overflow-hidden py-20 md:py-28">
+      <section className="amber-panel overflow-hidden py-20 md:py-28">
         <div className={`${container} grid items-center gap-10 md:grid-cols-12`}>
           <div className="md:col-span-8">
             <h2 className="type-statement text-5xl md:text-7xl">

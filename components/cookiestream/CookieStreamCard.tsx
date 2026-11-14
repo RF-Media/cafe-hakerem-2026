@@ -114,6 +114,11 @@ export function CookieStreamCard({
     const isFirst = firstRender.current;
     firstRender.current = false;
     if (manageFocus && (!isFirst || focusOnMount)) titleRef.current?.focus();
+    // StrictMode double-invokes this effect in dev; undo the ref flip on cleanup so the
+    // phantom second mount doesn't read as a view change and steal focus onto the title.
+    return () => {
+      firstRender.current = isFirst;
+    };
   }, [view, manageFocus, focusOnMount]);
 
   const rows: Array<{ key: 'necessary' | 'analytics' | 'marketing'; label: string; description: string }> = [

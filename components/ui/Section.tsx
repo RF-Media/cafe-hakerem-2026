@@ -30,7 +30,7 @@ const toneClasses = {
   jachnun: "bg-jachnun text-cream",
   pine: "bg-olive text-cream",
   sage: "bg-sage text-espresso",
-  amber: "cs-panel",
+  amber: "amber-panel",
 } as const;
 
 const spacingClasses = {

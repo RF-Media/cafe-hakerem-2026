@@ -7,6 +7,7 @@
  * the tile alone. Hover zooms the photo, lifts in the category's line and turns
  * the arrow chip. Touch shows the same tile without the extras.
  */
+import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
@@ -25,6 +26,9 @@ type AlwaysRollingSectionProps = {
   title: string;
   cta: string;
   caption: string;
+  /** A temporary campaign card: above the heading on phones, in the empty
+   *  end corner of the heading row from `lg`. */
+  aside?: ReactNode;
 };
 
 /** By position. `grid-flow-dense` packs them; 12 columns, 5 rows on desktop. */
@@ -41,7 +45,7 @@ const spans = [
   { cls: "col-span-2 aspect-[16/9] md:aspect-auto md:col-span-8", sizes: "(max-width: 768px) 100vw, 66vw" },
 ];
 
-export function AlwaysRollingSection({ categories, eyebrow, title, cta, caption }: AlwaysRollingSectionProps) {
+export function AlwaysRollingSection({ categories, eyebrow, title, cta, caption, aside }: AlwaysRollingSectionProps) {
   const menuButton = (
     <Button as="a" href="/menu" variant="primary" icon={<IconArrow />}>
       {cta}
@@ -50,7 +54,14 @@ export function AlwaysRollingSection({ categories, eyebrow, title, cta, caption 
 
   return (
     <Section tone="cream" spacing="md">
-      <SectionHeading eyebrow={eyebrow} title={title} action={menuButton} actionBelow />
+      {aside ? (
+        <div className="mb-10 flex flex-col gap-8 md:mb-14 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
+          <div className="-mt-8 md:mt-0 lg:order-last lg:w-[440px] lg:shrink-0 xl:w-[480px]">{aside}</div>
+          <SectionHeading eyebrow={eyebrow} title={title} action={menuButton} actionBelow className="!mb-0" />
+        </div>
+      ) : (
+        <SectionHeading eyebrow={eyebrow} title={title} action={menuButton} actionBelow />
+      )}
 
       <Stagger
         className="grid grid-flow-dense grid-cols-2 gap-3 md:grid-cols-12 md:auto-rows-[200px] md:gap-4 lg:auto-rows-[220px]"

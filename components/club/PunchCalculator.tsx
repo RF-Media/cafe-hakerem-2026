@@ -34,12 +34,10 @@ export function PunchCalculator({ heading }: { heading: ReactNode }) {
   const fresh = cups > previous.current ? previous.current : undefined;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-12 lg:grid-rows-[auto_1fr] lg:gap-x-14 lg:gap-y-8">
-      <div className="lg:col-span-5">{heading}</div>
+    <div className="grid gap-8 lg:grid-cols-12 lg:items-center lg:gap-x-12 lg:gap-y-6">
+      <div className="lg:col-span-6">{heading}</div>
 
-      {/* Pinned, and capped to the viewport, so the whole scene stays in view
-          while the slider moves. Stacked above the slider on a phone. */}
-      <div className="mx-auto w-full max-w-[480px] lg:sticky lg:top-24 lg:col-span-7 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:max-w-[calc((100svh-7rem)*0.95)] lg:self-start">
+      <div className="mx-auto w-full max-w-[400px] lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 lg:max-w-[min(440px,calc(100svh-10rem))]">
         <RewardScene
           filled={filled}
           fresh={fresh}
@@ -54,8 +52,8 @@ export function PunchCalculator({ heading }: { heading: ReactNode }) {
         />
       </div>
 
-      <div className="lg:col-span-5 lg:row-start-2">
-        <label htmlFor="cups" className="block type-sub text-2xl md:text-3xl">
+      <div className="lg:col-span-6 lg:row-start-2 lg:self-start">
+        <label htmlFor="cups" className="block type-sub text-xl md:text-2xl">
           {c.perWeek(cups)}
         </label>
         <input
@@ -80,18 +78,18 @@ export function PunchCalculator({ heading }: { heading: ReactNode }) {
           className="cs-range mt-3 w-full"
         />
 
-        <dl aria-live="polite" className="mt-5 divide-y divide-cs-ink/20 border-y border-cs-ink/20">
-          <div className="flex items-baseline justify-between gap-4 py-3.5">
+        <dl aria-live="polite" className="mt-4 divide-y divide-cs-ink/20 border-y border-cs-ink/20">
+          <div className="flex items-baseline justify-between gap-4 py-2.5">
             <dt className="text-sm font-medium">{c.everyLabel}</dt>
-            <dd className="type-statement text-3xl tabular-nums md:text-4xl">{c.every(days)}</dd>
+            <dd className="type-statement text-2xl tabular-nums md:text-3xl">{c.every(days)}</dd>
           </div>
-          <div className="flex items-baseline justify-between gap-4 py-3.5">
+          <div className="flex items-baseline justify-between gap-4 py-2.5">
             <dt className="text-sm font-medium">{c.yearLabel}</dt>
-            <dd className="type-statement text-3xl tabular-nums md:text-4xl">{c.year(perYear)}</dd>
+            <dd className="type-statement text-2xl tabular-nums md:text-3xl">{c.year(perYear)}</dd>
           </div>
         </dl>
 
-        <h3 className="mt-6 type-index text-sm">{c.perksLabel}</h3>
+        <h3 className="mt-5 type-index text-sm">{c.perksLabel}</h3>
         <ul className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2.5">
           {c.perks.map((perk) => {
             const on = filled >= perk.position;
@@ -116,9 +114,7 @@ export function PunchCalculator({ heading }: { heading: ReactNode }) {
           })}
         </ul>
 
-        <p className="mt-5 text-sm leading-relaxed">{c.note}</p>
-
-        <div className="mt-6">
+        <div className="mt-5">
           <Button as="a" href={clubJoinUrl("club_calculator")} external variant="ink" size="lg" icon={<IconArrow />}>
             {c.cta}
           </Button>

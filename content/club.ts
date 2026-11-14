@@ -40,8 +40,7 @@ export const club = {
     year: (n: number) => `${n} כוסות עלינו`,
     /* CONFIRM BEFORE LAUNCH: every label is a real benefit from the facts above,
        but only positions 1 and 10 are real positions. 3, 5 and 7 are the order
-       they appear on the illustration, not the café's card, and the note below
-       says so. To promise a cookie at a given punch, set that milestone in the
+       they appear on the illustration, not the café's card. To promise a cookie at a given punch, set that milestone in the
        café's CoffeeStream card template first, then mirror it here. */
     perks: [
       { position: 1, icon: "gift", label: "ניקוב ראשון במתנה" },
@@ -66,7 +65,6 @@ export const club = {
               ? "הכרטיס מלא, ועוד ניקוב אחד לכרטיס הבא"
               : "הכרטיס מלא, הקפה עלינו",
     sceneLabel: (filled: number, total: number) => `כרטיסיית ניקובים לדוגמה של קפה הכרם, ${filled} ניקובים מתוך ${total}`,
-    note: "חישוב לדוגמה: ניקוב אחד לכל קנייה, 52 שבועות בשנה. ההטבות באיור להמחשה: יום ההולדת והמבצעים מגיעים לכל חבר, בכל קצב.",
     cta: "להתחיל למלא",
   },
 

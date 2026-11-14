@@ -28,7 +28,8 @@ import { WhyVisitSection } from "@/components/sections/WhyVisitSection";
 import { business } from "@/content/business";
 import { catering } from "@/content/catering";
 import { homeFAQs } from "@/content/faqs";
-import { homeHolidays } from "@/content/holidays";
+import { hanukkahCampaign, homeHolidays } from "@/content/holidays";
+import { HanukkahCard, HanukkahSection } from "@/components/sections/HanukkahCampaign";
 import {
   homeAbout,
   homeAlwaysRolling,
@@ -69,17 +70,23 @@ export default function HomePage() {
         title={homeAlwaysRolling.title}
         cta={homeAlwaysRolling.cta}
         caption={homeAlwaysRolling.caption}
+        aside={hanukkahCampaign.enabled ? <HanukkahCard /> : undefined}
       />
 
-      {/* Holiday promotions band — copy pending, see content/holidays.ts. */}
-      <Section tone="cream-3">
-        <Reveal>
-          <SectionHeading eyebrow={homeHolidays.eyebrow} title={homeHolidays.title} />
-        </Reveal>
-        <Reveal delay={0.06}>
-          <p className="mt-4 max-w-prose-he text-base text-espresso-soft md:text-lg">{homeHolidays.body}</p>
-        </Reveal>
-      </Section>
+      {/* Holiday band. The Hanukkah campaign takes its place while it runs;
+          switch it in content/holidays.ts. Original copy pending there too. */}
+      {hanukkahCampaign.enabled ? (
+        <HanukkahSection />
+      ) : (
+        <Section tone="cream-3">
+          <Reveal>
+            <SectionHeading eyebrow={homeHolidays.eyebrow} title={homeHolidays.title} />
+          </Reveal>
+          <Reveal delay={0.06}>
+            <p className="mt-4 max-w-prose-he text-base text-espresso-soft md:text-lg">{homeHolidays.body}</p>
+          </Reveal>
+        </Section>
+      )}
 
       <WhyVisitSection eyebrow={homeValues.eyebrow} title={homeValues.title} items={homeValues.items} />
 

@@ -104,8 +104,8 @@ export function PageHero({
               priority
               sizes="50vw"
               quality={80}
-              className="hero-fade object-cover"
-              style={{ ["--d" as never]: 200, ...(imagePosition ? { objectPosition: imagePosition } : {}) }}
+              className="object-cover"
+              style={imagePosition ? { objectPosition: imagePosition } : undefined}
             />
           </div>
         </div>
@@ -123,7 +123,7 @@ export function PageHero({
           {/* Shown at every width. Hidden on phones it would still be preloaded,
               because `priority` doesn't know about `display: none`. */}
           <div className="flex justify-center self-end pb-6 md:col-span-5 md:pb-2">
-            <div className="hero-fade w-full md:max-w-[420px]" style={{ ["--d" as never]: 200 }}>
+            <div className="w-full md:max-w-[420px]">
               <CafeImage
                 variant="interior"
                 src={image}
