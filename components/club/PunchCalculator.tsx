@@ -113,6 +113,7 @@ export function PunchCalculator({ heading }: { heading: ReactNode }) {
             );
           })}
         </ul>
+        <p className="mt-2 text-xs">{c.perksNote}</p>
 
         <div className="mt-5">
           <Button as="a" href={clubJoinUrl("club_calculator")} external variant="ink" size="lg" icon={<IconArrow />}>

@@ -8,6 +8,8 @@
  */
 
 export const homeHolidays = {
+  /** Hidden at the café's request (2026-11-14); true brings the band back. */
+  enabled: false,
   eyebrow: "מבצעי חגים",
   title: "משהו מיוחד לחג",
   // [TODO: תוכן למבצעי חגים - טרם נמסר]
@@ -16,8 +18,8 @@ export const homeHolidays = {
 
 /**
  * Temporary Hanukkah campaign. `enabled` is the one switch: true shows the
- * card beside "מה בא לכם היום?" (below the hero on phones) and puts the
- * Hanukkah section in place of `homeHolidays`; false restores both as they were.
+ * card beside "מה בא לכם היום?" (below the hero on phones) and adds the
+ * Hanukkah section above the `homeHolidays` band; false removes the card and the section.
  *
  * No approved Hanukkah offers exist in the project (content/offers.ts has none,
  * and the café hasn't supplied holiday promotions), so per the brief the button

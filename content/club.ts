@@ -38,8 +38,8 @@ export const club = {
     every: (days: number) => (days === 1 ? "יום" : days === 7 ? "שבוע" : days === 14 ? "שבועיים" : `${days} ימים`),
     yearLabel: "בשנה שלמה",
     year: (n: number) => `${n} כוסות עלינו`,
-    /* CONFIRM BEFORE LAUNCH: every label is a real benefit from the facts above,
-       but only positions 1 and 10 are real positions. 3, 5 and 7 are the order
+    /* Illustrative, and labelled so on the page (perksNote, client OK 2026-11-14):
+       every label is a real benefit, but only positions 1 and 10 are real positions. 3, 5 and 7 are the order
        they appear on the illustration, not the café's card. To promise a cookie at a given punch, set that milestone in the
        café's CoffeeStream card template first, then mirror it here. */
     perks: [
@@ -49,7 +49,8 @@ export const club = {
       { position: 7, icon: "cake", label: "קפה חינם ליום ההולדת" },
       { position: 10, icon: "cup", label: "הקפה העשירי עלינו" },
     ] as ClubPerk[],
-    perksLabel: "מה נכנס לכרטיס",
+    perksLabel: "מה נכנס לכרטיס*",
+    perksNote: "* להמחשה ולשם הכיף בלבד.",
     perkOn: "בכרטיס",
     perkOff: "בהמשך",
     phoneYear: "קפה חינם בשנה",
@@ -107,11 +108,11 @@ export const club = {
      points there. */
   offersSection: {
     eyebrow: "לחברי המועדון",
-    title: "גם הנחות, לא רק קפה חינם",
+    title: "שלל הנחות והטבות מפתיעות, לא רק קפה עשירי בחינם",
   },
   offersCta: {
     eyebrow: "מבצעים לחברים",
-    title: "האפי אאוור, הנחות וכוס יין",
+    title: "Happy Hour, הנחות וכוס יין",
     body:
       "בין 14:00 ל-19:00 הכרטיס שלכם פותח קפה שני בחצי מחיר, 10% הנחה על התפריט וכוס יין ב-₪30. " +
       "יש גם עוד כמה הטבות שרצות.",

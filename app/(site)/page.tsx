@@ -73,12 +73,11 @@ export default function HomePage() {
         aside={hanukkahCampaign.enabled ? <HanukkahCard /> : undefined}
       />
 
-      {/* Holiday band. The Hanukkah campaign takes its place while it runs;
-          switch it in content/holidays.ts. Original copy pending there too. */}
-      {hanukkahCampaign.enabled ? (
-        <HanukkahSection />
-      ) : (
-        <Section tone="cream-3">
+      {/* Hanukkah campaign and the holiday band, each behind its own switch
+          in content/holidays.ts. */}
+      {hanukkahCampaign.enabled && <HanukkahSection />}
+      {homeHolidays.enabled && (
+        <Section tone="cream-2">
           <Reveal>
             <SectionHeading eyebrow={homeHolidays.eyebrow} title={homeHolidays.title} />
           </Reveal>
