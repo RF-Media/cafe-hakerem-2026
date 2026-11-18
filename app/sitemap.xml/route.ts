@@ -13,7 +13,7 @@ export const dynamic = "force-static";
 const indexed: { key: PageKey; priority: number; images: string[] }[] = [
   { key: "home", priority: 1, images: ["/images/barista_shared.jpg", "/images/coffee-duo_shared.jpg", "/images/storefront_shared.jpg"] },
   { key: "menu", priority: 0.9, images: ["/images/burekas-golden_shared.jpg", "/images/sandwich-seeded_shared.jpg", "/images/cinnamon-rolls_shared.jpg", "/images/cheesecake-basque_shared.jpg"] },
-  { key: "jachnun", priority: 0.9, images: ["/images/jachnun-closeup_shared.jpg", "/images/jachnun-tray_shared.jpg"] },
+  { key: "jachnun", priority: 0.9, images: ["/images/jachnun-spread_shared.jpg", "/images/jachnun-closeup_shared.jpg", "/images/jachnun-tray_shared.jpg"] },
   { key: "catering", priority: 0.8, images: ["/images/burekas-table_shared.jpg", "/images/sandwich-box_catering.jpg", "/images/sweet-box_catering.jpg"] },
   { key: "offers", priority: 0.8, images: [] },
   { key: "club", priority: 0.8, images: ["/images/cup-pastry_coffee-club.jpg"] },

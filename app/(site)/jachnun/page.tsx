@@ -63,7 +63,7 @@ export default function JachnunPage() {
         lede={jachnun.hero.lede}
         image={jachnun.hero.image}
         imageAlt={jachnun.hero.imageAlt}
-        imagePosition="35% 50%"
+        imagePosition="50% 50%"
       >
         <div className="flex flex-wrap items-center gap-3">
           <Button as="a" href="#order" variant="onDark" size="lg" icon={<IconArrow />}>
