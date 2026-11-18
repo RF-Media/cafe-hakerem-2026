@@ -61,7 +61,7 @@ export function JachnunPromo() {
                 alt={homeJachnun.imageAlt}
                 ratio="aspect-[4/5]"
                 className="!rounded-none"
-                position="35% 50%"
+                position="50% 50%"
                 sizes="(max-width: 1024px) 90vw, 40vw"
               />
             </ImageReveal>

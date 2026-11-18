@@ -29,6 +29,7 @@ export const imageMeta: Record<string, { w: number; h: number; c: string }> = {
   "/images/iced-latte-palms_shared.jpg": { w: 1349, h: 1800, c: "#747873" },
   "/images/jachnun-closeup_shared.jpg": { w: 1360, h: 907, c: "#9f6b40" },
   "/images/jachnun-plate_jachnun.jpg": { w: 1351, h: 1800, c: "#9f948e" },
+  "/images/jachnun-spread_shared.jpg": { w: 900, h: 1600, c: "#91806b" },
   "/images/jachnun-tray_shared.jpg": { w: 1360, h: 907, c: "#9e8a7e" },
   "/images/juice-orange_shared.jpg": { w: 1500, h: 1240, c: "#6f675c" },
   "/images/latte-cinnamon_shared.jpg": { w: 1012, h: 1800, c: "#9d9287" },
