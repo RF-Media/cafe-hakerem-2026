@@ -75,7 +75,7 @@ export default function HomePage() {
 
       {/* Hanukkah campaign and the holiday band, each behind its own switch
           in content/holidays.ts. */}
-      {hanukkahCampaign.enabled && <HanukkahSection />}
+      {hanukkahCampaign.enabled && hanukkahCampaign.sectionEnabled && <HanukkahSection />}
       {homeHolidays.enabled && (
         <Section tone="cream-2">
           <Reveal>

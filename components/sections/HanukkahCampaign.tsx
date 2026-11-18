@@ -61,9 +61,15 @@ export function HanukkahCard() {
           </p>
           <p className="type-title mt-2 text-balance text-[1.4rem] text-cream sm:text-2xl xl:text-[1.7rem]">{c.card.title}</p>
           <p className="mt-1 text-sm text-cream/85 md:text-base">{c.card.line}</p>
-          <Button as="a" href={`#${c.anchor}`} variant="onDark" size="sm" icon={<IconArrow />} className="mt-4 lg:mt-3">
-            {c.card.cta}
-          </Button>
+          {c.sectionEnabled ? (
+            <Button as="a" href={`#${c.anchor}`} variant="onDark" size="sm" icon={<IconArrow />} className="mt-4 lg:mt-3">
+              {c.card.cta}
+            </Button>
+          ) : (
+            <p className="mt-4 inline-flex items-center rounded-full border border-brass/40 px-4 py-1.5 type-index text-xs text-brass lg:mt-3">
+              {c.card.soon}
+            </p>
+          )}
         </div>
 
         <div aria-hidden className="relative grid h-28 w-28 shrink-0 place-items-center sm:h-36 sm:w-36 xl:h-40 xl:w-40">
