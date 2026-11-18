@@ -37,7 +37,7 @@ const fontStyle: React.CSSProperties = {
 export const metadata: Metadata = {
   metadataBase: new URL(business.siteUrl),
   title: {
-    default: "קפה הכרם - בית קפה בוטיקי בגני תקווה",
+    default: "קפה הכרם – בית קפה בגני תקווה | קפה, ארוחות בוקר ומגשי אירוח",
     template: "%s",
   },
   description:
@@ -136,6 +136,17 @@ function globalSchema() {
           name: "מועדון הלקוחות של קפה הכרם",
           url: `${url}/coffee-club`,
           description: `כרטיסיית ניקובים דיגיטלית בחינם: ניקוב ראשון במתנה, ו${business.coffeestream.reward.he} בניקוב העשירי.`,
+          // Required by Google's loyalty-program markup. One tier: every member
+          // collects punches, which is a points benefit.
+          hasTiers: [
+            {
+              "@type": "MemberProgramTier",
+              "@id": `${url}/#club-member`,
+              name: "חבר מועדון",
+              hasTierBenefit: "https://schema.org/TierBenefitLoyaltyPoints",
+              url: `${url}/coffee-club`,
+            },
+          ],
         },
       },
     ],

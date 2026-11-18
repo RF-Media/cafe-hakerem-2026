@@ -70,7 +70,7 @@ external font CDNs, dark mode logic.
     jachnun-preorder/route.ts   phase-1 one-step form (email only)
     jachnun-order/route.ts      phase-2 checkout, gated off
     catering-inquiry/route.ts
-  sitemap.ts
+  sitemap.xml/route.ts   sitemap, with image entries
   robots.ts
   llms.txt/route.ts       plain-text fact sheet for AI engines
   layout.tsx              <html lang="he" dir="rtl">, fonts,
@@ -1845,7 +1845,8 @@ npm run preflight       # ✓ Run both checks + next build (pre-deploy gate)
 
 #### 1. **Breadcrumbs** (visual + schema)
 - Visible on all inner pages (light text, RTL-correct separators)
-- BreadcrumbSchema JSON-LD on all pages (home passes empty `trail=[]`)
+- BreadcrumbSchema JSON-LD on all inner pages (home passes empty `trail=[]`, which renders
+  nothing: Google rejects a one-item BreadcrumbList)
 - Home page has NO visible breadcrumb (root doesn't need one)
 - Redundancy signal: same path appears in HTML + JSON-LD
 
@@ -1891,7 +1892,7 @@ renders:
 
 | Page | BreadcrumbSchema | Page Schema | FAQSchema | FactualParagraph |
 |------|------------------|------------|-----------|------------------|
-| Home | ✓ (empty trail) | Organization | ✓ | ✓ |
+| Home | — (empty trail renders nothing) | Organization | ✓ | ✓ |
 | Menu | ✓ | Menu | ✓ | ✓ |
 | About | ✓ | AboutPage | ✓ | ✓ |
 | Jachnun | ✓ | Product | ✓ | ✓ |
@@ -2493,3 +2494,30 @@ and both kill switches show them lit. A first pass let the sufganiyah overhang t
 top edge; on desktop that left a tall card with empty space under it, so everything now sits
 inside the card and the heading row centres the two (`lg:items-center`). The "משהו מיוחד לחג" band is hidden at the café's request
 behind `homeHolidays.enabled`. Its `[TODO]` body still fails `check:todos`.
+
+**2026-11-14 — Pre-launch SEO, sharing and tracking pass.**
+The home title is now the live WordPress title, word for word: "קפה הכרם – בית קפה בגני תקווה |
+קפה, ארוחות בוקר ומגשי אירוח", at the café's request, so the result Google already shows doesn't
+change at launch. It is the one title with an en dash. /offers had been sharing the club's photo
+under an alt that described a glass of wine the photo doesn't show. It now has `og_offers.jpg`,
+the Happy Hour ticket with its three values, rendered in headless Chrome rather than with
+`ImageResponse`, because Satori lays Hebrew out left to right.
+
+The old site's Yoast sitemaps list five URLs. `/` and `/privacy/` still exist. `/hello-world`,
+`/category/*` and `/author/*` (and the WordPress feeds) now 301 in `next.config.js`.
+
+Search Console: the home page no longer emits a one-item BreadcrumbList; the catering trays in
+the `OfferCatalog` are `Service`, not `Product`, since an unpriced Product is an invalid
+"Product snippets" item; `MemberProgram` gained the `hasTiers` Google's loyalty-program markup
+requires, a single tier whose benefit is `TierBenefitLoyaltyPoints` (the punches).
+
+Tracking: `cta_click` now fires for every internal link, not only `<Button as="a">`, so the ticket
+links on /offers, the tray cards, footer and nav are all measured; `ui_location` separates them,
+and the /offers coupons report as `offer_<id>`. `data-cta` is gone. `club_join_click` counted
+every `app.coffeestream.co.il` link, including CoffeeStream's privacy and terms pages, as a key
+event; it now needs the café's card path `/s/`. GTM needed no change: `cta_click` was already in
+its trigger.
+
+The sitemap had never carried an image: Next 14.2's `MetadataRoute.Sitemap` drops the `images`
+field without an error, so the 2026-11-05 "images in the sitemap" never reached Google. It is now
+a route handler, `app/sitemap.xml/route.ts`, that writes the `image:` namespace itself.

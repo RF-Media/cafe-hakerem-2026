@@ -61,7 +61,7 @@ export default function OffersPage() {
 
       {/* Hero: the headline offer is the hero. On phones the coupon follows the
           <h1> directly, so the first screen holds the deal, not a promise of one. */}
-      <section className="relative isolate overflow-hidden bg-espresso-deep text-cream">
+      <section data-track-area="page_hero" className="relative isolate overflow-hidden bg-espresso-deep text-cream">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_70%_at_22%_55%,hsl(var(--amber)/0.16),transparent_70%)]"

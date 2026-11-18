@@ -10,7 +10,9 @@ export type PageSeo = { path: string; title: string; description: string; image:
 export const pages = {
   home: {
     path: "/",
-    title: "קפה הכרם - בית קפה בוטיקי בגני תקווה",
+    // The live WordPress title, kept word for word so the home result Google
+    // already shows doesn't change at launch.
+    title: "קפה הכרם – בית קפה בגני תקווה | קפה, ארוחות בוקר ומגשי אירוח",
     description:
       "קפה הכרם, בית קפה בוטיקי ברחוב הכרמל 20 בגני תקווה: קפה שנטחן במקום, בורקס תורכי, מאפים חמים, מגשי אירוח, ג'חנון של שבת ומועדון לקוחות. פתוח גם בשבת.",
     image: "/images/og_home.jpg",
@@ -53,8 +55,8 @@ export const pages = {
     title: "מבצעים | קפה הכרם - בית קפה בגני תקווה",
     description:
       "מבצעים בקפה הכרם בגני תקווה: Happy Hour לחברי מועדון הלקוחות בין 14:00-19:00 עם 50% הנחה על קפה שני, 10% על התפריט וכוס יין ב-30 ש״ח, ועוד הטבות שמתחלפות.",
-    image: "/images/og_coffee-club.jpg",
-    imageAlt: "שתי כוסות קפה ממותגות של קפה הכרם וכוס יין על שולחן עץ",
+    image: "/images/og_offers.jpg",
+    imageAlt: "Happy Hour לחברי מועדון הלקוחות של קפה הכרם, 14:00-19:00: 50% על קפה שני, 10% על כל התפריט, ₪30 לכוס יין",
   },
   club: {
     path: "/coffee-club",

@@ -48,7 +48,7 @@ known parameters to `undefined`, so a value from an earlier event never leaks in
 | `phone_call_click` | Any `tel:` link | `ui_location` |
 | `whatsapp_click` | Any `wa.me` link | `ui_location` |
 | `directions_click` | Any Waze or Google Maps link (not the reviews card) | `ui_location`, `map_provider` (`waze`/`google_maps`) |
-| `club_join_click` | Any link into the CoffeeStream club | `ui_location` (the link's `utm_campaign`: `home_band`, `club_calculator`, `menu_interlude`, ...) |
+| `club_join_click` | Any link to the café's card on CoffeeStream (`/s/cafehakerem`); CoffeeStream's privacy and terms pages don't count | `ui_location` (the link's `utm_campaign`: `home_band`, `club_calculator`, `menu_interlude`, `offers_hero`, `offers_<offer id>`, ...) |
 
 ### Soft conversions
 
@@ -74,14 +74,15 @@ known parameters to `undefined`, so a value from an earlier event never leaks in
 | `faq_open` | An FAQ question is expanded | `faq_question` (first 100 chars) |
 | `menu_category_click` | A /menu category chip or a home category tile | `menu_category`, `ui_location` |
 | `gallery_filter` | An Instagram gallery filter chip | `gallery_category` |
-| `cta_click` | A button-style internal link (`<Button as="a">`) | `link_text`, `link_url`, `ui_location` |
+| `cta_click` | Any internal link (buttons, cards, text links, nav, footer, same-page `#` jumps), except the skip link and links tagged with their own event (`menu_category_click`) | `link_text`, `link_url`, `ui_location` |
 | `page_not_found` | The 404 page renders | none |
 
 ### `ui_location` values
 
 `header`, `footer`, `mobile_bar`, `home_hero`, `page_hero`, `home_categories`, `menu_rail`,
-`content`, `jachnun_order` (links and buttons inside the order card), or for club links the
-`utm_campaign` placement.
+`content`, `jachnun_order` (links and buttons inside the order card), `offer_<offer id>` (a coupon
+on /offers), or for club links the `utm_campaign` placement. `page_hero` covers the custom heroes on
+/offers, /coffee-club and /map as well as `<PageHero>`.
 
 ### Automatic GA4 events (enhanced measurement)
 

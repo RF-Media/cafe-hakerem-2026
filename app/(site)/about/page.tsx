@@ -145,13 +145,13 @@ export default function AboutPage() {
           </Reveal>
         </div>
 
-        <Stagger as="dl" className="mt-14 grid gap-12 sm:grid-cols-3 sm:gap-6" stagger={0.1}>
+        <Stagger as="ul" className="mt-14 grid gap-12 sm:grid-cols-3 sm:gap-6" stagger={0.1}>
           {about.stats.items.map((stat, i) => {
             const Icon = [IconClock, IconCup, IconSpark][i] ?? IconSpark;
             return (
               <StaggerItem
                 key={stat.label}
-                as="div"
+                as="li"
                 variant="tile"
                 className="group relative text-center sm:border-s sm:border-cream/15 sm:first:border-s-0"
               >
@@ -159,11 +159,11 @@ export default function AboutPage() {
                   <span className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-brass/40 text-brass transition-colors duration-base group-hover:bg-brass group-hover:text-espresso-deep">
                     <Icon className="h-5 w-5" />
                   </span>
-                  <dd className="mt-5 type-statement text-5xl text-cream tabular-nums md:text-6xl">
+                  <p className="mt-5 type-statement text-5xl text-cream tabular-nums md:text-6xl">
                     <Counter value={stat.value} suffix={stat.suffix} />
-                  </dd>
+                  </p>
                   <span aria-hidden className="mx-auto mt-4 block h-px w-10 bg-brass/50" />
-                  <dt className="mt-4 type-sub text-lg text-cream">{stat.label}</dt>
+                  <p className="mt-4 type-sub text-lg text-cream">{stat.label}</p>
                   <p className="mt-1 text-sm text-cream/70">{stat.detail}</p>
                 </div>
               </StaggerItem>
