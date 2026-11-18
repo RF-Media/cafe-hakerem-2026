@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { checkRateLimit, ipFromRequest } from "@/lib/ratelimit";
+import { checkPhoneLimit, checkRateLimit, ipFromRequest } from "@/lib/ratelimit";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { getAvailableSlots } from "@/lib/jachnun-cutoff";
 import { generateReference, jachnunPreorderSchema } from "@/lib/validation";
@@ -75,6 +75,16 @@ export async function POST(req: Request) {
     return err(msg, 400, "validation");
   }
   const data = parsed.data;
+
+  // Per-phone limit (normalized by phoneSchema). Catches the real abuse
+  // case — rapid repeat submissions from one person — which the per-IP
+  // window alone can miss when the attacker rotates IPs or networks.
+  const phoneLimit = await checkPhoneLimit(data.phone);
+  if (!phoneLimit.ok) {
+    return err("כבר התקבלו הזמנות מהמספר הזה לאחרונה. נסו שוב בעוד שעה או התקשרו אלינו.", 429, "rate_limited", {
+      "Retry-After": String(phoneLimit.retryAfterSeconds || 3600),
+    });
+  }
 
   // Re-derived from the server clock: the Friday 16:00 cutoff can pass
   // while the form is open.

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { checkRateLimit, ipFromRequest } from "@/lib/ratelimit";
+import { checkPhoneLimit, checkRateLimit, ipFromRequest } from "@/lib/ratelimit";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { cateringInquirySchema, generateReference } from "@/lib/validation";
 import { escapeHtml, orderCopyRecipients, rtlEmail, sendCustomerEmail, sendNotification } from "@/lib/resend";
@@ -57,6 +57,15 @@ export async function POST(req: Request) {
     return err(msg, 400);
   }
   const data = parsed.data;
+
+  // Per-phone limit, same bucket the jachnun pre-order uses, so a single
+  // phone can't ping-pong between the two forms to bypass the cap.
+  const phoneLimit = await checkPhoneLimit(data.phone);
+  if (!phoneLimit.ok) {
+    return err("כבר התקבלו פניות מהמספר הזה לאחרונה. נסו שוב בעוד שעה או התקשרו אלינו.", 429, {
+      "Retry-After": String(phoneLimit.retryAfterSeconds || 3600),
+    });
+  }
   const reference = generateReference("CAT");
 
   if (hasDatabase()) {
