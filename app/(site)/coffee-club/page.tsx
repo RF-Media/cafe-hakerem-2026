@@ -59,7 +59,7 @@ export default function ClubPage() {
       {/* The ramp's first screen: CoffeeStream's amber panel, the illustration
           from its sign-in screen, and the two buttons that are the whole point
           of the page. */}
-      <section className="amber-panel overflow-hidden">
+      <section data-track-area="page_hero" className="amber-panel overflow-hidden">
         <div className={`${container} pb-14 pt-6 md:pb-20`}>
           <Breadcrumb items={[{ name: "מועדון הלקוחות" }]} bare />
           <div className="mt-8 grid items-center gap-12 lg:mt-10 lg:grid-cols-12 lg:gap-16">

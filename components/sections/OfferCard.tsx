@@ -167,7 +167,7 @@ export function OfferTicket({ offer }: { offer: Offer }) {
       : null;
 
   return (
-    <article className="ticket-shadow group h-full transition-transform duration-base ease-out-soft hover:-translate-y-1">
+    <article data-track-area={`offer_${offer.id}`} className="ticket-shadow group h-full transition-transform duration-base ease-out-soft hover:-translate-y-1">
       <div className="ticket-x flex h-full overflow-hidden rounded-[18px] bg-cream-3 [--tear:6.75rem] md:[--tear:8.75rem]">
         <div className="flex min-w-0 flex-1 flex-col p-5 md:p-6">
           <div className="flex items-start justify-between gap-3">

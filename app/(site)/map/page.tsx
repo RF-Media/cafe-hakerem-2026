@@ -44,7 +44,7 @@ export default function MapPage() {
       {/* On a phone this stacks address, map, details, so the DOM keeps that
           order and the grid moves the map into its own column on desktop. The
           first column is the right one, since the page is RTL. */}
-      <section className="bg-olive text-cream lg:grid lg:min-h-[calc(100svh-var(--nav-h))] lg:grid-cols-[minmax(390px,33%)_minmax(0,1fr)] lg:grid-rows-[auto_1fr]">
+      <section data-track-area="page_hero" className="bg-olive text-cream lg:grid lg:min-h-[calc(100svh-var(--nav-h))] lg:grid-cols-[minmax(390px,33%)_minmax(0,1fr)] lg:grid-rows-[auto_1fr]">
         <header className="px-6 pt-6 md:px-10 lg:col-start-1 lg:row-start-1 lg:pe-8 lg:ps-12 lg:pt-8">
           <Breadcrumb items={[{ name: mapPage.crumb }]} tone="dark" bare />
           <h1 className="type-display mt-5 lg:mt-10">

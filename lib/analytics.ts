@@ -125,16 +125,25 @@ function fromLink(a: HTMLAnchorElement): void {
   if ((host === "google.com" && url.pathname.startsWith("/maps")) || host === "maps.google.com" || host === "maps.app.goo.gl") {
     return track("directions_click", { ui_location, map_provider: "google_maps" });
   }
-  if (host === clubHost) {
+  // Only the café's card is a join. CoffeeStream's privacy and terms pages share the host.
+  if (host === clubHost && url.pathname.startsWith("/s/")) {
     return track("club_join_click", { ui_location: url.searchParams.get("utm_campaign") ?? ui_location });
   }
   if (host === "instagram.com") return track("social_click", { ui_location, social_network: "instagram" });
   if (host === "facebook.com") return track("social_click", { ui_location, social_network: "facebook" });
 
-  if (url.origin === window.location.origin && a.hasAttribute("data-cta")) {
+  // Every internal link, so a path through the site can be read click by click;
+  // ui_location tells nav, footer and in-page CTAs apart. The skip link is not a choice.
+  if (url.origin === window.location.origin && !a.classList.contains("skip-link")) {
     track("cta_click", {
       ui_location,
-      link_text: (a.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 100),
+      // innerText keeps a card's lines apart, where textContent runs "title" and "body" together.
+      link_text: (a.getAttribute("aria-label") || a.innerText || a.textContent || "")
+        .split("\n")
+        .map((line) => line.replace(/\s+/g, " ").trim())
+        .filter(Boolean)
+        .join(" · ")
+        .slice(0, 100),
       link_url: url.pathname + url.hash,
     });
   }

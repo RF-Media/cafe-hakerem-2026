@@ -56,11 +56,17 @@ const nextConfig = {
     return rules;
   },
   async redirects() {
-    // [TODO: enumerate legacy WordPress URLs once Search Console access is available.
-    // Per CLAUDE.md §10, every old URL with inbound links should 301 to its new equivalent.]
+    // Legacy WordPress URLs, read off its Yoast sitemaps on 2026-11-14: `/`, `/privacy/`
+    // (both still exist; the trailing slash is redirected by Next), plus the three below.
+    // Add any further URL Search Console reports as a 404 after launch.
     return [
       // The club moved here on 2026-11-07. Shared links may still point at the old slug.
       { source: "/club", destination: "/coffee-club", permanent: true },
+      { source: "/hello-world", destination: "/", permanent: true },
+      { source: "/category/:path*", destination: "/", permanent: true },
+      { source: "/author/:path*", destination: "/about", permanent: true },
+      { source: "/feed", destination: "/", permanent: true },
+      { source: "/comments/feed", destination: "/", permanent: true },
     ];
   },
 };

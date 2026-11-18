@@ -114,7 +114,6 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(function Button(
         <a
           ref={ref as React.Ref<HTMLAnchorElement>}
           href={href}
-          data-cta=""
           className={classes}
           aria-label={ariaLabel}
           {...(external && href.startsWith("http")
@@ -129,7 +128,6 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(function Button(
       <Link
         href={href}
         ref={ref as React.Ref<HTMLAnchorElement>}
-        data-cta=""
         className={classes}
         aria-label={ariaLabel}
       >

@@ -41,7 +41,7 @@ export const business = {
 
   email: {
     // Public-facing email, shown on /contact.
-    public: "hello@cafehakerem.co.il",
+    public: "info@cafehakerem.co.il",
 
     // Internal: where order notifications and catering inquiries go.
     // This is NOT shown publicly. Set via env var in production:

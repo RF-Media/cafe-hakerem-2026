@@ -40,7 +40,9 @@ function serviceSchema() {
       name: "מגשי אירוח",
       itemListElement: catering.options.map((o) => ({
         "@type": "Offer",
-        itemOffered: { "@type": "Product", name: o.title.he, description: o.includes.join(", ") },
+        // Service, not Product: a Product without a price is an invalid
+        // "Product snippets" item in Search Console, and trays are priced on request.
+        itemOffered: { "@type": "Service", name: o.title.he, description: o.includes.join(", ") },
       })),
     },
   };
