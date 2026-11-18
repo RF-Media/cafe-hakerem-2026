@@ -2563,3 +2563,20 @@ gate; and robots.txt points to the sitemap. It was submitted to the `cafehakerem
 Search Console property on 2026-11-18. Known weakness, left as is: `lastmod` is the deploy
 time on every URL, so Google will likely ignore it. When a page gets a new photo, add it to
 that page's list here.
+
+**2026-11-18 — Favicon and app-icon pipeline use the real café mark; shape per CoffeeStream's
+rule.** The icon files (`app/icon.svg`, `app/apple-icon.png`, `app/favicon.ico`,
+`public/icons/icon-*.png`) were all a generic coffee-cup glyph, not the café's logo.
+Regenerated from `public/images/logo_dark.png`, matching the shape rule in
+`coffeestream/lib/app-icon.ts`: **home-screen icons are square and opaque**
+(`apple-icon.png` 180, `icon-192.png`, `icon-512.png`, plus a new `maskable-512.png` with
+`purpose: "maskable"` in `app/manifest.ts`, art kept inside the central 80% circle for
+Android adaptive icons) because iOS applies its own rounded mask and paints transparent
+pixels black. Pre-rounding would double-round, and a transparent PNG would show a black
+tile. **Only the favicon is pre-rounded**, at `rx = size × 0.225` (iOS squircle
+convention), because the browser tab draws it as is. The favicon uses the arch mark
+*alone*, not the full wordmark: at 16–32px the Hebrew letters go illegible, and the
+arch reads at any size. `app/favicon.ico` packs 16/32/48 PNGs so legacy browsers get the
+same art. The Organization JSON-LD `logo` in `app/layout.tsx` moved from the 1200×532
+wordmark to the 512×512 square tile, which is what Google's Logo rich result wants at
+small sizes.

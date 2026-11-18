@@ -1,8 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="7" fill="#16100e" />
-  <rect x="9" y="13" width="13" height="11" rx="2" fill="none" stroke="#f6f3ee" stroke-width="2" stroke-linejoin="round" />
-  <path d="M22 16c3 0 3 5 0 6" fill="none" stroke="#f6f3ee" stroke-width="2" stroke-linecap="round" />
-  <path d="M7 26h13" fill="none" stroke="#f6f3ee" stroke-width="2" stroke-linecap="round" />
-  <path d="M13.3 10.5c-1-1.2 1-1.4 0-2.6" fill="none" stroke="#f6f3ee" stroke-width="1.7" stroke-linecap="round" />
-  <path d="M17.7 10.5c-1-1.2 1-1.4 0-2.6" fill="none" stroke="#f6f3ee" stroke-width="1.7" stroke-linecap="round" />
+  <rect width="32" height="32" rx="7" fill="#f6f3ee" />
+  <g fill="none" stroke="#3b2411" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 14 A7 7 0 0 1 23 14 L23 26 L9 26 Z" />
+    <path d="M9 18 L23 18" />
+    <path d="M16 7 L16 14" />
+    <path d="M11 9.5 L16 14 L21 9.5" />
+    <ellipse cx="14.5" cy="22" rx="3.4" ry="2.4" />
+    <circle cx="19" cy="21.5" r="0.9" />
+    <path d="M13.3 17c-.6-.7.6-.9 0-1.6" />
+    <path d="M14.8 17c-.6-.7.6-.9 0-1.6" />
+  </g>
 </svg>

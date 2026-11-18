@@ -95,7 +95,7 @@ function globalSchema() {
         url,
         telephone: business.phone.tel,
         email: business.email.public,
-        logo: `${url}/images/logo_dark.png`,
+        logo: `${url}/icons/icon-512.png`,
         image: [
           `${url}/images/storefront_shared.jpg`,
           `${url}/images/barista_shared.jpg`,
