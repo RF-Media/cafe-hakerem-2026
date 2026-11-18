@@ -734,9 +734,9 @@ certifications, kashrut status. Use `[TODO]`.
 | `/`         | `קפה הכרם — בית קפה בוטיקי בגני תקווה`                   |
 | `/menu`     | `התפריט שלנו \| קפה הכרם — בית קפה בגני תקווה`           |
 | `/about`    | `הסיפור שלנו \| קפה הכרם — בית קפה בגני תקווה`           |
-| `/jachnun`  | `ג'חנון של שבת להזמנה \| קפה הכרם — גני תקווה`           |
-| `/catering` | `מגשי אירוח להזמנה \| קפה הכרם — גני תקווה`              |
-| `/contact`  | `צור קשר, שעות וכתובת \| קפה הכרם — גני תקווה`           |
+| `/jachnun`  | `ג'חנון של שבת להזמנה \| קפה הכרם — בית קפה בגני תקווה`  |
+| `/catering` | `מגשי אירוח להזמנה \| קפה הכרם — בית קפה בגני תקווה`     |
+| `/contact`  | `צור קשר, שעות וכתובת \| קפה הכרם — בית קפה בגני תקווה`  |
 | `/coffee-club` | `מועדון הלקוחות \| קפה הכרם — בית קפה בגני תקווה`      |
 | `/map`      | `מפה והגעה \| קפה הכרם — בית קפה בגני תקווה`             |
 
@@ -2553,3 +2553,13 @@ Not done in this pass, but considered: a per-phone rate limit on top of the exis
 stronger guard against the attacker Turnstile is designed for; the per-phone limit
 would catch an authenticated-but-noisy customer, which is a different threat model.
 Added later if volume warrants.
+
+**2026-11-18 — Sitemap images brought up to date; sitemap submitted to Search Console.**
+The image lists in `app/sitemap.xml/route.ts` had fallen behind the pages, and now carry 46
+photos, up from 22: every photo a page actually renders, except the /offers share card, which is
+a promo graphic and not on the page. The live file was checked before submitting: every page
+loads with no redirect, is indexable and is its own canonical; every image loads with no auth
+gate; and robots.txt points to the sitemap. It was submitted to the `cafehakerem.co.il`
+Search Console property on 2026-11-18. Known weakness, left as is: `lastmod` is the deploy
+time on every URL, so Google will likely ignore it. When a page gets a new photo, add it to
+that page's list here.
