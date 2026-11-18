@@ -2521,3 +2521,10 @@ its trigger.
 The sitemap had never carried an image: Next 14.2's `MetadataRoute.Sitemap` drops the `images`
 field without an error, so the 2026-11-05 "images in the sitemap" never reached Google. It is now
 a route handler, `app/sitemap.xml/route.ts`, that writes the `image:` namespace itself.
+
+**2026-11-18 — Hanukkah section hidden; physical accessibility sits with מרכז הבמה.**
+`hanukkahCampaign.sectionEnabled = false` removes the `#hanukkah` section; the card stays and
+shows a "בקרוב" chip in place of the button that jumped to it. Setting it back to true restores both.
+A new `/accessibility` FAQ states that the café is physically accessible and that, since
+קפה הכרם is a counter inside the מרכז הבמה complex in גני תקווה, physical accessibility is that
+complex's responsibility. The café's public email is now `info@cafehakerem.co.il`.

@@ -28,6 +28,8 @@ export const homeHolidays = {
  */
 export const hanukkahCampaign = {
   enabled: true,
+  /** Section hidden for now (2026-11-18); the card stays and says "בקרוב" instead of linking. */
+  sectionEnabled: false,
   anchor: "hanukkah",
   image: "/images/sufganiyah.png",
   imageAlt: "סופגנייה עם אבקת סוכר",
@@ -35,6 +37,7 @@ export const hanukkahCampaign = {
     title: "חנוכה שמח בקפה הכרם",
     line: "קפה חם וסופגנייה. חג שמח.",
     cta: "לחנוכה בקפה הכרם",
+    soon: "בקרוב",
   },
   section: {
     eyebrow: "חג אורים שמח",
