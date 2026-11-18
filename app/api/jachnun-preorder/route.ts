@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { checkRateLimit } from "@/lib/ratelimit";
+import { checkRateLimit, ipFromRequest } from "@/lib/ratelimit";
+import { verifyTurnstile } from "@/lib/turnstile";
 import { getAvailableSlots } from "@/lib/jachnun-cutoff";
 import { generateReference, jachnunPreorderSchema } from "@/lib/validation";
 import {
@@ -32,7 +33,7 @@ export const maxDuration = 60;
  * outcome this route must never produce.
  */
 
-type ErrorCode = "rate_limited" | "bad_request" | "validation" | "slot_unavailable" | "send_failed";
+type ErrorCode = "rate_limited" | "bad_request" | "validation" | "slot_unavailable" | "send_failed" | "turnstile";
 
 function err(message: string, status: number, code: ErrorCode, headers?: Record<string, string>) {
   return NextResponse.json({ ok: false, error: message, code }, { status, headers });
@@ -54,6 +55,17 @@ export async function POST(req: Request) {
     raw = await req.json();
   } catch {
     return err("הבקשה אינה תקינה.", 400, "bad_request");
+  }
+
+  // Turnstile gates every submission before any work. Degrades to allow-all
+  // when TURNSTILE_SECRET_KEY is unset (lib/turnstile.ts).
+  const turnstileToken =
+    raw && typeof raw === "object" && typeof (raw as { turnstileToken?: unknown }).turnstileToken === "string"
+      ? (raw as { turnstileToken: string }).turnstileToken
+      : undefined;
+  const turnstile = await verifyTurnstile(turnstileToken, ipFromRequest(req));
+  if (!turnstile.ok) {
+    return err("אימות האבטחה נכשל. רעננו את הדף ונסו שוב.", 403, "turnstile");
   }
 
   const parsed = jachnunPreorderSchema.safeParse(raw);

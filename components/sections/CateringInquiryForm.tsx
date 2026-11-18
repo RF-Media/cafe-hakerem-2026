@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/ui/FormField";
+import { Turnstile, type TurnstileHandle } from "@/components/ui/Turnstile";
 import { track } from "@/lib/analytics";
 
 type Status =
@@ -24,10 +25,19 @@ function guestRange(raw: string): string {
 
 export function CateringInquiryForm() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  // Turnstile token: present after the widget verifies, null until then and
+  // after any expiry/error. Null when the widget is disabled (no site key).
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileHandle>(null);
   const started = useRef(false);
+  const turnstileEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (turnstileEnabled && !turnstileToken) {
+      setStatus({ kind: "error", message: "אימות האבטחה טרם הושלם. רעננו את הדף ונסו שוב." });
+      return;
+    }
     setStatus({ kind: "submitting" });
     const fd = new FormData(e.currentTarget);
     const guests = String(fd.get("guestCount") ?? "").trim();
@@ -39,6 +49,7 @@ export function CateringInquiryForm() {
       eventDate: eventDate ? new Date(eventDate).toISOString() : undefined,
       guestCount: guests ? Number(guests) : undefined,
       message: String(fd.get("message") ?? ""),
+      turnstileToken: turnstileToken ?? undefined,
     };
 
     try {
@@ -56,11 +67,23 @@ export function CateringInquiryForm() {
           has_event_date: eventDate ? "yes" : "no",
         });
       } else {
+        // Tokens are single-use: hand out a fresh one for the retry.
+        setTurnstileToken(null);
+        turnstileRef.current?.reset();
         setStatus({ kind: "error", message: j?.error ?? "אירעה שגיאה. נסו שוב." });
-        const error_type = r.status === 400 || r.status === 422 ? "validation" : r.status === 429 ? "rate_limit" : "server";
+        const error_type =
+          r.status === 403
+            ? "turnstile"
+            : r.status === 400 || r.status === 422
+              ? "validation"
+              : r.status === 429
+                ? "rate_limit"
+                : "server";
         track("form_error", { form_name: FORM_NAME, error_type });
       }
     } catch {
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
       setStatus({ kind: "error", message: "שגיאת רשת. נסו שוב." });
       track("form_error", { form_name: FORM_NAME, error_type: "network" });
     }
@@ -109,6 +132,13 @@ export function CateringInquiryForm() {
       {status.kind === "error" ? (
         <p role="alert" className="text-sm text-jachnun">{status.message}</p>
       ) : null}
+
+      <Turnstile
+        ref={turnstileRef}
+        onVerify={setTurnstileToken}
+        onExpire={() => setTurnstileToken(null)}
+        onError={() => setTurnstileToken(null)}
+      />
 
       <Button
         type="submit"

@@ -2528,3 +2528,28 @@ shows a "בקרוב" chip in place of the button that jumped to it. Setting it b
 A new `/accessibility` FAQ states that the café is physically accessible and that, since
 קפה הכרם is a counter inside the מרכז הבמה complex in גני תקווה, physical accessibility is that
 complex's responsibility. The café's public email is now `info@cafehakerem.co.il`.
+
+**2026-11-18 — Cloudflare Turnstile gates both form endpoints.**
+The jachnun pre-order and catering inquiry endpoints are now protected by Cloudflare
+Turnstile, siteverified server-side in `lib/turnstile.ts` and rendered by one shared
+widget in `components/ui/Turnstile.tsx`. The check sits in front of Zod parsing, DB
+writes and Resend, so a failed challenge costs nothing downstream. Appearance is
+`interaction-only`: invisible unless Cloudflare decides to challenge, which keeps the
+form clean for the real customer. Tokens are single-use, so a failed submission
+resets the widget via an imperative ref before letting the user retry. Phase 2's
+`/api/jachnun-order` is `CHECKOUT_ENABLED = false` and was deliberately left alone —
+one fewer place to maintain, trivial to add when payment is live.
+
+Fail-closed in production, fail-open in dev — same shape as `lib/ratelimit.ts`.
+`TURNSTILE_SECRET_KEY` unset in production is logged as an error rather than
+silently dropped: a misconfigured deploy would otherwise lose the protection with
+no signal. `NEXT_PUBLIC_TURNSTILE_SITE_KEY` unset makes the widget component return
+null, so a half-configured deploy where the public key is missing but the secret
+isn't still fails closed (no token sent, server rejects). Both must be set
+together; both are documented in `.env.example` and the README.
+
+Not done in this pass, but considered: a per-phone rate limit on top of the existing
+5/60s per-IP window (the original ask was "halt after 2 orders"). Turnstile is the
+stronger guard against the attacker Turnstile is designed for; the per-phone limit
+would catch an authenticated-but-noisy customer, which is a different threat model.
+Added later if volume warrants.

@@ -35,10 +35,22 @@ npm run dev                          # http://localhost:3000
 | `NEXT_PUBLIC_SITE_URL`     | Canonical absolute origin, e.g. `https://cafehakerem.co.il`      |
 | `UPSTASH_REDIS_REST_URL`   | Upstash Redis REST URL (rate limiting)                           |
 | `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis REST token (rate limiting)                         |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (public, read by the widget) |
+| `TURNSTILE_SECRET_KEY`     | Cloudflare Turnstile secret (server-side siteverify)             |
 
 If `RESEND_API_KEY` is unset, orders still persist to the DB; the
 notification email is silently skipped. This is intentional: an email
 outage should not lose orders.
+
+Cloudflare Turnstile protects both the jachnun pre-order and catering
+inquiry forms. Both env vars must be set together — the public site
+key is read on the client by the widget, the secret is used by the
+server to verify tokens with Cloudflare's siteverify endpoint. If
+`TURNSTILE_SECRET_KEY` is unset, the server allows submissions through
+(dev convenience, matches the rate limiter's degraded mode) and logs
+an error in production. Create a widget at
+<https://dash.cloudflare.com/?to=/:account/turnstile> and add every
+domain the site runs on (production, previews, localhost).
 
 ## Prisma
 

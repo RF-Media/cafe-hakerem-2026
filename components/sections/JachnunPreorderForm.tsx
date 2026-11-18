@@ -33,6 +33,7 @@ import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { FormField } from "@/components/ui/FormField";
 import { CafeImage } from "@/components/ui/CafeImage";
+import { Turnstile, type TurnstileHandle } from "@/components/ui/Turnstile";
 import { IconArrow, IconCheck, IconEdit } from "@/components/ui/icons";
 import { EMPTY_DRAFT, validateDetails, type DetailsField } from "@/components/order/state";
 import { getAvailableSlots, type Slot } from "@/lib/jachnun-cutoff";
@@ -83,6 +84,7 @@ const SERVER_ERROR_TYPE: Record<string, string> = {
   validation: "validation",
   slot_unavailable: "slot_unavailable",
   send_failed: "server",
+  turnstile: "turnstile",
 };
 
 const focusRing =
@@ -99,6 +101,11 @@ export function JachnunPreorderForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [restored, setRestored] = useState(false);
+  // Turnstile token: present after the widget verifies, null until then and
+  // after any expiry/error. Null when the widget is disabled (no site key).
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileHandle>(null);
+  const turnstileEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -301,6 +308,11 @@ export function JachnunPreorderForm() {
     }
     if (preorderUnits(qty) === 0) return goTo(0);
     if (!slotIso) return goTo(1);
+    if (turnstileEnabled && !turnstileToken) {
+      track("form_error", { form_name: FORM_NAME, error_type: "turnstile" });
+      setStatus({ kind: "error", message: "אימות האבטחה טרם הושלם. רעננו את הדף ונסו שוב." });
+      return;
+    }
 
     flushItemChanges();
     setStatus({ kind: "submitting" });
@@ -308,7 +320,13 @@ export function JachnunPreorderForm() {
       const r = await fetch("/api/jachnun-preorder", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...details, quantity: qty.jachnun, burekas: qty.burekas, pickupSlot: slotIso }),
+        body: JSON.stringify({
+          ...details,
+          quantity: qty.jachnun,
+          burekas: qty.burekas,
+          pickupSlot: slotIso,
+          turnstileToken: turnstileToken ?? undefined,
+        }),
       });
       const j = await r.json().catch(() => null);
 
@@ -335,9 +353,14 @@ export function JachnunPreorderForm() {
         return goTo(1);
       }
 
+      // Tokens are single-use: hand out a fresh one for the retry.
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
       setStatus({ kind: "error", message: j?.error ?? copy.generic });
     } catch {
       track("form_error", { form_name: FORM_NAME, error_type: "network" });
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
       setStatus({ kind: "error", message: copy.network });
     }
   }
@@ -585,6 +608,18 @@ export function JachnunPreorderForm() {
               </p>
             </div>
           ) : null}
+
+          {/* Turnstile sits in the summary bar so it mounts once at step 1 and
+              is already verified by the time the submit button at step 3 is
+              reachable. Interaction-only appearance: invisible unless a
+              challenge is required. */}
+          <Turnstile
+            ref={turnstileRef}
+            onVerify={setTurnstileToken}
+            onExpire={() => setTurnstileToken(null)}
+            onError={() => setTurnstileToken(null)}
+            className="mt-3 empty:hidden"
+          />
 
           <Button
             type="submit"

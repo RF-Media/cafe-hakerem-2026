@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { checkRateLimit } from "@/lib/ratelimit";
+import { checkRateLimit, ipFromRequest } from "@/lib/ratelimit";
+import { verifyTurnstile } from "@/lib/turnstile";
 import { cateringInquirySchema, generateReference } from "@/lib/validation";
 import { escapeHtml, orderCopyRecipients, rtlEmail, sendCustomerEmail, sendNotification } from "@/lib/resend";
 import { waitUntil } from "@vercel/functions";
@@ -34,6 +35,17 @@ export async function POST(req: Request) {
     raw = await req.json();
   } catch {
     return err("הבקשה אינה תקינה.", 400);
+  }
+
+  // Turnstile gates every submission before any work. Degrades to allow-all
+  // when TURNSTILE_SECRET_KEY is unset (lib/turnstile.ts).
+  const turnstileToken =
+    raw && typeof raw === "object" && typeof (raw as { turnstileToken?: unknown }).turnstileToken === "string"
+      ? (raw as { turnstileToken: string }).turnstileToken
+      : undefined;
+  const turnstile = await verifyTurnstile(turnstileToken, ipFromRequest(req));
+  if (!turnstile.ok) {
+    return err("אימות האבטחה נכשל. רעננו את הדף ונסו שוב.", 403);
   }
 
   const parsed = cateringInquirySchema.safeParse(raw);
