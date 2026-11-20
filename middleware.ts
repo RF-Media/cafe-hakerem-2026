@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const GONE_PREFIXES = ["/wp-content/", "/wp-admin/", "/wp-includes/", "/wp-json/"];
+const GONE_EXACT = ["/xmlrpc.php", "/post-sitemap.xml", "/page-sitemap.xml"];
+
 // Pre-launch site gate. No-ops if BASIC_AUTH_USER/BASIC_AUTH_PASSWORD are
 // unset, so removing the two env vars in Vercel is how this gets switched
 // off at launch — no code change or redeploy needed.
 export function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  if (GONE_PREFIXES.some((p) => pathname.startsWith(p)) || GONE_EXACT.includes(pathname)) {
+    return new NextResponse(null, { status: 410 });
+  }
+
   const user = process.env.BASIC_AUTH_USER;
   const pass = process.env.BASIC_AUTH_PASSWORD;
 
