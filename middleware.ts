@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const GONE_PREFIXES = ["/wp-content/", "/wp-admin/", "/wp-includes/", "/wp-json/"];
-const GONE_EXACT = ["/xmlrpc.php", "/post-sitemap.xml", "/page-sitemap.xml"];
+const GONE_EXACT = ["/xmlrpc.php", "/post-sitemap.xml", "/page-sitemap.xml", "/wp-sitemap.xml"];
 
 // Pre-launch site gate. No-ops if BASIC_AUTH_USER/BASIC_AUTH_PASSWORD are
 // unset, so removing the two env vars in Vercel is how this gets switched
