@@ -24,7 +24,7 @@ export const club = {
     primary: "להצטרפות בחינם",
     secondary: "כבר חברים? לכרטיס שלי",
     trust: ["בלי דמי חבר", "בלי אפליקציה", "ניקוב ראשון במתנה"],
-    poweredBy: "מועדון הלקוחות של קפה הכרם פועל על",
+    poweredBy: "מועדון הלקוחות של קפה הכרם מופעל ע״י",
   },
 
   /* The interactive centrepiece: how fast your own habit fills the card. */
@@ -71,7 +71,7 @@ export const club = {
 
   steps: {
     eyebrow: "שלושה צעדים",
-    title: "דקה אחת, וזה בטלפון",
+    title: "כמה קליקים, ואתם בפנים.",
     items: [
       {
         icon: "qr" as const,
@@ -108,7 +108,7 @@ export const club = {
      points there. */
   offersSection: {
     eyebrow: "לחברי המועדון",
-    title: "שלל הנחות והטבות מפתיעות, לא רק קפה עשירי בחינם",
+    title: "שלל הנחות והטבות מפתיעות (לא רק קפה עשירי בחינם).",
   },
   offersCta: {
     eyebrow: "מבצעים לחברים",
