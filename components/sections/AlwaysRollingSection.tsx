@@ -98,10 +98,7 @@ export function AlwaysRollingSection({ categories, eyebrow, title, cta, caption,
                 </span>
 
                 <span className="absolute inset-x-0 bottom-0 block p-4 md:p-5">
-                  <span aria-hidden className="type-index block text-brass">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className="mt-2 flex items-center gap-2 type-sub text-lg text-cream md:text-2xl">
+                  <span className="flex items-center gap-2 type-sub text-lg text-cream md:text-2xl">
                     {cat.title.he}
                     {cat.id === "pastries" ? <span aria-hidden>🔥</span> : null}
                   </span>
