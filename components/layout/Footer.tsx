@@ -109,9 +109,6 @@ export function Footer() {
         <div className={`${container} flex flex-col gap-3 py-6 text-xs text-cream/80 md:flex-row md:items-center md:justify-between`}>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <span>© {new Date().getFullYear()} {business.name.he}. כל הזכויות שמורות.</span>
-            <a href="https://coffeestream.co.il" target="_blank" rel="noopener noreferrer" dir="ltr" className="transition-colors hover:text-brass">
-              Powered by CoffeeStream ♡
-            </a>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/accessibility" className="transition-colors hover:text-brass">
