@@ -125,10 +125,9 @@ export function IconCup({ className }: IconProps) {
 export function IconStamp({ className }: IconProps) {
   return (
     <svg {...base} className={className ?? size}>
-      <rect x="2.75" y="5.75" width="18.5" height="12.5" rx="2.5" />
-      <circle cx="7.5" cy="12" r="1.75" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="12" r="1.75" fill="currentColor" stroke="none" />
-      <circle cx="16.5" cy="12" r="1.6" />
+      <path d="M4 10h12v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-6z" />
+      <path d="M16 11.5h1.5a2.75 2.75 0 0 1 0 5.5H16" />
+      <path d="M7 3.5v3M10 3.5v3M13 3.5v3" />
     </svg>
   );
 }
