@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { CafeImage } from "@/components/ui/CafeImage";
 import { FAQBlock } from "@/components/ui/FAQBlock";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { IconArrow, IconPhone, IconWhatsapp } from "@/components/ui/icons";
+import { IconArrow, IconWhatsapp } from "@/components/ui/icons";
 import { Section, container } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/motion/Reveal";
@@ -17,6 +17,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { FactualParagraph } from "@/components/sections/FactualParagraph";
 import { CateringPlanner, InquiryFlip, TrayPick } from "@/components/sections/CateringPlanner";
 import { PageHero } from "@/components/sections/PageHero";
+import { SlideToCall } from "@/components/sections/SlideToCall";
 import { catering } from "@/content/catering";
 import { cateringFAQs } from "@/content/faqs";
 import { business } from "@/content/business";
@@ -78,24 +79,7 @@ export default function CateringPage() {
             <p className="mt-3 max-w-prose-he type-lede text-base text-cream md:text-lg">{catering.call.body}</p>
           </Reveal>
           <Reveal delay={0.08} className="flex flex-col items-stretch gap-3 sm:items-start lg:items-end">
-            <a
-              href={`tel:${business.phone.tel}`}
-              aria-label={`${catering.call.callLabel}: ${business.phone.display}`}
-              className="group flex min-h-[72px] items-center gap-4 rounded-pill bg-cream py-3 pe-8 ps-3 text-espresso shadow-lg
-                         transition-[transform,background-color] duration-fast ease-out-soft hover:scale-[1.02] hover:bg-cream-3
-                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-2
-                         focus-visible:ring-offset-olive"
-            >
-              <span aria-hidden className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-olive text-cream md:h-14 md:w-14">
-                <IconPhone className="h-6 w-6" />
-              </span>
-              <span className="flex flex-col">
-                <span className="text-sm text-espresso-soft">{catering.call.callLabel}</span>
-                <span dir="ltr" className="type-statement text-3xl leading-none tabular-nums md:text-4xl">
-                  {business.phone.display}
-                </span>
-              </span>
-            </a>
+            <SlideToCall tel={business.phone.tel} display={business.phone.display} label={catering.call.callLabel} />
             <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-base sm:ps-3 lg:justify-end lg:pe-3 lg:ps-0">
               <a
                 href={`https://wa.me/${business.whatsapp.number}?text=${encodeURIComponent(catering.call.whatsappMessage)}`}

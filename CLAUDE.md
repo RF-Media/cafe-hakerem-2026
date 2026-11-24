@@ -598,6 +598,7 @@ preference — do not assume.
 | Map ripple, polaroid drop | `.map-ripple`, `.map-polaroid` | `transform` + `opacity`; ripples removed by the kill switch |
 | Punch press, sticker landing | `<RewardScene>` | one-shot on slider input, `transform` + `opacity`; nothing in the scene runs on its own |
 | Coupon drop | `.coupon-drop` (/offers hero) | once on load, `transform` only, so the page's biggest numbers paint at full opacity |
+| Slide to call | `<SlideToCall>` (/catering call band) | knob `transform`, fill `clip-path`; a tap runs the same fill, reduced motion dials at once |
 
 ### Forbidden
 
@@ -2644,3 +2645,14 @@ context, so the catalogue and the form's step 1 are one selection, saved under t
 `data-hide-mobile-bar` sits on the always-mounted `#inquiry` wrapper. MobileBar collects its
 targets once, at mount, so a marker on a face that mounts later is never seen. The promises
 moved from the pine strip under the hero to a sage section above the FAQs, with its own heading.
+
+**2026-11-24 — /catering's call pill slides to dial.**
+`<SlideToCall>` replaces the plain `tel:` pill in the call band. Dragging the phone knob fills the
+pill under the finger, and releasing past 85% dials. A tap or Enter runs the same fill in 650ms and
+then dials, because a drag-only control fails WCAG 2.5.7 and most people will just tap. Under
+reduced motion the tap dials at once. Without JS it is the same `tel:` link as before. The link is
+`draggable={false}`: otherwise the browser starts a native link drag and cancels the pointer after
+a few pixels. The fill is `olive-soft`, since the band's own pine would make a full pill vanish.
+Measurement: a tap is counted by the site-wide click listener as before. A drag ends in a click
+too, so that click is stopped at `window`, and a completed drag sends `phone_call_click` itself;
+a drag released short sends nothing.

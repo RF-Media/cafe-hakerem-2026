@@ -24,7 +24,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { business } from "@/content/business";
 import { menuCategories } from "@/content/menu";
 import { catering } from "@/content/catering";
-import { IconArrow, IconChevron, IconClose, IconInstagram, IconMenu, IconPhone, IconStamp } from "@/components/ui/icons";
+import { IconArrow, IconChevron, IconClose, IconInstagram, IconMenu, IconPhone, IconStamp, IconWhatsapp } from "@/components/ui/icons";
 import { ScrollProgress } from "@/components/motion/ScrollProgress";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -360,20 +360,48 @@ export function Nav() {
             </Link>
           </div>
 
-          <button
-            ref={triggerRef}
-            type="button"
-            className={
-              "md:hidden grid place-items-center w-11 h-11 -me-2 rounded-full transition-colors " +
-              (overHero ? "text-cream hover:bg-cream/15" : "text-espresso hover:bg-cream-2")
-            }
-            aria-label={open ? "סגור תפריט" : "פתח תפריט"}
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            onClick={() => setOpen((v) => !v)}
-          >
-            {open ? <IconClose className="w-6 h-6" /> : <IconMenu className="w-6 h-6" />}
-          </button>
+          <div className="md:hidden flex items-center gap-1 -me-2">
+            <a
+              href={business.socials.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="אינסטגרם"
+              className={
+                "grid place-items-center w-11 h-11 rounded-full transition-colors " +
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-cream " +
+                (overHero ? "text-cream hover:bg-cream/15" : "text-olive hover:bg-cream-2")
+              }
+            >
+              <IconInstagram className="w-6 h-6" />
+            </a>
+            <a
+              href={`https://wa.me/${business.whatsapp.number}?text=${encodeURIComponent(business.whatsapp.prefilledMessage)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`וואטסאפ אל ${business.name.he}`}
+              className={
+                "grid place-items-center w-11 h-11 rounded-full transition-colors " +
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-cream " +
+                (overHero ? "text-cream hover:bg-cream/15" : "text-olive hover:bg-cream-2")
+              }
+            >
+              <IconWhatsapp className="w-6 h-6" />
+            </a>
+            <button
+              ref={triggerRef}
+              type="button"
+              className={
+                "grid place-items-center w-11 h-11 rounded-full transition-colors " +
+                (overHero ? "text-cream hover:bg-cream/15" : "text-espresso hover:bg-cream-2")
+              }
+              aria-label={open ? "סגור תפריט" : "פתח תפריט"}
+              aria-expanded={open}
+              aria-controls="mobile-nav"
+              onClick={() => setOpen((v) => !v)}
+            >
+              {open ? <IconClose className="w-6 h-6" /> : <IconMenu className="w-6 h-6" />}
+            </button>
+          </div>
 
         </div>
 
