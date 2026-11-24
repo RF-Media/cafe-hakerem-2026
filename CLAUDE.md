@@ -2752,3 +2752,11 @@ ends with a jump; snap is now off during a programmatic move and back once the t
 "לכל 15 הטעמים" now targets the carousel, not its section: on a 390×844 phone the card lands 32px
 under the nav with the heading out of view, and from `md` the carousel is centred under the nav
 (`.stories-anchor`, scroll-margin computed from the card's size).
+
+**2026-11-24 — /hanukkah catalogue: Products carry their Offers, not the other way round.**
+Search Console flagged all 21 catalogue items as invalid Product snippets ("Either offers, review or
+aggregateRating should be specified"). The `OfferCatalog` listed `Offer`s whose `itemOffered` was a
+`Product`; Google validates each Product on its own, and one reached that way has no `offers`. Each
+entry is now a `Product` with an `offers` Offer (price, ILS, availability, a URL to the visible price,
+the café as seller) and a short description. Same prices, same catalogue. When adding priced items
+anywhere: Product → offers, never Offer → itemOffered → Product.

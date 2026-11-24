@@ -45,27 +45,39 @@ const bundleAnchor = hanukkahBuilderEnabled ? "#order" : "#prices";
 
 /**
  * One graph, built from the same content the page renders: the page itself,
- * and an offer catalogue whose every price is visible (singles on the story
- * cards and in the price list, bundles in the price list).
+ * and a catalogue of Products, each carrying its own Offer. The Offer goes
+ * inside the Product, not the other way round: Google validates every Product
+ * on its own, and one reached through `Offer.itemOffered` has no `offers` and
+ * is rejected as an invalid Product snippet (Search Console, 2026-11-24).
+ * Every price is visible: singles on the story cards and in the price list,
+ * bundles in the price list.
  */
 function pageSchema() {
-  const singles = flavors.map((f) => ({
+  const brand = { "@type": "Brand", name: business.name.he };
+  const offer = (price: number, availability: string, anchor: string) => ({
     "@type": "Offer",
-    price: f.price.toFixed(2),
+    price: price.toFixed(2),
     priceCurrency: "ILS",
-    availability: "https://schema.org/InStock",
+    availability: `https://schema.org/${availability}`,
+    url: `${abs("/hanukkah")}${anchor}`,
     seller: cafe,
-    itemOffered: { "@type": "Product", name: `סופגניית ${f.name}`, image: abs(f.image), brand: { "@type": "Brand", name: business.name.he } },
+  });
+  const singles = flavors.map((f) => ({
+    "@type": "Product",
+    name: `סופגניית ${f.name}`,
+    description: f.alt,
+    image: abs(f.image),
+    brand,
+    offers: offer(f.price, "InStock", "#flavors"),
   }));
   const bundles = BUNDLE_TIERS.flatMap((tier) =>
     BUNDLE_SIZES.map((size) => ({
-      "@type": "Offer",
-      price: bundlePrice(tier, size).toFixed(2),
-      priceCurrency: "ILS",
-      availability: "https://schema.org/PreOrder",
-      url: `${abs("/hanukkah")}${bundleAnchor}`,
-      seller: cafe,
-      itemOffered: { "@type": "Product", name: `${hanukkahBundles[tier].label} של ${size} סופגניות`, image: abs(flavors[0].image) },
+      "@type": "Product",
+      name: `${hanukkahBundles[tier].label} של ${size} סופגניות`,
+      description: `${hanukkahBundles[tier].label} של ${size} סופגניות חנוכה מ${business.name.he}, להזמנה מראש ואיסוף מהקפה.`,
+      image: abs(flavors[0].image),
+      brand,
+      offers: offer(bundlePrice(tier, size), "PreOrder", bundleAnchor),
     })),
   );
   return {
