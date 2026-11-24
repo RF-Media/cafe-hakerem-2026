@@ -11,6 +11,7 @@ Owner of the GTM/GA4 setup: this file and `gtm-container.json` beside it.
 |---|---|---|
 | Walk-ins | `directions_click`, `phone_call_click`, `whatsapp_click` | `map_load`, `reviews_click`, `menu_category_click`, `time_on_page` 60s on /menu or /map |
 | Jachnun pre-orders | `generate_lead` (`form_name` = `jachnun_preorder`, with `value`) | `form_view`, `form_start`, `order_item_change`, `form_step`, `form_error` |
+| Hanukkah pre-orders | `generate_lead` (`form_name` = `hanukkah_preorder`, with `value`, `item_id` = `<tier>_<size>`) | `form_view`, `form_start`, `order_item_change` (settled tier/size), `form_error` |
 | Catering leads | `generate_lead` (`form_name` = `catering_inquiry`) | `form_view`, `form_start`, `form_step`, `form_error` (friction), `faq_open` on /catering |
 | Club members | `club_join_click` | `club_calculator_use` |
 | Brand / content | none | `scroll_depth`, `time_on_page`, `faq_open`, `gallery_filter`, `social_click`, `cta_click` |

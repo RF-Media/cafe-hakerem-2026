@@ -9,6 +9,7 @@ import { PACKAGE_IDS, jachnunPackages, jachnunPricing } from "@/content/jachnun"
 import { PAYMENT_METHODS } from "@/content/jachnun-order";
 import { isValidIsraeliMobile, normalizePhone } from "@/lib/phone";
 import { PREORDER_MAX } from "@/lib/preorder";
+import { BUNDLE_SIZES, BUNDLE_TIERS } from "@/content/hanukkah";
 
 /* Israeli mobile phone. The rule itself lives in lib/phone.ts so the
  * checkout can validate on blur without shipping Zod to the browser. */
@@ -115,6 +116,23 @@ export const jachnunPreorderSchema = z
 
 export type JachnunPreorderInput = z.infer<typeof jachnunPreorderSchema>;
 
+/* ─── Hanukkah bundle pre-order ────────────────────────────────── */
+
+export const hanukkahPreorderSchema = z.object({
+  name: nameSchema,
+  phone: phoneSchema,
+  tier: z.enum(BUNDLE_TIERS, { errorMap: () => ({ message: "סוג מארז לא תקין." }) }),
+  // The price is derived server-side from tier + size; the browser never sends one.
+  size: z
+    .number({ invalid_type_error: "גודל מארז לא תקין." })
+    .refine((n): n is (typeof BUNDLE_SIZES)[number] => (BUNDLE_SIZES as readonly number[]).includes(n), {
+      message: "גודל מארז לא תקין.",
+    }),
+  notes: optionalNotesSchema,
+});
+
+export type HanukkahPreorderInput = z.infer<typeof hanukkahPreorderSchema>;
+
 /* ─── Catering inquiry ─────────────────────────────────────────── */
 
 export const cateringInquirySchema = z.object({
@@ -146,7 +164,7 @@ export type CateringInquiryInput = z.infer<typeof cateringInquirySchema>;
  * Short, human-friendly reference code shown to the customer.
  * e.g. "JCH-2X4P". Not a security token — just a confirmation handle.
  */
-export function generateReference(prefix: "JCH" | "CAT"): string {
+export function generateReference(prefix: "JCH" | "CAT" | "HNK"): string {
   const alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"; // no 0/1/I/O
   let out = "";
   for (let i = 0; i < 4; i++) {

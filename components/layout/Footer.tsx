@@ -18,6 +18,7 @@ const linkGroups: { title: string; items: { href: string; label: string }[] }[] 
     items: [
       { href: "/menu", label: "התפריט" },
       { href: "/offers", label: "מבצעים" },
+      { href: "/hanukkah", label: "סופגניות חנוכה" },
       { href: "/jachnun", label: "ג'חנון של שבת" },
       { href: "/catering", label: "מגשי אירוח" },
       { href: "/coffee-club", label: "מועדון הלקוחות" },

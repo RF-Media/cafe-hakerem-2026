@@ -382,6 +382,36 @@
   from { transform: translate3d(0, 0, 0); }
   to   { transform: translate3d(50%, 0, 0); }
 }
+/* /hanukkah stories (`<SufganiyahStories>`): the active card full size, its
+   neighbours stepped back. Spacers let the first and last card reach the centre.
+   The fill is the autoplay timer; it is never rendered under reduced motion. */
+.stories-track { --story-w: min(68vw, 19rem); --story-gap: 0.75rem; }
+@media (min-width: 768px) { .stories-track { --story-gap: 1.25rem; } }
+.stories-spacer { width: calc(50vw - var(--story-w) / 2 - var(--story-gap)); }
+.story-card > article {
+  transform: scale(0.86);
+  opacity: 0.7;
+  transition: transform var(--dur-base) var(--ease-out-soft), opacity var(--dur-base) var(--ease-out-soft);
+}
+.story-card[data-active] > article { transform: none; opacity: 1; }
+.story-card:not([data-active]):hover > article { opacity: 0.9; }
+.story-fill { animation-name: story-fill; animation-timing-function: linear; animation-fill-mode: both; }
+@keyframes story-fill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* /hanukkah hero donuts settle in one after another. Transform only, so each
+   paints at full opacity the moment it decodes. */
+.donut-settle {
+  animation: donut-settle 0.8s var(--ease-out-soft) both;
+  animation-delay: calc(380ms + var(--i, 0) * 60ms);
+}
+@keyframes donut-settle {
+  from { transform: translate3d(0, 22px, 0) scale(0.92); }
+  to   { transform: none; }
+}
+
 /* The hero coupon drops onto the page. Transform only: it holds the page's
    biggest numbers, so it paints at full opacity from the first frame. */
 .coupon-drop {
@@ -413,6 +443,12 @@
   transform-origin: 50% 100%;
   animation: candle-lit 520ms var(--ease-out-soft) both;
 }
+
+@keyframes price-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.94); }
+  to   { opacity: 1; transform: none; }
+}
+.price-pop { animation: price-pop var(--dur-base) var(--ease-out-soft) both; }
 
 @keyframes stamp-press {
   0%   { transform: scale(1.5) rotate(-12deg); opacity: 0; }
@@ -861,6 +897,7 @@
   .seal-ping,
   .hero-settle,
   .coupon-drop,
+  .donut-settle,
   .candle-lit,
   .map-art,
   .map-polaroid {
@@ -927,6 +964,7 @@ html.a11y-motion [data-parallax],
 html.a11y-motion .seal-ping,
 html.a11y-motion .hero-settle,
 html.a11y-motion .coupon-drop,
+html.a11y-motion .donut-settle,
 html.a11y-motion .candle-lit {
   animation: none !important;
 }

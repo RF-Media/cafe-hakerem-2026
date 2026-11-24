@@ -76,6 +76,7 @@ async function checkFAQs() {
       { name: "map", data: faqs.mapFAQs },
       { name: "about", data: faqs.aboutFAQs },
       { name: "club", data: faqs.clubFAQs },
+      { name: "hanukkah", data: faqs.hanukkahFAQs },
     ];
 
     for (const page of allPages) {
