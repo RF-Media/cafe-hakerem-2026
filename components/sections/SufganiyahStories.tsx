@@ -49,31 +49,73 @@ export function SufganiyahStories() {
     return () => io.disconnect();
   }, []);
 
-  // Active card = the one whose centre is nearest the track's centre.
+  // Programmatic moves run with snap off: WebKit stutters, or lands with a jump, when a
+  // smooth scrollBy fights a mandatory snap. Snap comes back once the track is still.
+  const programmatic = useRef(false);
+  const restoreSnap = useCallback(() => {
+    programmatic.current = false;
+    track.current?.style.removeProperty("scroll-snap-type");
+  }, []);
+
+  // Every scroll frame: the active card is the one nearest the track's centre, and,
+  // unless motion is reduced, each card's scale and opacity follow its distance from
+  // that centre, so a swipe moves the cards with the finger rather than popping the
+  // new one in when it crosses the middle.
   useEffect(() => {
     const el = track.current;
     if (!el) return;
+    const live = !reduced;
+    if (live) el.dataset.live = "";
+    else delete el.dataset.live;
     let frame = 0;
+    let idle = 0;
     const read = () => {
       frame = 0;
-      const mid = el.getBoundingClientRect().left + el.clientWidth / 2;
+      const t = el.getBoundingClientRect();
+      const mid = t.left + t.width / 2;
+      const list = cards.current;
+      const a = list[0]?.getBoundingClientRect();
+      const b = list[1]?.getBoundingClientRect();
+      const step = a && b ? Math.abs(b.left - a.left) : t.width;
       let best = 0;
       let dist = Infinity;
-      cards.current.forEach((c, i) => {
-        if (!c) return;
+      const offsets = list.map((c, i) => {
+        if (!c) return 1;
         const r = c.getBoundingClientRect();
         const d = Math.abs(r.left + r.width / 2 - mid);
         if (d < dist) {
           dist = d;
           best = i;
         }
+        return Math.min(d / step, 1);
+      });
+      list.forEach((c, i) => {
+        const art = c?.firstElementChild as HTMLElement | null;
+        if (!art) return;
+        if (live) {
+          const p = offsets[i];
+          art.style.transform = p < 0.001 ? "none" : `scale(${1 - 0.14 * p})`;
+          art.style.opacity = String(1 - 0.3 * p);
+        } else {
+          art.style.removeProperty("transform");
+          art.style.removeProperty("opacity");
+        }
       });
       setActive(best);
     };
+    const settle = () => {
+      delete el.dataset.moving;
+      if (programmatic.current) restoreSnap();
+    };
     const onScroll = () => {
+      el.dataset.moving = "";
+      window.clearTimeout(idle);
+      idle = window.setTimeout(settle, 140);
       if (!frame) frame = requestAnimationFrame(read);
     };
     const onTouch = () => {
+      // The finger takes over: hand snapping back to it at once.
+      if (programmatic.current) restoreSnap();
       // A finger on the track holds autoplay until 3s after the last movement.
       setTouchHold(true);
       window.clearTimeout(touchTimer.current);
@@ -82,15 +124,18 @@ export function SufganiyahStories() {
     el.addEventListener("touchstart", onTouch, { passive: true });
     el.addEventListener("touchmove", onTouch, { passive: true });
     el.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
     read();
     return () => {
       el.removeEventListener("scroll", onScroll);
       el.removeEventListener("touchstart", onTouch);
       el.removeEventListener("touchmove", onTouch);
+      window.removeEventListener("resize", onScroll);
       window.clearTimeout(touchTimer.current);
+      window.clearTimeout(idle);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [reduced, restoreSnap]);
 
   const goTo = useCallback(
     (i: number) => {
@@ -99,7 +144,13 @@ export function SufganiyahStories() {
       if (!el || !card) return;
       const r = card.getBoundingClientRect();
       const t = el.getBoundingClientRect();
-      el.scrollBy({ left: r.left + r.width / 2 - (t.left + t.width / 2), behavior: reduced ? "auto" : "smooth" });
+      const dx = r.left + r.width / 2 - (t.left + t.width / 2);
+      if (Math.abs(dx) < 1) return;
+      if (!reduced) {
+        programmatic.current = true;
+        el.style.scrollSnapType = "none";
+      }
+      el.scrollBy({ left: dx, behavior: reduced ? "auto" : "smooth" });
     },
     [reduced],
   );
@@ -152,7 +203,7 @@ export function SufganiyahStories() {
                 aria-roledescription="slide"
                 aria-label={copy.position(i + 1, flavors.length)}
                 onClick={() => !isActive && goTo(i)}
-                className={`story-card w-[var(--story-w)] shrink-0 snap-center ${isActive ? "" : "cursor-pointer"}`}
+                className={`story-card w-[var(--story-w)] shrink-0 snap-center snap-always ${isActive ? "" : "cursor-pointer"}`}
               >
                 <article className="relative isolate aspect-[9/16] overflow-hidden rounded-[1.25rem] bg-[linear-gradient(180deg,#2b2521_0%,#3a322c_45%,#1b1714_100%)] text-cream shadow-lg ring-1 ring-cream/10">
                   <div

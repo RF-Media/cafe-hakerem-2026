@@ -8,8 +8,10 @@
  * CONFIRM BEFORE LAUNCH:
  *  - what separates a regular bundle from a premium one (flavours? box?). The
  *    brief gives the two price ladders only, so the copy names the tiers and
- *    claims nothing about what is inside. A premium 6-pack (₪99) costs more than
- *    six singles (₪84-₪90), which suggests the box or the selection differs.
+ *    claims nothing about what is inside. With singles at ₪10 and ₪19 (café,
+ *    2026-11-24), a regular 6-pack (₪50) undercuts six classics (₪60) and a
+ *    premium one (₪99) six of the rest (₪114), so the tiers read as classic
+ *    and special flavours, but nobody has said so.
  *  - that a rep phoning to confirm and take payment is the process here, as it
  *    is for the jachnun pre-order.
  */
@@ -38,29 +40,36 @@ export type Flavor = {
 
 const img = (slug: string) => `/images/sufganiyah-${slug}_hanukkah.jpg`;
 
-/** Price-sheet order: the two classics, then ₪15, then ₪14. */
+/** Two prices only (café, 2026-11-24): the jam classics, and everything else. */
+const CLASSIC = 10;
+const SPECIAL = 19;
+
+/** Price-sheet order: the two classics first. */
 export const flavors: Flavor[] = [
-  { id: "dulce-de-leche", name: "ריבת חלב", price: 7, image: img("dulce-de-leche"), alt: "סופגניית ריבת חלב עם אבקת סוכר ופקעת ריבת חלב בגוון קרמל בראש, על צלחת זכוכית" },
-  { id: "strawberry-jam", name: "ריבת תות", price: 7, image: img("strawberry-jam"), alt: "סופגנייה קלאסית עם אבקת סוכר וטיפת ריבת תות אדומה בראש" },
-  { id: "blueberry-cream", name: "אוכמניות שמנת", price: 15, image: img("blueberry-cream"), alt: "סופגניית אוכמניות ושמנת עם קרם סגלגל, אוכמנית טרייה ופיסות שוקולד לבן" },
-  { id: "lemon-lime-mascarpone", name: "לימון ליים מסקרפונה", price: 15, image: img("lemon-lime-mascarpone"), alt: "סופגניית לימון ליים עם מערבולת קרם מסקרפונה ופירורי מרנג לבן" },
-  { id: "espresso-chocolate", name: "שוקולד אספרסו", price: 15, image: img("espresso-chocolate"), alt: "סופגניית שוקולד אספרסו עם פירורי שוקולד, קרם ושבב שוקולד בראש" },
-  { id: "chai-masala", name: "צ'אי מסאלה", price: 15, image: img("chai-masala"), alt: "סופגניית צ'אי מסאלה עם קרם לבן, כוכב אניס ופרוסת וופל קריספית" },
-  { id: "pecan-caramel", name: "פקאן קרמל", price: 15, image: img("pecan-caramel"), alt: "סופגניית פקאן קרמל עם ציפוי שוקולד, קרם ופקאן מקורמל בראש" },
-  { id: "marshmallow-popping-candy", name: "מרשמלו וסוכריות קופצות", price: 15, image: img("marshmallow-popping-candy"), alt: "סופגנייה עם ציפוי שוקולד, סוכריות קופצות בורדו וקובייה של מרשמלו שרוף" },
-  { id: "pretzel", name: "בייגלה", price: 14, image: img("pretzel"), alt: "סופגניית בייגלה עם ציפוי שוקולד, אגוזים, קרם ובייגלה קטן בראש" },
-  { id: "cookie-cream", name: "קרם עוגיות", price: 14, image: img("cookie-cream"), alt: "סופגנייה עם קרם לבן, פירורי עוגיית שוקולד ופקעת קרם בראש" },
-  { id: "millefeuille", name: "מילפיי", price: 14, image: img("millefeuille"), alt: "סופגניית מילפיי עם פירורי בצק עלים זהוב ואבקת סוכר" },
-  { id: "crunch", name: "קליק", price: 14, image: img("crunch"), alt: "סופגנייה מצופה בכדורי שוקולד קריספיים בחום ולבן" },
-  { id: "raspberry", name: "פטל", price: 14, image: img("raspberry"), alt: "סופגניית פטל עם ציפוי שוקולד לבן, פירורי פטל מיובש וקרם בראש" },
-  { id: "saint-honore", name: "סנט אנורה", price: 14, image: img("saint-honore"), alt: "סופגניית סנט אנורה עם ציפוי קרמל מבריק בגוון כתום" },
-  { id: "peanut-butter", name: "חמאת בוטנים", price: 14, image: img("peanut-butter"), alt: "סופגניית חמאת בוטנים עם קרם לבן ופירורי בוטנים מקורמלים" },
+  { id: "dulce-de-leche", name: "ריבת חלב", price: CLASSIC, image: img("dulce-de-leche"), alt: "סופגניית ריבת חלב עם אבקת סוכר ופקעת ריבת חלב בגוון קרמל בראש, על צלחת זכוכית" },
+  { id: "strawberry-jam", name: "ריבת תות", price: CLASSIC, image: img("strawberry-jam"), alt: "סופגנייה קלאסית עם אבקת סוכר וטיפת ריבת תות אדומה בראש" },
+  { id: "blueberry-cream", name: "אוכמניות שמנת", price: SPECIAL, image: img("blueberry-cream"), alt: "סופגניית אוכמניות ושמנת עם קרם סגלגל, אוכמנית טרייה ופיסות שוקולד לבן" },
+  { id: "lemon-lime-mascarpone", name: "לימון ליים מסקרפונה", price: SPECIAL, image: img("lemon-lime-mascarpone"), alt: "סופגניית לימון ליים עם מערבולת קרם מסקרפונה ופירורי מרנג לבן" },
+  { id: "espresso-chocolate", name: "שוקולד אספרסו", price: SPECIAL, image: img("espresso-chocolate"), alt: "סופגניית שוקולד אספרסו עם פירורי שוקולד, קרם ושבב שוקולד בראש" },
+  { id: "chai-masala", name: "צ'אי מסאלה", price: SPECIAL, image: img("chai-masala"), alt: "סופגניית צ'אי מסאלה עם קרם לבן, כוכב אניס ופרוסת וופל קריספית" },
+  { id: "pecan-caramel", name: "פקאן קרמל", price: SPECIAL, image: img("pecan-caramel"), alt: "סופגניית פקאן קרמל עם ציפוי שוקולד, קרם ופקאן מקורמל בראש" },
+  { id: "marshmallow-popping-candy", name: "מרשמלו וסוכריות קופצות", price: SPECIAL, image: img("marshmallow-popping-candy"), alt: "סופגנייה עם ציפוי שוקולד, סוכריות קופצות בורדו וקובייה של מרשמלו שרוף" },
+  { id: "pretzel", name: "בייגלה", price: SPECIAL, image: img("pretzel"), alt: "סופגניית בייגלה עם ציפוי שוקולד, אגוזים, קרם ובייגלה קטן בראש" },
+  { id: "cookie-cream", name: "קרם עוגיות", price: SPECIAL, image: img("cookie-cream"), alt: "סופגנייה עם קרם לבן, פירורי עוגיית שוקולד ופקעת קרם בראש" },
+  { id: "millefeuille", name: "מילפיי", price: SPECIAL, image: img("millefeuille"), alt: "סופגניית מילפיי עם פירורי בצק עלים זהוב ואבקת סוכר" },
+  { id: "crunch", name: "קליק", price: SPECIAL, image: img("crunch"), alt: "סופגנייה מצופה בכדורי שוקולד קריספיים בחום ולבן" },
+  { id: "raspberry", name: "פטל", price: SPECIAL, image: img("raspberry"), alt: "סופגניית פטל עם ציפוי שוקולד לבן, פירורי פטל מיובש וקרם בראש" },
+  { id: "saint-honore", name: "סנט אנורה", price: SPECIAL, image: img("saint-honore"), alt: "סופגניית סנט אנורה עם ציפוי קרמל מבריק בגוון כתום" },
+  { id: "peanut-butter", name: "חמאת בוטנים", price: SPECIAL, image: img("peanut-butter"), alt: "סופגניית חמאת בוטנים עם קרם לבן ופירורי בוטנים מקורמלים" },
 ];
 
-/** Distinct single prices, cheapest first, each with its flavours: the price list. */
-export const priceGroups = [...new Set(flavors.map((f) => f.price))]
-  .sort((a, b) => a - b)
-  .map((price) => ({ price, flavors: flavors.filter((f) => f.price === price) }));
+const specials = flavors.filter((f) => f.price === SPECIAL);
+
+/** The price list: two rows, the classic and the rest, the second naming every flavour. */
+export const priceGroups = [
+  { price: CLASSIC, title: "ריבה / ריבת חלב", detail: "סופגנייה רגילה" },
+  { price: SPECIAL, title: `כל השאר, ${specials.length} טעמים`, detail: specials.map((f) => f.name).join(" · ") },
+];
 
 export const afternoonDeal = {
   days: "ימים א׳-ה׳",
@@ -206,5 +215,5 @@ export const hanukkah = {
       { href: "/map", label: "מפה והגעה", note: "רחוב הכרמל 20, חניה ושעות", image: "/images/courtyard-tall_shared.jpg" },
     ],
   },
-  factual: `בחנוכה קפה הכרם מגיש ${flavors.length} טעמי סופגניות במחיר של ₪7 עד ₪15 ליחידה, ומארזים רגילים ומארזי פרימיום של 6, 12 ו-20 סופגניות להזמנה מראש. בימים א׳-ה׳ בין 14:00 ל-18:00, ברכישת 2 סופגניות ומעלה, הפוך קטן ב-₪10.`,
+  factual: `בחנוכה קפה הכרם מגיש ${flavors.length} טעמי סופגניות: סופגניית ריבה או ריבת חלב ב-₪${CLASSIC}, וכל שאר הטעמים ב-₪${SPECIAL} ליחידה, ומארזים רגילים ומארזי פרימיום של 6, 12 ו-20 סופגניות להזמנה מראש. בימים א׳-ה׳ בין 14:00 ל-18:00, ברכישת 2 סופגניות ומעלה, הפוך קטן ב-₪10.`,
 };

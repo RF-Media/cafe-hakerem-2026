@@ -197,9 +197,12 @@ export default function HanukkahPage() {
 
       {/* The 15 flavours as stories, dark cards on the light ground. overflow-x-clip:
           the track is full-bleed (100vw), and clip, unlike hidden, makes no scroll container. */}
-      <Section tone="cream-2" id="flavors" className="overflow-x-clip">
+      <Section tone="cream-2" className="overflow-x-clip">
         <SectionHeading eyebrow={hanukkah.stories.eyebrow} title={hanukkah.stories.title} />
-        <SufganiyahStories />
+        {/* The hero CTA lands on the carousel itself, centred under the nav (.stories-anchor). */}
+        <div id="flavors" className="stories-anchor">
+          <SufganiyahStories />
+        </div>
       </Section>
 
       {/* The afternoon deal as a ticket, matching the club coupon in the hero. It is open
@@ -286,9 +289,12 @@ export default function HanukkahPage() {
             <h3 className="type-sub text-xl md:text-2xl">{prices.singles}</h3>
             <ul className="mt-4 divide-y divide-stroke border-y border-stroke">
               {priceGroups.map((g) => (
-                <li key={g.price} className="flex gap-5 py-4">
+                <li key={g.price} className="flex gap-5 py-5">
                   <p className="type-statement w-16 shrink-0 text-3xl tabular-nums text-brass-ink">₪{g.price}</p>
-                  <p className="pt-1 text-espresso-soft">{g.flavors.map((f) => f.name).join(" · ")}</p>
+                  <div className="min-w-0 pt-0.5">
+                    <p className="type-sub text-lg md:text-xl">{g.title}</p>
+                    <p className="mt-1 text-espresso-soft">{g.detail}</p>
+                  </div>
                 </li>
               ))}
             </ul>

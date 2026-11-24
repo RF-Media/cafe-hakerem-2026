@@ -2733,3 +2733,22 @@ plays. The "how it works" steps went with the builder, and "עוד מקפה הכ
 Twelve of the 22 atmosphere photos from the café's Drive folder are used (downloaded locally;
 near-duplicates left out), re-encoded without EXIF and named per §8. `<WideCarousel>` had no
 callers left and was deleted.
+
+**2026-11-24 — /hanukkah: two single prices, a carousel that follows the finger, and a CTA that lands on it.**
+The café simplified the singles to two prices: ריבה / ריבת חלב (the plain sufganiyah) ₪10, and the other
+13 flavours ₪19. The price list is two rows, the second naming every flavour. The FAQ answer, the meta
+description ("מ-₪10") and the factual paragraph follow, and the story cards, schema and llms.txt read
+the same `flavors` prices. The bundle prices are unchanged.
+
+The stories carousel felt jerky on phones for three reasons. The active card switched size and opacity
+in one 320ms transition the moment its centre crossed the middle, so cards popped mid-swipe; scale and
+opacity are now written per frame from each card's distance to the centre, with no transition, and
+`will-change` is set only while the track moves so the card re-rasterises sharp when it stops. A flick
+could fly past several cards; `scroll-snap-stop: always` stops on the next one, like stories. And
+autoplay and the arrows ran a smooth `scrollBy` against mandatory snap, which WebKit animates badly or
+ends with a jump; snap is now off during a programmatic move and back once the track is still for
+140ms, or as soon as a finger touches it. Reduced motion keeps the old static styling.
+
+"לכל 15 הטעמים" now targets the carousel, not its section: on a 390×844 phone the card lands 32px
+under the nav with the heading out of view, and from `md` the carousel is centred under the nav
+(`.stories-anchor`, scroll-margin computed from the card's size).

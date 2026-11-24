@@ -394,7 +394,19 @@
   transition: transform var(--dur-base) var(--ease-out-soft), opacity var(--dur-base) var(--ease-out-soft);
 }
 .story-card[data-active] > article { transform: none; opacity: 1; }
-.story-card:not([data-active]):hover > article { opacity: 0.9; }
+/* Once hydrated (and motion allowed), scale and opacity follow the scroll position
+   frame by frame from inline styles, so no transition: one would lag the finger.
+   will-change only while moving, so the layer re-rasterises sharp when it settles. */
+.stories-track[data-live] .story-card > article { transition: none; }
+.stories-track[data-moving] .story-card > article { will-change: transform, opacity; }
+/* Hash jumps to #flavors: on a phone the card lands ~32px under the nav with the
+   section heading out of view; from md the carousel (card + the track's py-4 +
+   the controls' mt-6 and h-12) is centred in the space under the nav. */
+@media (min-width: 768px) {
+  .stories-anchor {
+    scroll-margin-top: max(0px, (100svh - var(--nav-h) - 16px - (19rem * 16 / 9 + 6.5rem)) / 2);
+  }
+}
 .story-fill { animation-name: story-fill; animation-timing-function: linear; animation-fill-mode: both; }
 @keyframes story-fill {
   from { transform: scaleX(0); }
