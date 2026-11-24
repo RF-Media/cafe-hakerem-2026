@@ -4,16 +4,8 @@
  * One real, café-confirmed main promotion (the happy hour) plus the one other
  * already-confirmed club fact worth surfacing here (the birthday gift, mirrored
  * from `club.perks` in content/club.ts — not re-invented). The remaining three
- * are EXAMPLE PROMOS, built so the page has enough rhythm to review and ship a
- * real design against; each is flagged below. CONFIRM WITH THE CAFÉ BEFORE
- * LAUNCH, then either keep them as real promotions or delete the entry.
- *
- * §9 would normally forbid inventing this kind of specific, actionable content
- * ("never invent... dates"), but the café explicitly asked for dummy promos to
- * fill out the page for review — same carve-out as the 2026-08-03 jachnun
- * add-on demo prices. No placeholder sentinel on purpose: a page that renders
- * one can't demonstrate the layout it exists to demonstrate, and the content
- * completeness check would block the build besides.
+ * (weekend brunch, coffee with a jachnun pickup, student discount) began as
+ * example promos and were confirmed by the café as real on 2026-11-24.
  */
 
 export type OfferExclusivity = "club" | "all";
@@ -119,7 +111,6 @@ export const offers = {
       lede: "קפה חינם ו-20% הנחה על התפריט, מתנה מהמועדון של קפה הכרם ליום ההולדת שלכם.",
       value: { big: "20%", small: "וגם קפה חינם" },
     },
-    // EXAMPLE PROMO — CONFIRM WITH THE CAFÉ BEFORE LAUNCH, then keep or delete.
     {
       id: "weekend-brunch",
       exclusivity: "all",
@@ -130,7 +121,6 @@ export const offers = {
       lede: "ארוחת בוקר מלאה וקפה או שתייה חמה אחת ב-₪45, בבוקר של שישי ושבת.",
       value: { big: "₪45", small: "בוקר וקפה" },
     },
-    // EXAMPLE PROMO — CONFIRM WITH THE CAFÉ BEFORE LAUNCH, then keep or delete.
     {
       id: "jachnun-coffee",
       exclusivity: "all",
@@ -142,7 +132,6 @@ export const offers = {
       value: { big: "חינם", small: "קפה על הבית" },
       cta: { label: "להזמנת ג'חנון", href: "/jachnun" },
     },
-    // EXAMPLE PROMO — CONFIRM WITH THE CAFÉ BEFORE LAUNCH, then keep or delete.
     {
       id: "student-discount",
       exclusivity: "all",

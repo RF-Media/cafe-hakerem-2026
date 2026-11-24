@@ -53,6 +53,9 @@ export default function AccessibilityPage() {
           <p className={body}>{s.contact.lead}</p>
           <ul className={`${body} space-y-1.5`}>
             <li>
+              {s.contact.coordinator.label}: {s.contact.coordinator.name}
+            </li>
+            <li>
               טלפון:{" "}
               <a href={`tel:${business.phone.tel}`} className="text-olive hover:text-espresso">
                 {business.phone.display}

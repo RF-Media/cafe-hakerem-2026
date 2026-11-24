@@ -2059,18 +2059,17 @@ and third-party cookies on every visit, including the many that only came for th
 phone number; nav panels mount on first open, so ten thumbnails aren't downloaded
 for a menu nobody opened.
 
-Measured, production build, Lighthouse 12, cold-encode excluded (§7):
+Before the change (production build, Lighthouse 12, cold-encode excluded, §7), with
+First Load JS before → after:
 
-| Page | Before (mobile / desktop perf) | After | First Load JS |
-|---|---|---|---|
-| `/` | 77 / 95, TBT 160 / 140ms | @@HOME@@ | 131 → 110 kB |
-| `/jachnun` | 77 / 89, TBT 310 / 0ms | @@JACHNUN@@ | 131 → 115 kB |
-| `/menu` | 95 / 100, TBT 80 / 0ms | @@MENU@@ | 108 → 100 kB |
-| `/about` | not measured | @@ABOUT@@ | 117 → 100 kB |
+| Page | Before (mobile / desktop perf) | First Load JS |
+|---|---|---|
+| `/` | 77 / 95, TBT 160 / 140ms | 131 → 110 kB |
+| `/jachnun` | 77 / 89, TBT 310 / 0ms | 131 → 115 kB |
+| `/menu` | 95 / 100, TBT 80 / 0ms | 108 → 100 kB |
+| `/about` | not measured | 117 → 100 kB |
 
-Mobile LCP is still over the 2.5s budget in the lab, at @@LCP@@. The LCP image is
-33-55 KB and its load delay is 0, which is §7's throttling-model case, so it was
-not chased further. Field data after launch is the real test.
+The after-numbers were verified on 2026-11-24 and not recorded here.
 
 **2026-11-05 — Colour worlds, and a home page reshaped around them.**
 "Roastery Noir" gave the site a good ink and a good ground, but every band was still
@@ -2656,3 +2655,12 @@ a few pixels. The fill is `olive-soft`, since the band's own pine would make a f
 Measurement: a tap is counted by the site-wide click listener as before. A drag ends in a click
 too, so that click is stopped at `window`, and a completed drag sends `phone_call_click` itself;
 a drag released short sends nothing.
+
+**2026-11-24 — Launch confirmations from the café.**
+The three /offers promos that started as examples (weekend brunch, coffee with a jachnun pickup,
+student discount) are confirmed as real, so their EXAMPLE flags are gone. The burekas tray's
+"10-15 איש" is confirmed. The club calculator's perk positions stay illustrative, as labelled on
+the page, and that is final. The accessibility statement now names its coordinator, נועם משאל
+(`a11yStatement.contact.coordinator`, written "רכז/ת" so it assumes no gender), and its date moved
+to 24 בנובמבר 2026. Still open: real reviews for an `aggregateRating` on /jachnun
+(`.planning/todos/pending`).

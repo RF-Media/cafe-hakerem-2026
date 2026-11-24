@@ -38,7 +38,7 @@ export const club = {
     every: (days: number) => (days === 1 ? "יום" : days === 7 ? "שבוע" : days === 14 ? "שבועיים" : `${days} ימים`),
     yearLabel: "בשנה שלמה",
     year: (n: number) => `${n} כוסות עלינו`,
-    /* Illustrative, and labelled so on the page (perksNote, client OK 2026-11-14):
+    /* Illustrative, and labelled so on the page (perksNote, client OK 2026-11-14; resolved as-is 2026-11-24):
        every label is a real benefit, but only positions 1 and 10 are real positions. 3, 5 and 7 are the order
        they appear on the illustration, not the café's card. To promise a cookie at a given punch, set that milestone in the
        café's CoffeeStream card template first, then mirror it here. */

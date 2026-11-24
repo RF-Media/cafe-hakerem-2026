@@ -5,11 +5,9 @@
  * A statement that overstates is a legal exposure under תקנה 35, not a
  * courtesy — when a feature changes, change the sentence here with it.
  *
- * CONFIRM BEFORE LAUNCH: the regulation asks for a named accessibility
- * coordinator, and for the café's physical arrangements (step-free entry,
- * accessible restroom, parking). Neither was supplied, so the contact block
- * routes to the café's own phone and email and the physical section is
- * absent rather than guessed.
+ * The regulation asks for a named accessibility coordinator (`contact.coordinator`,
+ * supplied by the café 2026-11-24) and for the café's physical arrangements,
+ * which sit with the מרכז הבמה complex (see accessibilityFAQs).
  */
 
 export const a11yWidget = {
@@ -32,7 +30,7 @@ export const a11yWidget = {
 
 export const a11yStatement = {
   title: "הצהרת נגישות",
-  updated: "עודכן: 21 באוקטובר 2026",
+  updated: "עודכן: 24 בנובמבר 2026",
   intro: [
     "קפה הכרם הוא בית קפה שכונתי בגני תקווה, וחשוב לנו שכל מי שמבקר באתר, כולל אנשים עם מוגבלות, יוכל למצוא את התפריט, את שעות הפתיחה ואת דרכי ההזמנה בקלות, בעצמאות ובכבוד.",
     "האתר הותאם, ככל הניתן, לדרישות תקנה 35 לתקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע\"ג-2013, ולתקן הישראלי ת\"י 5568 ברמה AA, המבוסס על הנחיות WCAG 2.0.",
@@ -84,6 +82,7 @@ export const a11yStatement = {
   contact: {
     heading: "נתקלתם בבעיה? אנחנו כאן כדי לעזור",
     lead: "לפניות בנושא נגישות, לבקשת מידע בפורמט נגיש או להצעות לשיפור, אפשר לפנות לקפה הכרם:",
+    coordinator: { label: "רכז/ת הנגישות", name: "נועם משאל" },
     after: "כדי שנוכל לטפל בפנייה במהירות, ספרו לנו מה הבעיה, באיזה עמוד נתקלתם בה ובאיזה מכשיר ודפדפן השתמשתם.",
   },
 } as const;
