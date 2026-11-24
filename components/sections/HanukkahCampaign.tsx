@@ -13,7 +13,7 @@ import { hanukkahCampaign as c } from "@/content/holidays";
 /** Nine lights, the shamash raised in the middle, set as the eyebrow's glyph.
  *  They light once on load, from the shamash outwards (`.candle-lit`), then
  *  hold still; both kill switches show them lit. */
-function Hanukkiah({ className }: { className?: string }) {
+export function Hanukkiah({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 130 30" aria-hidden className={className}>
       <path d="M2 29.25h126" stroke="currentColor" strokeOpacity="0.5" strokeWidth="1" />
@@ -61,8 +61,8 @@ export function HanukkahCard() {
           </p>
           <p className="type-title mt-2 text-balance text-[1.4rem] text-cream sm:text-2xl xl:text-[1.7rem]">{c.card.title}</p>
           <p className="mt-1 text-sm text-cream/85 md:text-base">{c.card.line}</p>
-          {c.sectionEnabled ? (
-            <Button as="a" href={`#${c.anchor}`} variant="onDark" size="sm" icon={<IconArrow />} className="mt-4 lg:mt-3">
+          {c.pageEnabled || c.sectionEnabled ? (
+            <Button as="a" href={c.pageEnabled ? c.page : `#${c.anchor}`} variant="onDark" size="sm" icon={<IconArrow />} className="mt-4 lg:mt-3">
               {c.card.cta}
             </Button>
           ) : (

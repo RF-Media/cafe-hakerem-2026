@@ -27,13 +27,16 @@ export const hanukkahCampaign = {
   enabled: true,
   /** Section hidden for now (2026-11-18); the card stays and says "בקרוב" instead of linking. */
   sectionEnabled: false,
+  /** The sufganiyot page (content/hanukkah.ts). While true, the card links to it. */
+  pageEnabled: true,
+  page: "/hanukkah",
   anchor: "hanukkah",
   image: "/images/sufganiyah.png",
   imageAlt: "סופגנייה עם אבקת סוכר",
   card: {
     title: "חנוכה שמח בקפה הכרם",
-    line: "קפה חם וסופגנייה. חג שמח.",
-    cta: "לחנוכה בקפה הכרם",
+    line: "15 טעמי סופגניות ומארזים להזמנה מראש.",
+    cta: "לסופגניות חנוכה",
     soon: "בקרוב",
   },
   section: {

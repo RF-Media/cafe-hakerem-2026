@@ -4,8 +4,9 @@
  */
 import { business, clubJoinUrl } from "@/content/business";
 import { catering } from "@/content/catering";
-import { aboutFAQs, cateringFAQs, clubFAQs, contactFAQs, homeFAQs, jachnunFAQs, mapFAQs, menuFAQs, offersFAQs } from "@/content/faqs";
+import { aboutFAQs, cateringFAQs, clubFAQs, contactFAQs, hanukkahFAQs, homeFAQs, jachnunFAQs, mapFAQs, menuFAQs, offersFAQs } from "@/content/faqs";
 import { jachnunPackages } from "@/content/jachnun";
+import { afternoonDeal, BUNDLE_SIZES, hanukkahBuilderEnabled, BUNDLE_TIERS, bundlePrice, flavors, hanukkahBundles } from "@/content/hanukkah";
 import { menuCategories } from "@/content/menu";
 import { offers } from "@/content/offers";
 import { pages } from "@/content/seo";
@@ -27,13 +28,17 @@ export function GET() {
     )
     .join("\n\n");
   const packages = jachnunPackages.map((p) => `- ${p.title}: ${formatILS(p.totalAgorot)} (${p.units})`).join("\n");
+  const sufganiyot = flavors.map((f) => `- ${f.name}: ₪${f.price}`).join("\n");
+  const sufganiyotBundles = BUNDLE_TIERS.flatMap((t) =>
+    BUNDLE_SIZES.map((n) => `- ${hanukkahBundles[t].label}, ${n} סופגניות: ₪${bundlePrice(t, n)}`),
+  ).join("\n");
   const trays = catering.options
     .map((o) => `- ${o.title.he}: ${o.serves}${o.fromPrice ? `, ${o.fromPrice}` : ""}`)
     .join("\n");
 
   // Each answer once: the home list repeats a few facts on purpose for readers.
   const seen = new Set<string>();
-  const faqs = [...homeFAQs, ...menuFAQs, ...jachnunFAQs, ...cateringFAQs, ...offersFAQs, ...clubFAQs, ...aboutFAQs, ...contactFAQs, ...mapFAQs]
+  const faqs = [...homeFAQs, ...menuFAQs, ...jachnunFAQs, ...cateringFAQs, ...offersFAQs, ...hanukkahFAQs, ...clubFAQs, ...aboutFAQs, ...contactFAQs, ...mapFAQs]
     .filter((f) => (seen.has(f.q) ? false : (seen.add(f.q), true)))
     .map((f) => `Q: ${f.q}\nA: ${f.a}`)
     .join("\n\n");
@@ -62,6 +67,14 @@ ${Object.values(pages)
 
 ## Jachnun packages
 ${packages}
+
+## Hanukkah sufganiyot (${url("/hanukkah")})
+${hanukkahBuilderEnabled ? "Pre-order on the site with a name and phone; a rep calls to confirm, arrange pickup and take payment." : `Bundles are ordered by phone (${business.phone.display}) and collected at the café.`}
+Afternoon deal: ${afternoonDeal.days} ${afternoonDeal.from}-${afternoonDeal.to}, ${afternoonDeal.offer}.
+### Single sufganiyot
+${sufganiyot}
+### Bundles
+${sufganiyotBundles}
 
 ## Catering trays
 ${trays}
