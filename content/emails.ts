@@ -8,37 +8,38 @@ export const emailShell = {
   /** Sunday-first, for the one-line hours summary ("א׳–ה׳ 07:00–20:00"). */
   dayShort: ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "שבת"],
   closed: "סגור",
-  pdfNote: "אישור ההזמנה מצורף למייל כקובץ PDF.",
   poweredBy: "מופעל על ידי",
   poweredByName: "CoffeeStream",
   poweredByUrl: "https://coffeestream.co.il",
 };
 
 export const jachnunConfirmation = {
-  subject: (reference: string) => `הזמנת הג'חנון שלך התקבלה · ${reference}`,
-  preheader: (day: string) => `נתראה ${day}. נציג שלנו יצור קשר לאישור ההזמנה ולתשלום.`,
+  subject: (reference: string) => `קיבלנו את בקשת ההזמנה שלך · ${reference}`,
+  preheader: (_day: string) => "זהו אישור קבלת הבקשה. נציג יתקשר אליך לאישור סופי, לתיאום ולתשלום.",
   eyebrow: "ג'חנון של שבת",
-  title: "ההזמנה שלך התקבלה",
+  title: "קיבלנו את בקשת ההזמנה",
   greeting: (name: string) => `שלום ${name},`,
-  intro: "תודה שהזמנת ג'חנון מקפה הכרם. הנה כל פרטי ההזמנה, כדאי לשמור את המייל הזה עד האיסוף.",
-  referenceLabel: "מספר הזמנה",
-  pickupHeading: "איסוף",
+  intro:
+    "תודה שפנית לקפה הכרם. זהו אישור על כך שפרטי בקשת ההזמנה הגיעו אלינו — זו עדיין לא הזמנה סגורה. נציג שלנו יצור איתך קשר טלפוני בקרוב כדי לאשר את הפרטים, לקבל את התשלום ולתת לך אישור סופי.",
+  referenceLabel: "מספר בקשה",
+  pickupHeading: "חלון איסוף מבוקש",
   pickupPlaceHeading: "מקום האיסוף",
   wazeLabel: "Waze",
   mapsLabel: "Google Maps",
   navigateLabel: "ניווט:",
-  orderHeading: "פירוט ההזמנה",
+  orderHeading: "מה ביקשת",
   unitsLabel: (units: number) => (units === 1 ? "יחידה אחת" : `${units} יחידות`),
   includedLabel: "כל ג'חנון מגיע עם",
   includedPrice: "כלול",
   totalLabel: "סכום משוער",
-  notChargedNote: "לא בוצע חיוב. ההזמנה טרם אושרה סופית - נציג שלנו יצור קשר לאישור ולקבלת פרטי התשלום.",
+  notChargedNote:
+    "לא בוצע חיוב, ולא נשמר מקום באופן סופי. הסכום הסופי, חלון האיסוף ואופן התשלום ייסגרו עם הנציג בטלפון.",
   detailsHeading: "הפרטים שלך",
   nameLabel: "שם",
   phoneLabel: "טלפון",
   emailLabel: "אימייל",
   notesLabel: "בקשות מיוחדות",
-  changeNote: "צריך לשנות או לבטל? התקשרו לקפה הכרם ונסדר את זה.",
+  changeNote: "רוצה לשנות משהו לפני שהנציג יתקשר? התקשרו לקפה הכרם ונסדר את זה.",
 };
 
 export const cateringConfirmation = {
@@ -55,9 +56,12 @@ export const cateringConfirmation = {
   emailLabel: "אימייל",
   eventDateLabel: "תאריך האירוע",
   guestsLabel: "מספר אורחים משוער",
-  messageLabel: "על האירוע",
+  traysLabel: "מגשים",
+  noTrays: "נשמח להמלצה מהקפה",
+  fulfilmentLabel: "איסוף או משלוח",
+  messageLabel: "הערות",
   nextHeading: "מה עכשיו?",
-  nextBody: "נעבור על הבקשה, נתקשר לתאם סוגי מגשים, כמויות ומועד איסוף, ונשלח הצעה מסודרת. בינתיים אפשר להציץ שוב במגשים שלנו.",
+  nextBody: "נעבור על הבקשה, נתקשר לתאם סוגי מגשים, כמויות ומועד איסוף או משלוח, ונשלח הצעה מסודרת. בינתיים אפשר להציץ שוב במגשים שלנו.",
   ctaLabel: "למגשי האירוח",
 };
 
@@ -92,7 +96,8 @@ export const orderTicket = {
   cateringHeader: "פנייה חדשה למגשי אירוח",
   jachnunSubject: (reference: string, name: string, total: string, slot: string) =>
     `ג'חנון ${reference} · ${name} · ${total} · ${slot}`,
-  cateringSubject: (reference: string, name: string) => `מגשי אירוח ${reference} · ${name}`,
+  cateringSubject: (reference: string, name: string, guests?: number, date?: string) =>
+    [`מגשי אירוח ${reference}`, name, guests ? `${guests} אורחים` : "", date ?? ""].filter(Boolean).join(" · "),
   pickupLabel: "איסוף",
   orderLabel: "בהזמנה",
   units: (n: number) => `${n} יח׳`,
@@ -102,7 +107,10 @@ export const orderTicket = {
   totalLabel: "סכום לאישור וגבייה בטלפון",
   eventDateLabel: "תאריך",
   guestsLabel: "אורחים",
-  messageLabel: "פרטים",
+  traysLabel: "מגשים",
+  noTrays: "לא בחר/ה - להמליץ",
+  fulfilmentLabel: "איך",
+  messageLabel: "הערות",
   callBack: "לחזור ללקוח בטלפון",
   sentTo: (email: string) => `אישור נשלח ללקוח: ${email}`,
   noCustomerEmail: "הלקוח לא השאיר אימייל, לא נשלח אישור",

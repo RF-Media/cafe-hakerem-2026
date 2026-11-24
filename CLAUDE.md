@@ -2564,6 +2564,23 @@ Search Console property on 2026-11-18. Known weakness, left as is: `lastmod` is 
 time on every URL, so Google will likely ignore it. When a page gets a new photo, add it to
 that page's list here.
 
+**2026-11-18 — Customer PDF attachment turned off; jachnun confirmation reworded as a receipt.**
+The 2026-10-22 PDF attached to every customer confirmation was headed "אישור הזמנה" with a
+total line. Under the phase-1 flow (2026-11-13 "rep calls to confirm and collect payment")
+that overstated what had just happened: the customer has typed a request, nothing is paid
+or held, and the actual confirmation comes from the rep on the phone. The café asked to hold
+off on the PDF rather than fix its copy for a flow that will change again when phase-2
+checkout turns on. `PDF_ATTACHMENT_ENABLED` in `lib/confirmation-pdf.ts` is `false` and
+`pdfAttachment()` short-circuits before Chromium launches; the routes still call it (gets
+`undefined` back), so switching it on is a one-line change. The jachnun confirmation copy
+(`jachnunConfirmation` in `content/emails.ts`) now says *receipt of request* in subject,
+title, intro and the "not charged" note, with the explicit line that it is not yet an
+order and that a rep will call to confirm, take payment and give the final
+confirmation. `emailShell.pdfNote` ("האישור מצורף כ-PDF") is gone from the shell and from
+both email templates. Catering copy was already framed as inquiry receipt and only lost
+the pdfNote tail. Mechanism, fonts and HTML renderers stay in place; see
+`docs/pdf-confirmation-disabled.md` for the full surface and the re-enable steps.
+
 **2026-11-18 — Favicon and app-icon pipeline use the real café mark; shape per CoffeeStream's
 rule.** The icon files (`app/icon.svg`, `app/apple-icon.png`, `app/favicon.ico`,
 `public/icons/icon-*.png`) were all a generic coffee-cup glyph, not the café's logo.
@@ -2580,3 +2597,50 @@ arch reads at any size. `app/favicon.ico` packs 16/32/48 PNGs so legacy browsers
 same art. The Organization JSON-LD `logo` in `app/layout.tsx` moved from the 1200×532
 wordmark to the 512×512 square tile, which is what Google's Logo rich result wants at
 small sizes.
+
+**2026-11-23 — Catering inquiry becomes a three-step card like the jachnun pre-order; inquiries go to the caterer.**
+The one-screen form under "בואו נדבר" is replaced by the /jachnun card's structure: header, progress
+row with what was chosen, one step at a time (מה → מתי → פרטים), and the inquiry so far in a bar pinned
+to the bottom of the card on phones and in an end column on desktop. It is sage, not terracotta: the
+structure is shared, the colour world (§4) is not. Step 1 offers the three trays as optional
+checkboxes (none ticked means "recommend something") and a guest stepper in fives; step 2 is an
+optional date and a required pickup-or-delivery; step 3 is name, phone, email and optional notes.
+`message` is no longer required. The DB row is unchanged (no migration): tray names and the
+fulfilment are written at the top of `message`, and the emails, ticket and PDF show them as rows.
+
+Measured in Chrome and WebKit, card scrolled under the nav: every step fits with no overlap at
+390×844, 430×932, 768×1024 and every desktop size from 1280×680. At 360×780 the details step runs
+34px under the bar; on a 375×667 SE, step 1 runs 80px under it and the details step 148px. The
+primary action stays visible throughout. All nine viewports submitted end to end against
+Cloudflare's test keys.
+
+Recipients: every inquiry's ticket now goes to `CATERING_INQUIRY_EMAILS` (noamfoods@gmail.com and
+info@coffeestream.co.il, set in Vercel for Production and Preview), falling back to
+`ORDER_COPY_EMAILS` when unset. The customer confirmation and the `CAFE_NOTIFICATION_EMAIL`
+notification are unchanged. The ticket subject now carries guests and date as well.
+
+Abuse: on top of Turnstile and the per-IP and per-phone limits, the route drops a filled hidden field
+(`hp`) or a fill under 4s (`elapsedMs`, measured from the draft's first save so a reload doesn't
+reset it) with a decoy success and a log line, no row and no email. A payload without `elapsedMs` is
+let through to Turnstile.
+
+
+**2026-11-23 — /catering reordered around the trays; the fine print turns into the form.**
+New order: sage hero (CTA to `#trays`) → a pine call band → the trays → occasions → the three
+promises → FAQ. The call band comes first because most catering is closed on the phone. It holds a
+large tap-to-call pill, WhatsApp, and a link to `#inquiry`. It is pine because reaching the café is
+the café's own world (§4). The trays sit on porcelain (food photography). Each card has an
+"להוסיף לפנייה" toggle (`aria-pressed`; the card picks up an olive ring via `has-[[aria-pressed=true]]`).
+
+Under the trays, one card (`<InquiryFlip>` in `components/sections/CateringPlanner.tsx`) shows the
+fine print (lead time, payment, cancellation, minimum) with the picks so far and a CTA. The CTA, any
+`#inquiry` link and a `#inquiry` deep link turn it over into `<CateringInquiryForm>`, and "חזרה
+לפרטים" turns it back. Only one face is mounted, so the card takes the height of the face it shows.
+The turn is two `rotateY` keyframes (`.flip-out`/`.flip-in`), transform and opacity only, with no
+fill left behind to break the form's sticky bar. Reduced motion swaps the face with no turn.
+After the turn, the card's heading takes focus. Tray picks live in the `<CateringPlanner>`
+context, so the catalogue and the form's step 1 are one selection, saved under the form's draft key.
+
+`data-hide-mobile-bar` sits on the always-mounted `#inquiry` wrapper. MobileBar collects its
+targets once, at mount, so a marker on a face that mounts later is never seen. The promises
+moved from the pine strip under the hero to a sage section above the FAQs, with its own heading.

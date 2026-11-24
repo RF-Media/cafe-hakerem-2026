@@ -132,11 +132,10 @@ export const cateringInquirySchema = z.object({
     .min(1)
     .max(1000)
     .optional(),
-  message: z
-    .string()
-    .trim()
-    .min(10, "תיאור קצר מדי. ספרו לנו עוד על האירוע.")
-    .max(2000, "ההודעה ארוכה מדי."),
+  /** Tray ids from content/catering.ts; optional, any number of them. */
+  trays: z.array(z.string().max(40)).max(10).default([]),
+  fulfilment: z.enum(["pickup", "delivery"]).optional(),
+  message: z.string().trim().max(2000, "ההודעה ארוכה מדי.").optional().default(""),
 });
 
 export type CateringInquiryInput = z.infer<typeof cateringInquirySchema>;

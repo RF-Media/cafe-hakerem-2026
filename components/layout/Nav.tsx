@@ -230,7 +230,7 @@ export function Nav() {
       <nav
         aria-label="ניווט ראשי"
         className={
-          "relative w-full h-full border-b transition-[background-color,box-shadow,border-color] " +
+          "relative z-50 w-full h-full border-b transition-[background-color,box-shadow,border-color] " +
           "duration-[250ms] ease-out-soft " +
           (overHero
             ? "bg-transparent border-transparent shadow-none"
@@ -356,7 +356,7 @@ export function Nav() {
                          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
             >
               <IconStamp className="w-4 h-4 transition-transform duration-base ease-out-soft group-hover/club:-rotate-12" />
-              המועדון
+              מועדון הכרם
             </Link>
           </div>
 

@@ -11,7 +11,7 @@ Owner of the GTM/GA4 setup: this file and `gtm-container.json` beside it.
 |---|---|---|
 | Walk-ins | `directions_click`, `phone_call_click`, `whatsapp_click` | `map_load`, `reviews_click`, `menu_category_click`, `time_on_page` 60s on /menu or /map |
 | Jachnun pre-orders | `generate_lead` (`form_name` = `jachnun_preorder`, with `value`) | `form_view`, `form_start`, `order_item_change`, `form_step`, `form_error` |
-| Catering leads | `generate_lead` (`form_name` = `catering_inquiry`) | `form_start`, `form_error` (friction), `faq_open` on /catering |
+| Catering leads | `generate_lead` (`form_name` = `catering_inquiry`) | `form_view`, `form_start`, `form_step`, `form_error` (friction), `faq_open` on /catering |
 | Club members | `club_join_click` | `club_calculator_use` |
 | Brand / content | none | `scroll_depth`, `time_on_page`, `faq_open`, `gallery_filter`, `social_click`, `cta_click` |
 
@@ -54,11 +54,11 @@ known parameters to `undefined`, so a value from an earlier event never leaks in
 
 | Event | Fires when | Parameters |
 |---|---|---|
-| `form_view` | The jachnun order card is 30% on screen, once per page view | `form_name` |
-| `form_start` | First focus inside the catering form, or first tap in the jachnun form (stepper, slot or field), once per page view | `form_name` |
+| `form_view` | The jachnun or catering card is 30% on screen, once per page view | `form_name` |
+| `form_start` | First tap in the catering or jachnun form (tray, stepper, slot or field), once per page view | `form_name` |
 | `order_item_change` | A jachnun/burekas stepper settles (taps within 800ms are one event) | `form_name`, `item_id` (`jachnun`/`burekas`), `jachnun_qty`, `burekas_qty`, `value`, `currency` |
-| `form_step` | The jachnun form moves forward a step | `form_name`, `form_step` (`pickup`/`details`), `jachnun_qty`, `burekas_qty`, `value`, `currency`, `pickup_window` (on `details`) |
-| `form_error` | The catering submission is rejected; in the jachnun form, also one per invalid field on "continue"/submit | `form_name`, `error_type` (`validation`/`rate_limit`/`slot_unavailable`/`server`/`network`), `form_field` (jachnun validation only: `items`/`slot`/`name`/`phone`/`email`/`notes`) |
+| `form_step` | A step form moves forward. Catering sends only `form_name` and `form_step` (`when`/`details`) | `form_name`, `form_step` (jachnun: `pickup`/`details`), `jachnun_qty`, `burekas_qty`, `value`, `currency`, `pickup_window` (on `details`) |
+| `form_error` | A submission is rejected; in both step forms, also one per invalid field on "continue"/submit | `form_name`, `error_type` (`validation`/`rate_limit`/`slot_unavailable`/`server`/`network`/`turnstile`, the last when the Cloudflare check is missing or refused), `form_field` (validation only. Jachnun: `items`/`slot`/`name`/`phone`/`email`/`notes`; catering: `fulfilment`/`eventDate`/`name`/`phone`/`email`) |
 | `map_load` | The /contact map facade is opened | `ui_location` |
 | `reviews_click` | The Google reviews card on /contact | `ui_location` |
 | `social_click` | Instagram or Facebook link | `social_network`, `ui_location` |
@@ -102,10 +102,10 @@ Imported from `gtm-container.json`:
 | Kind | Name | Setup |
 |---|---|---|
 | Constant | `const - GA4 Measurement ID` | `G-KHG85VPG1Q` |
-| Data Layer Variables (v2) | `dlv - <param>` | One per parameter above (24) |
+| Data Layer Variables (v2) | `dlv - <param>` | One per parameter above (24, matching `PARAMS` in `lib/analytics.ts`) |
 | Trigger | `CE - site events` | Custom Event, regex `^(generate_lead\|phone_call_click\|…)$` over every event in the catalogue |
 | Tag | `GA4 - Google tag` | Google tag, ID from the constant, fires on Initialization - All Pages |
-| Tag | `GA4 - Event - site events` | GA4 Event, name `{{Event}}`, all 16 parameters mapped to their variables, fires on `CE - site events` |
+| Tag | `GA4 - Event - site events` | GA4 Event, name `{{Event}}`, all 24 parameters mapped to their variables, fires on `CE - site events` |
 
 Consent: both tags use their built-in `analytics_storage` check and need no additional consent.
 
@@ -126,7 +126,7 @@ Consent: both tags use their built-in `analytics_storage` check and need no addi
 - **Data retention:** 14 months.
 - **Google signals:** off (the banner has no marketing consent).
 - **Funnel explorations:**
-  - Catering: page_view /catering → `form_start` → `generate_lead`
+  - Catering: page_view /catering → `form_view` → `form_start` → `form_step` (`when`, `details`) → `generate_lead`
   - Jachnun (open funnel, all filtered on `form_name` = `jachnun_preorder`): `form_view` →
     `form_start` → `form_step` = `pickup` → `form_step` = `details` → `generate_lead`.
     Breakdown by device category: most of this traffic is mobile. Drop-off between `details` and

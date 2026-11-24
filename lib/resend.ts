@@ -117,6 +117,19 @@ export function orderCopyRecipients(): string[] {
 }
 
 /**
+ * Who gets every catering inquiry: the caterer who quotes it, plus
+ * CoffeeStream. CATERING_INQUIRY_EMAILS, comma-separated; falls back to
+ * ORDER_COPY_EMAILS so an unset var never drops a lead.
+ */
+export function cateringInquiryRecipients(): string[] {
+  const own = (process.env.CATERING_INQUIRY_EMAILS ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return own.length ? own : orderCopyRecipients();
+}
+
+/**
  * Wraps an HTML body in an RTL Hebrew email shell.
  */
 export function rtlEmail(title: string, bodyHtml: string): string {

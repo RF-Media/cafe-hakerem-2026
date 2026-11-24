@@ -20,6 +20,7 @@ import {
   eventDateLabel,
   hoursSummary,
   multiline,
+  cateringRecapRows,
   type CateringConfirmationInput,
   type JachnunConfirmationInput,
 } from "@/lib/email-templates";
@@ -166,8 +167,7 @@ export function cateringConfirmationHtml(d: CateringConfirmationInput): string {
     [c.phoneLabel, ltr(d.phone)],
   ];
   if (d.email) rows.push([c.emailLabel, ltr(d.email)]);
-  if (d.guestCount) rows.push([c.guestsLabel, String(d.guestCount)]);
-  rows.push([c.messageLabel, multiline(d.message)]);
+  rows.push(...cateringRecapRows(d, c));
 
   return document({
     title: t.cateringTitle,
@@ -219,14 +219,24 @@ export async function renderPdf(html: string): Promise<Buffer> {
 }
 
 /**
- * The attachment for a confirmation, or none. A PDF that fails to render
- * (cold Chromium, a Vercel hiccup) must never cost the customer their email,
- * so the failure is logged and the email goes out without it.
+ * The customer-facing PDF attachment. Disabled 2026-11-18: phase-1 does not
+ * pay or confirm anything on submit — a rep calls the customer, takes the
+ * payment and gives the final confirmation — so a document headed "אישור
+ * הזמנה" with a total overstated what had happened. The café asked to hold
+ * off rather than reword the PDF for a flow that will change again.
+ *
+ * The whole mechanism below (HTML renderers, Chromium launch, PDF print)
+ * is kept intact. Flip the flag to turn it back on. The customer email keeps
+ * going out as before; only the attachment is skipped. See
+ * `docs/pdf-confirmation-disabled.md`.
  */
+export const PDF_ATTACHMENT_ENABLED = false;
+
 export async function pdfAttachment(
   reference: string,
   html: string,
 ): Promise<{ filename: string; content: Buffer }[] | undefined> {
+  if (!PDF_ATTACHMENT_ENABLED) return undefined;
   try {
     return [{ filename: confirmationPdf.filename(reference), content: await renderPdf(html) }];
   } catch (e) {

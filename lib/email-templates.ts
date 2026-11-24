@@ -223,8 +223,7 @@ export function jachnunConfirmationEmail(d: JachnunConfirmationInput): { subject
     row(text(c.notChargedNote, { size: 13, color: C.inkSoft }), "10px 40px 0"),
     row(sectionLabel(c.detailsHeading) + detailRows(details), "28px 40px 0"),
     row(
-      text(`${c.changeNote} <a href="tel:${business.phone.tel}" style="color:${C.pine};text-decoration:none;font-weight:700;" dir="ltr">${business.phone.display}</a>`, { size: 14 }) +
-        `<p style="margin:12px 0 0;font-size:12px;line-height:18px;color:${C.inkSoft};">${emailShell.pdfNote}</p>`,
+      text(`${c.changeNote} <a href="tel:${business.phone.tel}" style="color:${C.pine};text-decoration:none;font-weight:700;" dir="ltr">${business.phone.display}</a>`, { size: 14 }),
       "24px 40px 34px",
     ),
   ].join("\n");
@@ -244,8 +243,25 @@ export type CateringConfirmationInput = {
   email?: string;
   eventDate?: string;
   guestCount?: number;
-  message: string;
+  /** Tray titles the customer ticked; empty means "recommend something". */
+  trays?: string[];
+  /** "איסוף מהקפה" / "משלוח", already a label. */
+  fulfilment?: string;
+  message?: string;
 };
+
+/** Trays, guests, pickup/delivery and notes, in the order every catering email shows them. */
+export function cateringRecapRows(
+  d: CateringConfirmationInput,
+  l: { traysLabel: string; noTrays: string; guestsLabel: string; fulfilmentLabel: string; messageLabel: string },
+): [string, string][] {
+  const rows: [string, string][] = [];
+  if (d.trays) rows.push([l.traysLabel, escapeHtml(d.trays.length ? d.trays.join(" · ") : l.noTrays)]);
+  if (d.guestCount) rows.push([l.guestsLabel, String(d.guestCount)]);
+  if (d.fulfilment) rows.push([l.fulfilmentLabel, escapeHtml(d.fulfilment)]);
+  if (d.message) rows.push([l.messageLabel, multiline(d.message)]);
+  return rows;
+}
 
 export function cateringConfirmationEmail(d: CateringConfirmationInput): { subject: string; html: string } {
   const c = cateringConfirmation;
@@ -255,8 +271,7 @@ export function cateringConfirmationEmail(d: CateringConfirmationInput): { subje
     [c.phoneLabel, `<span dir="ltr">${escapeHtml(d.phone)}</span>`],
   ];
   if (d.email) rows.push([c.emailLabel, `<span dir="ltr">${escapeHtml(d.email)}</span>`]);
-  if (d.guestCount) rows.push([c.guestsLabel, String(d.guestCount)]);
-  rows.push([c.messageLabel, multiline(d.message)]);
+  rows.push(...cateringRecapRows(d, c));
 
   const body = [
     row(text(`${escapeHtml(c.greeting(d.name))}<br>${c.intro}`, { color: C.inkSoft }), "16px 40px 0"),
@@ -274,7 +289,7 @@ export function cateringConfirmationEmail(d: CateringConfirmationInput): { subje
         <td bgcolor="${C.ink}" style="background:${C.ink};border-radius:999px;padding:12px 26px;" align="center">
           <a href="${siteUrl}/catering" style="color:${C.cream};font-size:14px;line-height:20px;font-weight:700;text-decoration:none;display:inline-block;">${c.ctaLabel}</a>
         </td>
-      </tr></table>` + `<p style="margin:18px 0 0;font-size:12px;line-height:18px;color:${C.inkSoft};">${emailShell.pdfNote}</p>`,
+      </tr></table>`,
       "20px 40px 34px",
     ),
   ].join("\n");
@@ -376,12 +391,11 @@ export function cateringInquiryTicket(d: CateringConfirmationInput): { subject: 
   const t = orderTicket;
   const rows: [string, string][] = [];
   if (d.eventDate) rows.push([t.eventDateLabel, escapeHtml(eventDateLabel(d.eventDate))]);
-  if (d.guestCount) rows.push([t.guestsLabel, String(d.guestCount)]);
-  rows.push([t.messageLabel, multiline(d.message)]);
+  rows.push(...cateringRecapRows(d, t));
   rows.push([t.customerLabel, `${escapeHtml(d.name)}<br>${phoneLink(d.phone)}`]);
 
   return {
-    subject: t.cateringSubject(d.reference, d.name),
+    subject: t.cateringSubject(d.reference, d.name, d.guestCount, d.eventDate ? eventDateLabel(d.eventDate) : undefined),
     html: ticket({
       header: t.cateringHeader,
       headline: d.reference,
