@@ -31,7 +31,7 @@ export function HomeHero() {
 
   return (
     <section data-track-area="home_hero" className="relative isolate -mt-[var(--nav-h)] flex min-h-[100svh] flex-col justify-end overflow-hidden bg-espresso-deep text-cream">
-      <div className="absolute inset-x-0 top-0 -z-10 h-[50svh] overflow-hidden md:h-full">
+      <div className="absolute inset-x-0 top-0 -z-10 h-[calc(min(36svh,calc(100svh-26.5rem))+6rem)] overflow-hidden md:h-full">
         <picture className="hero-settle absolute inset-0 block">
           <source media="(orientation: portrait)" srcSet={portrait.srcSet} sizes={portrait.sizes} />
           {/* eslint-disable-next-line jsx-a11y/alt-text -- alt arrives through getImageProps */}
@@ -43,7 +43,7 @@ export function HomeHero() {
         <div aria-hidden className="absolute inset-0 hidden bg-gradient-to-l from-espresso-deep/90 via-espresso-deep/45 to-transparent md:block" />
       </div>
 
-      <div className={`${container} relative w-full pb-6 pt-[43svh] md:pb-8 md:pt-28`}>
+      <div className={`${container} relative w-full pb-6 pt-[min(36svh,calc(100svh-26.5rem))] md:pb-8 md:pt-28`}>
         <div className="max-w-4xl">
           <h1 className="type-display">
             <span className="hero-fade mb-3 block type-index text-brass md:mb-5 md:!text-sm" style={{ ["--d" as never]: 0 }}>
@@ -64,14 +64,14 @@ export function HomeHero() {
             {homeHero.lede}
           </p>
 
-          <div className="hero-fade mt-5 flex flex-wrap gap-3 md:mt-8" style={{ ["--d" as never]: 560 }}>
-            <Magnetic>
-              <Button as="a" href="/menu" variant="onDark" size="lg" icon={<IconArrow />}>
+          <div className="hero-fade mt-5 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap md:mt-8" style={{ ["--d" as never]: 560 }}>
+            <Magnetic className="w-full sm:w-auto">
+              <Button as="a" href="/menu" variant="onDark" size="lg" icon={<IconArrow />} className="w-full sm:w-auto">
                 {homeHero.primaryCta}
               </Button>
             </Magnetic>
-            <Magnetic>
-              <Button as="a" href="/jachnun" variant="onDarkGhost" size="lg">
+            <Magnetic className="w-full sm:w-auto">
+              <Button as="a" href="/jachnun" variant="jachnun" size="lg" className="w-full sm:w-auto">
                 {homeHero.secondaryCta}
               </Button>
             </Magnetic>

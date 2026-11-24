@@ -10,7 +10,7 @@ import { forwardRef, type ReactNode } from "react";
  */
 
 export type ButtonProps = {
-  variant: "primary" | "secondary" | "ghost" | "onDark" | "onDarkGhost" | "ink" | "inkGhost";
+  variant: "primary" | "secondary" | "ghost" | "onDark" | "onDarkGhost" | "ink" | "inkGhost" | "jachnun";
   size?: "sm" | "md" | "lg" | "xl";
   as?: "button" | "a";
   href?: string;
@@ -56,6 +56,10 @@ const variantClasses: Record<ButtonProps["variant"], string> = {
     "hover:bg-cream/20 hover:border-brass/70",
   // The club's button, on amber: CoffeeStream's ink with its cream type.
   ink: "bg-cs-ink text-cs-cream hover:bg-black shadow-sm hover:shadow-md",
+  // The jachnun sub-brand's own CTA: terracotta, with cream type (AA, §4).
+  jachnun:
+    "bg-jachnun text-cream shadow-sm ring-1 ring-cream/15 " +
+    "hover:shadow-md hover:ring-brass/60",
   inkGhost: "bg-transparent text-cs-ink border-2 border-cs-ink hover:bg-cs-ink hover:text-cs-cream",
 };
 
