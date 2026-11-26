@@ -24,10 +24,13 @@ export const homeHero = {
   image: "/images/barista_shared.jpg",
   /** Portrait screens get their own photo: the hero box is taller than it is
    *  wide there, and `object-cover` would blow a thin slice of the landscape
-   *  shot up several times over. One <img>, so one alt covers both photos. */
-  imageMobile: "/images/coffee-duo_shared.jpg",
+   *  shot up several times over. One <img>, so one alt covers both photos.
+   *  Kept to this specific file for its byte weight (2026-10-21, restored
+   *  2026-11-26): a foliage-heavy landscape crop here cost real mobile LCP,
+   *  and this plain cup against a blurred background compresses far smaller. */
+  imageMobile: "/images/takeaway-cup_shared.jpg",
   imageAlt:
-    "בריסטה של קפה הכרם בחולצה עם לוגו הבית ליד מכונת האספרסו, וכוסות קפה ממותגות עם קרואסון חמאה",
+    "בריסטה של קפה הכרם ליד מכונת האספרסו, וכוס קפה ממותגת של קפה הכרם על שולחן בחוץ",
 };
 
 /** The strip under the hero. Facts only, and each one is findable elsewhere. */
