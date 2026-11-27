@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "db:migrate": "prisma migrate dev",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "index:bing": "tsx scripts/submit-to-indexnow.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
