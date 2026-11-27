@@ -53,37 +53,18 @@ This submits the following pages:
 - Accessibility (`/accessibility`)
 - Privacy (`/privacy`)
 
-## Automatic Submission (Vercel Deployment Hook)
+## When to Submit Again
 
-To automatically notify Bing every time you deploy to production:
+IndexNow is on-demand only. Submit again when you publish significant new content:
 
-1. Go to your Vercel project settings: https://vercel.com/dashboard
-2. Navigate to **Integrations** → **Deploy Hooks**
-3. Create a new deploy hook with:
-   - **Name:** `Bing IndexNow`
-   - **Branch:** `main`
-   - **URL:** `https://cafehakerem.co.il/api/indexnow`
-   - **Request body:**
-     ```json
-     {
-       "urlList": [
-         "https://cafehakerem.co.il/",
-         "https://cafehakerem.co.il/menu",
-         "https://cafehakerem.co.il/about",
-         "https://cafehakerem.co.il/jachnun",
-         "https://cafehakerem.co.il/catering",
-         "https://cafehakerem.co.il/contact",
-         "https://cafehakerem.co.il/map",
-         "https://cafehakerem.co.il/coffee-club",
-         "https://cafehakerem.co.il/offers",
-         "https://cafehakerem.co.il/hanukkah",
-         "https://cafehakerem.co.il/accessibility",
-         "https://cafehakerem.co.il/privacy"
-       ]
-     }
-     ```
+- Add a new page (seasonal offers, new service)
+- Major menu or pricing updates
+- Content changes that people search for
 
-The deploy hook will automatically call the IndexNow endpoint after every successful deploy to Vercel.
+Simply run:
+```bash
+npm run index:bing
+```
 
 ## Bing Webmaster Tools
 
